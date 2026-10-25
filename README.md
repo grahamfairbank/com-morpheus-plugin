@@ -96,15 +96,32 @@ The plugin uses **one GreenLake API client for the whole Morpheus appliance**: e
 
 - **Credentials stay on the appliance.** Only the Morpheus appliance talks to GreenLake. The API client secret is stored with the plugin settings and is never sent to browsers.
 - **Read-only by default.** The action buttons are off until an administrator turns on **Enable actions**. Even then, they appear only for roles granted **com-morpheus: Run HPE COM actions** at full access.
-- **Every action request is re-checked on the appliance:**
-  - it must be a POST carrying Morpheus's CSRF token;
-  - actions must be turned on, and the user must have full access;
-  - the user's tenant must own the host;
-  - the host's COM server is found again from Morpheus data, never from the browser;
-  - only confirmed matches qualify, never "probable" ones;
-  - job progress is shown only for that server's jobs.
+- **Every action request is re-checked on the appliance** (hardened in 0.3.1 after an [independent security review](#independent-security-review)):
+  - **Request:**
+    - it must be a **POST** (anything else, including an unknown method, is refused);
+    - it must carry the `X-Requested-With` header, which a cross-site form or image can't send;
+    - when the browser names its origin, that origin must be this appliance;
+    - Morpheus's own CSRF protection applies on top.
+  - **The tab's action token:** the request must carry the signed token the server put into that host's tab. Markup injected elsewhere in the UI can't forge a working button.
+  - **Permission and setting:** actions must be turned on, and the user must have **Run HPE COM actions** at full access.
+  - **Ownership:** the user's tenant must own the host (or the user is in the master tenant), and the host must be a hypervisor host.
+  - **Which server:** the host's COM server is found again from Morpheus data, never from the browser.
+    - Only **confirmed** matches qualify: all of the host's MAC addresses match one COM server.
+    - A `com-serial` / `com-id` **tag** only changes which server is *shown*. For actions, a tag must agree with the host's own hardware: at least one of its MAC addresses must be in that server's inventory, and none in another server's. So a user who can edit tags can't aim a job at someone else's server. A tag still decides which server's data the tab *displays*. Because everything is read through the one shared GreenLake client, a user who can edit a host's tags can view (not act on) any server in the COM workspace. Limit the client's COM scope if that matters to you.
+  - **Results:** job progress is shown only for that server's own jobs. Unknown, foreign and malformed jobs all get the same answer.
+  - **Rate:** one action per server every 30 seconds.
+  - **Errors:** unexpected errors return a reference number; the details stay in the Morpheus log.
 - **No commands on hosts.** The plugin never runs anything on hypervisor hosts. Actions are COM jobs only, and each one is logged with the Morpheus user who started it.
 - **No power actions.** Power on, off and restart aren't in this version.
+
+### Independent security review
+
+Before 0.3.1, the action routes, permission model and browser script were reviewed independently, by a separate AI reviewer (Anthropic's Claude Fable model) given read-only access to the source and HPE's published plugin API source. It found:
+- **one High:** a `com-id` / `com-serial` tag could aim an action at any COM server the API client could reach, beyond the user's tenant;
+- **two Medium:** cross-site request protection relied entirely on Morpheus, and the method check failed open; markup injected elsewhere in the UI could trigger the page-wide script;
+- **several Low/Informational findings:** job-status checks, error detail, no rate limit, a missing host-type re-check, and the `/caps` permission.
+
+All of them are fixed in 0.3.1, each with tests, and the fixes were re-reviewed. Versions 0.2.0 and 0.3.0 are affected when **Enable actions** is on: upgrade to 0.3.1. Exploiting any of them required a signed-in Morpheus user with the actions permission; none was reachable anonymously.
 
 ## How it works
 

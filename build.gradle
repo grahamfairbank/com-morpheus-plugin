@@ -57,6 +57,8 @@ dependencies {
 	provided "org.slf4j:slf4j-api:$slf4jVersion"
 
 	testImplementation "com.morpheusdata:morpheus-plugin-api:$testApiVersion"
+	// Test-only: lets the route specs build realistic requests. Never bundled (the appliance supplies it).
+	testImplementation "jakarta.servlet:jakarta.servlet-api:6.0.0"
 	testImplementation "org.codehaus.groovy:groovy:$groovyVersion"
 	testImplementation "org.codehaus.groovy:groovy-json:$groovyVersion"
 	testImplementation "io.reactivex.rxjava3:rxjava:3.1.7"

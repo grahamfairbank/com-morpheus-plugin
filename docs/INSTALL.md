@@ -51,8 +51,8 @@ The plugin adds two permissions, under **Administration → Roles → (role) →
 
 | Permission | Levels | Grants |
 |---|---|---|
-| **com-morpheus: View HPE COM tab** | None / Read | Seeing the tab, when "Only show to roles with the com-morpheus permission" is on. Admin roles usually have it already. |
-| **com-morpheus: Run HPE COM actions** | None / Full | The action buttons, when **Enable actions** is on. Anyone with it acts in COM **as the API client's GreenLake account**, so grant it only to roles you'd trust with that account. |
+| **com-morpheus: View HPE COM tab** | None / Read | Seeing the tab, when "Only show to roles with the com-morpheus permission" is on. Check your admin roles: plugin permissions may need to be granted explicitly. |
+| **com-morpheus: Run HPE COM actions** | None / Full | The action buttons, when **Enable actions** is on. Anyone with it acts in COM **as the API client's GreenLake account**, so grant it only to roles you'd trust with that account. Since 0.3.1, editing a host's tags can't widen what it reaches: tagged matches must agree with the host's hardware before any action runs. |
 
 Why only these actions, and why iLO reset is a safe one, is explained under [Why these actions](../README.md#why-these-actions) in the README.
 
@@ -75,7 +75,12 @@ Why only these actions, and why iLO reset is a safe one, is explained under [Why
 | rate limited by COM | GreenLake throttled the client. Wait the time shown; the plugin caches to keep calls low. |
 | No matching server | None of the host's MACs are in COM's inventory: the server isn't onboarded in this workspace, or its inventory is old. Add `com-serial=<serial>` as a tag on the host. |
 | more than one COM server | Shared or moved NICs. Add `com-serial=<serial>` to the host. |
-| Match: probable | Only some MACs match (a replaced NIC, or a stale COM inventory). Confirm with `com-serial=<serial>`, or run an inventory collection in COM. Actions stay disabled until it's confirmed. |
+| Match: probable | Only some MACs match (a replaced NIC, or a stale COM inventory). Confirm with `com-serial=<serial>` (actions then work if at least one MAC matches that server and none match another), or run an inventory collection in COM. |
+| "Actions on a tag-matched host need the tag to agree with the host's hardware" | The `com-serial` / `com-id` tag names a server whose inventory has none of this host's MACs, or another server has some of them. Collect inventory in COM, or correct or remove the tag. |
+| "Request refused: cross-origin" | The browser's Origin doesn't match the appliance's host name as the plugin sees it. This happens behind a reverse proxy that rewrites `Host` without sending `X-Forwarded-Host`. Configure the proxy to pass the original `Host`, or `X-Forwarded-Host`. |
+| "Request refused: missing X-Requested-With header" | The request didn't come from the plugin's own script (for example, a hand-made API call or a proxy stripping headers). Use the buttons in the tab. |
+| "Request refused: reopen the HPE COM tab and try again" | The tab's action token is from before the plugin was reloaded or upgraded. Reopen the tab. |
+| "An action was started on this server less than 30 seconds ago" | One action per server every 30 seconds. Wait for the running job to finish. |
 | No action buttons | Check that **Enable actions** is on, that your role has **Run HPE COM actions** at **Full**, and that you have reloaded the page. |
 | "the API client needs a COM role that can run server jobs (HTTP 403)" | The COM API client is read-only. Give it an operator role in GreenLake. |
 | "Upload: nothing happens" / "Failed to parse plugin file" | A corrupt or incomplete download: check it with `SHA256SUMS`. The upload's exact reason is in the browser's developer tools (Network → the upload request's response) and in the Morpheus log. |

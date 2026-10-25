@@ -64,14 +64,14 @@ class ComServiceSpec extends Specification {
 		tab.comId == Fixtures.MATCHED_ID
 	}
 
-	def "a com-id tag works before the index exists"() {
+	def "a com-id tag shows its server straight away and starts matching (actions need it)"() {
 		given:
 		HostFacts h = Fixtures.host()
 		h.tags = ['com-id': Fixtures.MATCHED_ID]
 
 		expect:
 		service.tab(h, settings).state == 'matched'
-		service.currentIndex() == null
+		service.currentIndex() != null
 	}
 
 	def "unknown MACs give a no-match explanation"() {

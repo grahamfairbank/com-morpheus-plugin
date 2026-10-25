@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.3.1 (2026-10-25): security release
+
+**Upgrade if you use the action buttons** (versions 0.2.0 and 0.3.0 with **Enable actions** on). The read-only tab wasn't affected.
+
+These fixes come from an **independent security review**. A separate AI reviewer (Anthropic's Claude Fable model), working read-only from the source and HPE's published plugin API source, reviewed the action routes, the permission model and the browser script. Every finding is fixed with tests, and the fixes were re-reviewed before release. Each issue needed a signed-in Morpheus user with the actions permission; none was reachable anonymously.
+
+- **High: tag override could target any COM server.**
+  - Before: a `com-id` / `com-serial` tag on a user's own host could aim an action at any server the shared GreenLake client could reach, beyond the user's tenant.
+  - Now: tags only change which server is shown. For actions, the tagged server must share at least one of the host's MAC addresses, and no other server may have any of them. A tag that matches the hardware still confirms a "probable" match.
+- **Medium: request forgery.**
+  - Before: the method check failed open, and cross-site protection relied entirely on Morpheus.
+  - Now: action routes require POST, `X-Requested-With: XMLHttpRequest` and a same-origin Origin/Referer, on top of Morpheus's CSRF filter.
+- **Medium: script gadget.**
+  - Before: markup injected anywhere in the UI could trigger an action through the page-wide script.
+  - Now:
+    - the script only responds inside the plugin's own tab;
+    - the actions it accepts, and the iLO reset confirmation, are fixed in the script rather than read from the page;
+    - the diagnostics only call the plugin's fixed URLs;
+    - each tab carries a **signed action token** for its host (a per-load secret), and the action routes refuse requests without it.
+- **Low:**
+  - job status requires the job to name this host's server, refuses non-actionable matches, and gives one answer for missing, foreign and malformed jobs;
+  - unexpected errors return a reference number, and COM response bodies and connection details go to the log only;
+  - one action per server every 30 seconds, and a job COM refuses doesn't block a retry;
+  - job polls are no longer cached.
+- **Informational:**
+  - action routes re-check that the server is a hypervisor host;
+  - `/caps` is gated on the actions permission, so a role with that permission but without the view permission sees the buttons.
+- Docs: the README "Security" section describes exactly what is checked, and the install guide covers the new messages.
+
 ## 0.3.0 (2026-10-25)
 
 - **One jar for Morpheus / VM Essentials 9.0 and 9.1:** `com-morpheus-plugin-<version>.jar`, with a minimum appliance version of 9.0.0. This replaces 0.2.0's `-vme9.0` / `-vme9.1` pair. It came from a post-0.2.0 finding: the 9.1 build runs unchanged on a 9.0 appliance.

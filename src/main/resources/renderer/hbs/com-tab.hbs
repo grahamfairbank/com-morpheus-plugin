@@ -96,12 +96,11 @@
 	</div>
 
 	{{#if actionsEnabled}}
-	<div class="vc-actions" data-server-id="{{hostId}}" hidden>
+	<div class="vc-actions" data-server-id="{{hostId}}" data-token="{{actionToken}}" hidden>
 		<button type="button" class="btn btn-default btn-sm vc-act" data-action="uidOn">UID light on</button>
 		<button type="button" class="btn btn-default btn-sm vc-act" data-action="uidOff">UID light off</button>
 		<button type="button" class="btn btn-default btn-sm vc-act" data-action="collectInventory">Collect inventory</button>
-		<button type="button" class="btn btn-default btn-sm vc-act" data-action="iloReset"
-			data-confirm="Reset the iLO of {{serial}}? The host and its VMs keep running, but the iLO, its web UI and COM's connection to it drop for a minute or two.">iLO reset</button>
+		<button type="button" class="btn btn-default btn-sm vc-act" data-action="iloReset">iLO reset</button>
 		<span class="vc-act-status" aria-live="polite"></span>
 	</div>
 	{{/if}}

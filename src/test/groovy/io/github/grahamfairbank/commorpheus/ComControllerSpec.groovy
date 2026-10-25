@@ -18,7 +18,7 @@ class ComControllerSpec extends Specification {
 		routes*.method == ['probe', 'probeOpen', 'caps', 'action', 'jobStatus']
 		routes[0].permissions*.code == ['com-morpheus-view']
 		routes[1].permissions == []
-		routes[2].permissions*.code == ['com-morpheus-view']
+		routes[2].permissions*.code == ['com-morpheus-actions']
 		routes[3].permissions*.code == ['com-morpheus-actions']
 		routes[4].permissions*.code == ['com-morpheus-actions']
 	}

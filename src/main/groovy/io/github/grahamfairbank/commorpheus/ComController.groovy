@@ -51,7 +51,8 @@ class ComController implements PluginController {
 		// Phase 2. Every route needs a permission: Morpheus 9.0.1 never matches a route with none (404).
 		// The Dispatcher only checks that the permission key exists, so the methods check levels themselves.
 		List<Permission.AccessType> full = Collections.singletonList(Permission.AccessType.full)
-		routes.add(Route.build(CAPS, 'caps', Permission.build(ComMorpheusPlugin.PERMISSION_CODE, read)))
+		// /caps answers only to roles that have the actions permission at all; others get 404 and no buttons.
+		routes.add(Route.build(CAPS, 'caps', Permission.build(ComMorpheusPlugin.ACTIONS_PERMISSION, full)))
 		routes.add(Route.build(ACTION, 'action', Permission.build(ComMorpheusPlugin.ACTIONS_PERMISSION, full)))
 		routes.add(Route.build(JOB, 'jobStatus', Permission.build(ComMorpheusPlugin.ACTIONS_PERMISSION, full)))
 		return routes
@@ -65,6 +66,8 @@ class ComController implements PluginController {
 
 	/** Whether this user may see the action buttons. */
 	JsonResponse caps(ViewModel<Map> model) {
+		Map bad = requestCheck(model)
+		if (bad) return json(403, bad)
 		ComSettings s = plugin.loadSettings()
 		boolean canAct = s.configured && s.enableActions && level(model, ComMorpheusPlugin.ACTIONS_PERMISSION) == 'full'
 		return json(200, [ok: true, canAct: canAct])
@@ -76,6 +79,7 @@ class ComController implements PluginController {
 		if (denied) return json(403, denied)
 		Map host = host(model)
 		if (host.error) return json((int) host.status, [ok: false, error: host.error])
+		if (!plugin.service.validToken(((HostFacts) host.facts).id, param(model, 'token'))) return json(403, [ok: false, error: 'Request refused: reopen the HPE COM tab and try again.'])
 		Map r = plugin.service.startAction((HostFacts) host.facts, plugin.loadSettings(), param(model, 'action'), username(model))
 		return json(r.ok ? 200 : 409, r)
 	}
@@ -86,16 +90,57 @@ class ComController implements PluginController {
 		if (denied) return json(403, denied)
 		Map host = host(model)
 		if (host.error) return json((int) host.status, [ok: false, error: host.error])
+		if (!plugin.service.validToken(((HostFacts) host.facts).id, param(model, 'token'))) return json(403, [ok: false, error: 'Request refused: reopen the HPE COM tab and try again.'])
 		String jobId = param(model, 'jobId')
 		if (!(jobId ==~ /[0-9a-fA-F-]{8,64}/)) return json(400, [ok: false, error: 'Missing or invalid jobId.'])
 		Map r = plugin.service.jobStatus((HostFacts) host.facts, plugin.loadSettings(), jobId)
 		return json(r.ok ? 200 : 409, r)
 	}
 
-	/** POST only, actions on, full access to the actions permission. Returns null when allowed. */
+	/**
+	 * The plugin's own defence against cross-site and forged requests (0.3.1), on top of Morpheus's CSRF filter:
+	 * POST only (an unknown method is refused), the X-Requested-With header that a cross-site form or image
+	 * can't send, and, when the browser says where the request came from, the same origin as the appliance.
+	 * Returns null when the request passes.
+	 */
+	static Map requestCheck(ViewModel<Map> model) {
+		def req = safe { model?.request }
+		if (req == null) return [ok: false, error: 'Request refused.']
+		if ((safe { req.method } as String) != 'POST') return [ok: false, error: 'POST only.']
+		if ((safe { req.getHeader('X-Requested-With') } as String) != 'XMLHttpRequest') return [ok: false, error: 'Request refused: missing X-Requested-With header.']
+		if (!sameOrigin(req)) return [ok: false, error: 'Request refused: cross-origin.']
+		return null
+	}
+
+	/**
+	 * Origin (or, failing that, Referer) must name this appliance: its host name must equal the Host,
+	 * X-Forwarded-Host or server name (ports ignored, as proxies add or drop :443). No header at all is allowed
+	 * (X-Requested-With already rules out cross-site forms); the literal "null" origin is refused.
+	 */
+	static boolean sameOrigin(req) {
+		String from = (safe { req.getHeader('Origin') } ?: safe { req.getHeader('Referer') }) as String
+		if (!from) return true
+		if (from == 'null') return false
+		String fromHost
+		try { fromHost = new URI(from).host?.toLowerCase() } catch (Exception e) { return false }
+		if (!fromHost) return false
+		Set<String> ours = [safe { req.getHeader('Host') }, safe { req.getHeader('X-Forwarded-Host') }, safe { req.serverName }]
+			.findAll().collect { hostOnly(it as String) }.findAll() as Set
+		return ours.contains(fromHost)
+	}
+
+	/** "a.example.com:8443" -> "a.example.com"; "[::1]:443" -> "[::1]"; first value of a comma list. */
+	static String hostOnly(String h) {
+		String v = h?.split(',')?.getAt(0)?.trim()?.toLowerCase()
+		if (!v) return null
+		if (v.startsWith('[')) return v.substring(0, v.indexOf(']') + 1)
+		return v.replaceFirst(/:\d+$/, '')
+	}
+
+	/** POST from this appliance (requestCheck), actions on, full access to the actions permission. Null when allowed. */
 	Map guard(ViewModel<Map> model) {
-		String method = safe { model?.request?.method } as String
-		if (method && method != 'POST') return [ok: false, error: 'POST only.']
+		Map bad = requestCheck(model)
+		if (bad) return bad
 		ComSettings s = plugin.loadSettings()
 		if (!s.enableActions) return [ok: false, error: 'Actions are turned off in the plugin settings.']
 		if (level(model, ComMorpheusPlugin.ACTIONS_PERMISSION) != 'full') return [ok: false, error: 'Your role needs "com-morpheus: Run HPE COM actions" at full access.']
@@ -113,7 +158,9 @@ class ComController implements PluginController {
 		Long mine = safe { account?.id } as Long
 		Long owner = safe { server.account?.id } as Long
 		if (!master && (mine == null || mine != owner)) return [status: 404, error: 'No such host.']
-		return [facts: HostFactsReader.facts(server, morpheus, true)]
+		HostFacts facts = HostFactsReader.facts(server, morpheus, true)
+		if (!ComService.isHost(facts)) return [status: 404, error: 'No such host.']
+		return [facts: facts]
 	}
 
 	static String level(ViewModel<Map> model, String code) {
@@ -122,7 +169,6 @@ class ComController implements PluginController {
 
 	static String param(ViewModel<Map> model, String name) {
 		String v = safe { model?.request?.getParameter(name) } as String
-		if (v == null) v = safe { ((Map) model?.object)?.get(name) } as String
 		return v?.trim()
 	}
 

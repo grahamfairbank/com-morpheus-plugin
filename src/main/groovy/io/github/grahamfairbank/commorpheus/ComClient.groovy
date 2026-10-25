@@ -157,7 +157,7 @@ class ComClient {
 		} catch (Exception e) {
 			throw new ComException("COM ${shortPath(pathAndQuery)} returned something that isn't JSON", r.status)
 		}
-		cache[pathAndQuery] = new CacheEntry(now, data)
+		if (ttlMs > 0) cache[pathAndQuery] = new CacheEntry(now, data) // ttl 0 = never reused, so never stored
 		return data
 	}
 
@@ -170,7 +170,9 @@ class ComClient {
 		try {
 			return transport.send(method, settings.apiUrl + pathAndQuery, h, jsonBody)
 		} catch (Exception e) {
-			throw new ComException("Couldn't reach COM at ${settings.apiUrl} (${e.class.simpleName}${e.message ? ': ' + e.message : ''})")
+			// Full detail (proxy, DNS, TLS) goes to the log only.
+			log.warn("com-morpheus: request to ${settings.apiUrl} failed: ${e}")
+			throw new ComException("Couldn't reach COM at ${settings.apiUrl} (${e.class.simpleName}). Details are in the Morpheus log.")
 		}
 	}
 
@@ -217,8 +219,9 @@ class ComClient {
 		}
 		if (r.status == 403) return new ComException("${what}: the COM API client doesn't have permission (HTTP 403)", 403)
 		if (r.status == 404) return new ComException("${what}: not found in COM (HTTP 404)", 404)
-		String detail = r.body?.replaceAll('\\s+', ' ')?.take(160)
-		return new ComException("${what}: HTTP ${r.status}${detail ? ' ' + detail : ''}", r.status)
+		// COM's response body can hold internal detail: log it, don't return it.
+		log.warn("com-morpheus: ${what}: HTTP ${r.status} ${r.body?.replaceAll('\\s+', ' ')?.take(500)}")
+		return new ComException("${what}: HTTP ${r.status}. Details are in the Morpheus log.", r.status)
 	}
 
 	private static Integer retryAfter(HttpResult r) {

@@ -9,6 +9,14 @@
   if (window.__comMorpheus) return;
   window.__comMorpheus = true;
   var API = '/plugin/comMorpheus';
+  // 0.3.1: everything the page could influence is fixed here instead of read from the DOM, so injected
+  // markup elsewhere in Morpheus can't trigger an action or a probe.
+  var ACTIONS = { uidOn: true, uidOff: true, collectInventory: true, iloReset: true };
+  var CONFIRM = {
+    iloReset: "Reset this server's iLO? The host and its VMs keep running, but the iLO, its web UI and COM's connection to it drop for a minute or two."
+  };
+  var PROBE_URLS = ['/plugin/comMorpheus/probe', '/comMorpheus/probe', '/plugin/comMorpheus/probeOpen', '/comMorpheus/probeOpen'];
+  var ROOT = '.com-morpheus'; // the plugin's own tab container
 
   function csrfFromMeta(doc) {
     var m = doc.querySelector('meta[name="_csrf"]');
@@ -52,7 +60,7 @@
   function run(root) {
     var out = root.querySelector('#vc-diag-out');
     var copy = root.querySelector('#vc-diag-copy');
-    var urls = Array.prototype.map.call(root.querySelectorAll('.vc-probe-url'), function (a) { return a.getAttribute('href'); });
+    var urls = PROBE_URLS;
     getCsrf().then(function (csrf) {
       var lines = ['csrf: ' + (csrf ? csrf.header + ' from ' + csrf.from : 'none found'), 'page: ' + location.pathname];
       var jobs = [];
@@ -108,8 +116,8 @@
 
   var POLL_MS = 4000, POLL_MAX = 150; // up to 10 minutes
 
-  function poll(bar, serverId, jobId, label, n) {
-    post('/job', { serverId: serverId, jobId: jobId }).then(function (r) {
+  function poll(bar, serverId, token, jobId, label, n) {
+    post('/job', { serverId: serverId, jobId: jobId, token: token }).then(function (r) {
       var j = r.body;
       if (!j.ok) { busy(bar, false); setStatus(bar, label + ': ' + (j.error || 'status unavailable'), 'bad'); return; }
       if (j.done) {
@@ -121,24 +129,27 @@
       }
       setStatus(bar, label + ': ' + (j.state || 'running') + '…', 'warn');
       if (n >= POLL_MAX) { busy(bar, false); setStatus(bar, label + ': still running in COM. Check the job there.', 'warn'); return; }
-      setTimeout(function () { poll(bar, serverId, jobId, label, n + 1); }, POLL_MS);
+      setTimeout(function () { poll(bar, serverId, token, jobId, label, n + 1); }, POLL_MS);
     }).catch(function (e) { busy(bar, false); setStatus(bar, label + ': ' + e, 'bad'); });
   }
 
   function act(btn) {
     var bar = btn.closest('.vc-actions');
-    if (!bar) return;
-    var msg = btn.getAttribute('data-confirm');
-    if (msg && !window.confirm(msg)) return;
-    var label = btn.textContent.trim();
+    var root = btn.closest(ROOT);
+    if (!bar || !root || !root.contains(bar)) return;
+    var action = btn.getAttribute('data-action');
     var serverId = bar.getAttribute('data-server-id');
+    var token = bar.getAttribute('data-token') || '';
+    if (!ACTIONS.hasOwnProperty(action) || !/^\d{1,18}$/.test(serverId || '')) return;
+    if (CONFIRM.hasOwnProperty(action) && !window.confirm(CONFIRM[action])) return;
+    var label = btn.textContent.trim();
     busy(bar, true);
     setStatus(bar, label + ': starting…', 'warn');
-    post('/action', { serverId: serverId, action: btn.getAttribute('data-action') }).then(function (r) {
+    post('/action', { serverId: serverId, action: action, token: token }).then(function (r) {
       var j = r.body;
       if (!j.ok || !j.jobId) { busy(bar, false); setStatus(bar, label + ': ' + (j.error || 'not started'), 'bad'); return; }
       setStatus(bar, label + ': ' + (j.state || 'PENDING') + '…', 'warn');
-      setTimeout(function () { poll(bar, serverId, j.jobId, label, 1); }, POLL_MS);
+      setTimeout(function () { poll(bar, serverId, token, j.jobId, label, 1); }, POLL_MS);
     }).catch(function (e) { busy(bar, false); setStatus(bar, label + ': ' + e, 'bad'); });
   }
 
@@ -153,8 +164,9 @@
   document.addEventListener('click', function (ev) {
     var t = ev.target;
     if (!t || !t.closest) return;
+    if (!t.closest(ROOT)) return; // only clicks inside the plugin's own tab
     var run1 = t.closest('#vc-diag-run');
-    if (run1) { var root = run1.closest('#vc-diag'); if (root) run(root); return; }
+    if (run1) { var root = run1.closest('#vc-diag'); if (root && root.closest(ROOT)) run(root); return; }
     var btn = t.closest('.vc-act');
     if (btn && !btn.disabled) act(btn);
   });
@@ -162,7 +174,7 @@
   function scan() {
     var root = document.getElementById('vc-diag');
     if (root) markReady(root);
-    Array.prototype.forEach.call(document.querySelectorAll('.vc-actions[data-server-id]'), initActions);
+    Array.prototype.forEach.call(document.querySelectorAll(ROOT + ' .vc-actions[data-server-id]'), initActions);
   }
   scan();
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
