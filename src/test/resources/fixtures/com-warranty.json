@@ -1,0 +1,91 @@
+{
+ "offset": 0,
+ "count": 6,
+ "total": 6,
+ "items": [
+  {
+   "id": "b3b4b812-374d-4815-b4dd-e66152d9b3bb",
+   "type": "compute-ops-mgmt/server/warranty",
+   "generation": 1,
+   "deviceId": "869121-B21+TST0000ABS",
+   "applicationCustomerId": "c656ab8e46f111ecb611261cc2e20617",
+   "createdAt": "2026-02-13T05:45:57.670977Z",
+   "updatedAt": "2026-02-13T05:45:57.670980Z",
+   "supportState": "EXPIRED",
+   "supportLevel": "NOSUPPORT",
+   "contractLevel": "NOSUPPORT",
+   "supportStartDate": null,
+   "supportEndDate": null
+  },
+  {
+   "id": "b6a43b0b-17ea-4e52-a976-56a21ced5c3b",
+   "type": "compute-ops-mgmt/server/warranty",
+   "generation": 1,
+   "deviceId": "869121-B21+TST0000ABM",
+   "applicationCustomerId": "c656ab8e46f111ecb611261cc2e20617",
+   "createdAt": "2026-02-13T05:50:57.707900Z",
+   "updatedAt": "2026-02-13T05:50:57.707904Z",
+   "supportState": "EXPIRED",
+   "supportLevel": "NOSUPPORT",
+   "contractLevel": "NOSUPPORT",
+   "supportStartDate": null,
+   "supportEndDate": null
+  },
+  {
+   "id": "30691533-a98c-4267-9b6f-882e17d3881e",
+   "type": "compute-ops-mgmt/server/warranty",
+   "generation": 1,
+   "deviceId": "869121-B21+TST0000ABQ",
+   "applicationCustomerId": "c656ab8e46f111ecb611261cc2e20617",
+   "createdAt": "2026-02-13T05:50:57.792040Z",
+   "updatedAt": "2026-02-13T05:50:57.792046Z",
+   "supportState": "EXPIRED",
+   "supportLevel": "NOSUPPORT",
+   "contractLevel": "NOSUPPORT",
+   "supportStartDate": null,
+   "supportEndDate": null
+  },
+  {
+   "id": "634eef70-1330-4976-9963-8bdf175a66dd",
+   "type": "compute-ops-mgmt/server/warranty",
+   "generation": 1,
+   "deviceId": "869121-B21+TST0000ABN",
+   "applicationCustomerId": "c656ab8e46f111ecb611261cc2e20617",
+   "createdAt": "2026-02-13T05:49:58.514146Z",
+   "updatedAt": "2026-02-13T05:49:58.514149Z",
+   "supportState": "EXPIRED",
+   "supportLevel": "NOSUPPORT",
+   "contractLevel": "NOSUPPORT",
+   "supportStartDate": null,
+   "supportEndDate": null
+  },
+  {
+   "id": "268795ba-d957-4cf9-b998-42d623b9ad5a",
+   "type": "compute-ops-mgmt/server/warranty",
+   "generation": 1,
+   "deviceId": "869121-B21+TST0000ABP",
+   "applicationCustomerId": "c656ab8e46f111ecb611261cc2e20617",
+   "createdAt": "2026-02-13T05:47:57.801761Z",
+   "updatedAt": "2026-02-13T05:47:57.801763Z",
+   "supportState": "EXPIRED",
+   "supportLevel": "NOSUPPORT",
+   "contractLevel": "NOSUPPORT",
+   "supportStartDate": null,
+   "supportEndDate": null
+  },
+  {
+   "id": "3859b786-6a20-4e20-86be-da1da254a11d",
+   "type": "compute-ops-mgmt/server/warranty",
+   "generation": 1,
+   "deviceId": "869121-B21+TST0000ABR",
+   "applicationCustomerId": "c656ab8e46f111ecb611261cc2e20617",
+   "createdAt": "2026-02-13T05:46:58.876491Z",
+   "updatedAt": "2026-02-13T05:46:58.876495Z",
+   "supportState": "EXPIRED",
+   "supportLevel": "NOSUPPORT",
+   "contractLevel": "NOSUPPORT",
+   "supportStartDate": null,
+   "supportEndDate": null
+  }
+ ]
+}

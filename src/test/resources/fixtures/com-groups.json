@@ -1,0 +1,159 @@
+{
+ "items": [
+  {
+   "id": "d764acc0-cac8-4618-b2a7-d300378730a3",
+   "name": "dHCI-Group1",
+   "description": "",
+   "complianceStatus": "NOT_APPLICABLE",
+   "autoAddTags": {},
+   "deviceType": "DIRECT_CONNECT_SERVER",
+   "policies": {
+    "onDeviceAdd": {
+     "biosApplySettings": true,
+     "biosFactoryReset": false,
+     "firmwarePowerOff": false,
+     "firmwareUpdate": false,
+     "iloApplySettings": false,
+     "osInstall": false,
+     "storageConfiguration": false,
+     "storageVolumeDeletion": false,
+     "storageVolumeName": "",
+     "storageVolumes": [],
+     "externalStorageConfiguration": false,
+     "osCompletionTimeoutMin": 240
+    },
+    "onDeviceApply": {
+     "firmwareDowngrade": false
+    }
+   },
+   "securityStatus": "UNKNOWN",
+   "devices": [],
+   "generation": 5,
+   "createdAt": "2023-04-24T20:44:23.500046Z",
+   "updatedAt": "2026-04-06T16:00:56.405397Z",
+   "type": "compute-ops-mgmt/group",
+   "resourceUri": "/compute-ops-mgmt/v1/groups/d764acc0-cac8-4618-b2a7-d300378730a3",
+   "devicesUri": "/compute-ops-mgmt/v1/groups/d764acc0-cac8-4618-b2a7-d300378730a3/devices",
+   "settingsUris": [
+    "/compute-ops-mgmt/v1/settings/00000000-0000-0000-0000-800000000001"
+   ],
+   "groupCompliance": {
+    "summary": "Not Applicable",
+    "firmware": {
+     "status": "Not Applicable",
+     "statusReason": ""
+    },
+    "iloSettings": {
+     "status": "Not Applicable",
+     "statusReason": ""
+    },
+    "externalStorage": "Not Applicable"
+   }
+  },
+  {
+   "id": "fe88af02-b15b-48b7-a8ed-11ebad6df4b6",
+   "name": "ST gen10",
+   "description": "gen10",
+   "complianceStatus": "NOT_APPLICABLE",
+   "autoAddTags": {},
+   "deviceType": "DIRECT_CONNECT_SERVER",
+   "policies": {
+    "onDeviceAdd": {
+     "biosApplySettings": false,
+     "biosFactoryReset": false,
+     "firmwarePowerOff": false,
+     "firmwareUpdate": false,
+     "iloApplySettings": false,
+     "osInstall": false,
+     "storageConfiguration": false,
+     "storageVolumeDeletion": false,
+     "storageVolumeName": "",
+     "storageVolumes": [],
+     "externalStorageConfiguration": false,
+     "osCompletionTimeoutMin": 240
+    },
+    "onDeviceApply": {
+     "firmwareDowngrade": false
+    }
+   },
+   "securityStatus": "UNKNOWN",
+   "devices": [],
+   "generation": 4,
+   "createdAt": "2023-09-08T15:09:02.314165Z",
+   "updatedAt": "2026-04-06T16:04:49.827578Z",
+   "type": "compute-ops-mgmt/group",
+   "resourceUri": "/compute-ops-mgmt/v1/groups/fe88af02-b15b-48b7-a8ed-11ebad6df4b6",
+   "devicesUri": "/compute-ops-mgmt/v1/groups/fe88af02-b15b-48b7-a8ed-11ebad6df4b6/devices",
+   "settingsUris": [
+    "/compute-ops-mgmt/v1/settings/a51c2b0c-c4da-41bd-90ae-d9a79d4abd8b",
+    "/compute-ops-mgmt/v1/settings/00000000-0000-0000-0000-800000000002"
+   ],
+   "groupCompliance": {
+    "summary": "Not Applicable",
+    "firmware": {
+     "status": "Not Applicable",
+     "statusReason": ""
+    },
+    "iloSettings": {
+     "status": "Not Applicable",
+     "statusReason": ""
+    },
+    "externalStorage": "Not Applicable"
+   }
+  },
+  {
+   "id": "06ada4ce-880a-4eeb-99e5-0966ec3218da",
+   "name": "DSCC Integration",
+   "description": "",
+   "complianceStatus": "NOT_APPLICABLE",
+   "autoAddTags": {},
+   "deviceType": "DIRECT_CONNECT_SERVER",
+   "policies": {
+    "onDeviceAdd": {
+     "biosApplySettings": false,
+     "biosFactoryReset": false,
+     "firmwarePowerOff": false,
+     "firmwareUpdate": false,
+     "iloApplySettings": false,
+     "osInstall": false,
+     "storageConfiguration": false,
+     "storageVolumeDeletion": false,
+     "storageVolumeName": "",
+     "storageVolumes": [],
+     "externalStorageConfiguration": false,
+     "osCompletionTimeoutMin": 240
+    },
+    "onDeviceApply": {
+     "firmwareDowngrade": false
+    }
+   },
+   "securityStatus": "UNKNOWN",
+   "devices": [],
+   "generation": 6,
+   "createdAt": "2024-05-30T15:23:27.332433Z",
+   "updatedAt": "2026-04-06T16:04:22.591043Z",
+   "type": "compute-ops-mgmt/group",
+   "resourceUri": "/compute-ops-mgmt/v1/groups/06ada4ce-880a-4eeb-99e5-0966ec3218da",
+   "devicesUri": "/compute-ops-mgmt/v1/groups/06ada4ce-880a-4eeb-99e5-0966ec3218da/devices",
+   "settingsUris": [
+    "/compute-ops-mgmt/v1/settings/ab43255b-ee87-4ee3-ae7f-d5bced8fc7e9"
+   ],
+   "groupCompliance": {
+    "summary": "Not Applicable",
+    "firmware": {
+     "status": "Not Applicable",
+     "statusReason": ""
+    },
+    "iloSettings": {
+     "status": "Not Applicable",
+     "statusReason": ""
+    },
+    "externalStorage": "Not Applicable"
+   }
+  }
+ ],
+ "count": 3,
+ "offset": 0,
+ "total": 3,
+ "next": null
+}

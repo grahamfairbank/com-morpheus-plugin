@@ -1,0 +1,63 @@
+{
+ "name": "host-02",
+ "hostname": "host-02-2",
+ "hardwareProductVendor": "HPE\n",
+ "hardwareProductName": "ProLiant DL360 Gen10\n",
+ "computeServerType": {
+  "code": "mvmHost"
+ },
+ "interfaces": [
+  {
+   "name": "eno5np0",
+   "macAddress": "00:00:5F:11:01:d0"
+  },
+  {
+   "name": "eno4",
+   "macAddress": "00:00:5E:44:b5:f3"
+  },
+  {
+   "name": "eno6np1",
+   "macAddress": "00:00:5F:11:01:d8"
+  },
+  {
+   "name": "eno2",
+   "macAddress": "00:00:5E:44:b5:f1"
+  },
+  {
+   "name": "democompute",
+   "macAddress": "46:00:00:5a:98:47"
+  },
+  {
+   "name": "test",
+   "macAddress": "00:00:5E:44:b5:f3"
+  },
+  {
+   "name": "eno3",
+   "macAddress": "00:00:5E:44:b5:f2"
+  },
+  {
+   "name": "ens1f1np1",
+   "macAddress": "00:00:5F:26:bc:38"
+  },
+  {
+   "name": "mgmt",
+   "macAddress": "F6:00:00:f8:31:4e"
+  },
+  {
+   "name": "ens1f0np0",
+   "macAddress": "00:00:5F:26:bc:30"
+  },
+  {
+   "name": "eno1",
+   "macAddress": "00:00:5E:44:b5:f0"
+  },
+  {
+   "name": "ovs-system",
+   "macAddress": "E2:00:00:f3:c5:a6"
+  },
+  {
+   "name": "bond0",
+   "macAddress": "AA:00:00:7e:ce:1d"
+  }
+ ]
+}

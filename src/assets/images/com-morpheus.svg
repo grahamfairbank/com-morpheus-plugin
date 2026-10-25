@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>com-morpheus</title>
+  <rect x="2" y="2" width="60" height="60" rx="10" fill="#1f2a36"/>
+  <rect x="12" y="16" width="40" height="10" rx="2" fill="#01a982"/>
+  <rect x="12" y="30" width="40" height="10" rx="2" fill="#01a982" opacity=".75"/>
+  <rect x="12" y="44" width="40" height="6" rx="2" fill="#01a982" opacity=".5"/>
+  <circle cx="18" cy="21" r="2" fill="#1f2a36"/>
+  <circle cx="18" cy="35" r="2" fill="#1f2a36"/>
+</svg>

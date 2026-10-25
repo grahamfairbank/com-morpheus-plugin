@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a new view, action or improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas and pull requests are welcome. Actions that reconfigure servers or change power need extra safeguards, so please describe how they should be protected (see "Why these actions" in the README).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      description: Which COM data or job would it use? Who should be allowed to use it?
+  - type: dropdown
+    id: pr
+    attributes:
+      label: Would you like to contribute a pull request?
+      options:
+        - "Yes"
+        - "Maybe, with guidance"
+        - "No"

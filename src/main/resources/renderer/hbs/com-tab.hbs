@@ -1,0 +1,260 @@
+{{!-- com-morpheus "HPE COM" host tab. Sub-tabs are CSS-only (radio buttons), so the tab needs no scripts. --}}
+<div class="com-morpheus">
+<style>
+.com-morpheus { padding: 8px 0; font-size: 13px; }
+.com-morpheus .vc-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.com-morpheus .vc-title { font-weight: 600; font-size: 14px; }
+.com-morpheus .vc-links a { margin-left: 14px; white-space: nowrap; }
+.com-morpheus .vc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.com-morpheus .vc-chip { border: 1px solid rgba(128,128,128,.35); border-radius: 12px; padding: 2px 10px; white-space: nowrap; }
+.com-morpheus .vc-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: #8a8f98; vertical-align: baseline; }
+.com-morpheus .vc-ok .vc-dot, .com-morpheus .vc-dot.vc-ok { background: #01a982; }
+.com-morpheus .vc-warn .vc-dot, .com-morpheus .vc-dot.vc-warn { background: #f0a500; }
+.com-morpheus .vc-bad .vc-dot, .com-morpheus .vc-dot.vc-bad { background: #d0312d; }
+.com-morpheus .vc-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+.com-morpheus .vc-tabs > label { display: inline-block; padding: 6px 12px; cursor: pointer; border-bottom: 2px solid transparent; margin: 0; font-weight: 500; }
+.com-morpheus .vc-tabs > input:checked + label { border-bottom-color: #01a982; font-weight: 600; }
+.com-morpheus .vc-tabs > input:focus-visible + label { outline: 2px solid #01a982; }
+.com-morpheus .vc-pane { display: none; padding-top: 10px; border-top: 1px solid rgba(128,128,128,.25); }
+.com-morpheus #vc-t-sum:checked ~ .vc-p-sum, .com-morpheus #vc-t-hea:checked ~ .vc-p-hea, .com-morpheus #vc-t-fw:checked ~ .vc-p-fw,
+.com-morpheus #vc-t-sup:checked ~ .vc-p-sup, .com-morpheus #vc-t-al:checked ~ .vc-p-al,
+.com-morpheus #vc-t-hw:checked ~ .vc-p-hw, .com-morpheus #vc-t-st:checked ~ .vc-p-st { display: block; }
+.com-morpheus .vc-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
+.com-morpheus .vc-actions[hidden] { display: none; }
+.com-morpheus .vc-act-status { margin-left: 6px; }
+.com-morpheus h4.vc-sub { font-size: 13px; font-weight: 600; margin: 14px 0 6px; }
+.com-morpheus table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.com-morpheus th, .com-morpheus td { text-align: left; padding: 4px 8px; vertical-align: top; border-bottom: 1px solid rgba(128,128,128,.18); }
+.com-morpheus th { font-weight: 600; }
+.com-morpheus table.vc-kv td:first-child { width: 34%; font-weight: 500; }
+.com-morpheus .vc-muted { opacity: .7; }
+.com-morpheus .vc-note { padding: 8px 10px; border-left: 3px solid #8a8f98; background: rgba(128,128,128,.08); margin: 8px 0; }
+.com-morpheus .vc-note.vc-warn { border-left-color: #f0a500; }
+.com-morpheus .vc-note.vc-bad { border-left-color: #d0312d; }
+.com-morpheus code { word-break: break-all; }
+</style>
+
+{{#if isUnconfigured}}
+	<div class="vc-note">The com-morpheus plugin has no COM API client yet. An administrator can add one in Administration &gt; Integrations &gt; Plugins &gt; com-morpheus.</div>
+{{/if}}
+
+{{#if isNotHpe}}
+	<div class="vc-note">
+		This host isn't a physical HPE server (vendor <code>{{vendor}}</code>, product <code>{{product}}</code>), so it can't be matched in HPE Compute Ops Management.
+		The tab is shown because "Show the tab on non-HPE hosts" is on.<br>
+		MAC addresses the plugin would use: <code>{{hostMacs}}</code>
+	</div>
+{{/if}}
+
+{{#if isBuilding}}
+	<div class="vc-note">Matching hosts to HPE Compute Ops Management: the plugin is reading the COM server list and inventories. This takes up to a minute the first time. Reopen this tab shortly.</div>
+{{/if}}
+
+{{#if isError}}
+	<div class="vc-note vc-bad"><strong>Couldn't load HPE Compute Ops Management data.</strong><br>{{error}}</div>
+{{/if}}
+
+{{#if isNomatch}}
+	<div class="vc-note vc-warn">
+		<strong>No matching server in HPE Compute Ops Management.</strong><br>{{reason}}
+		{{#if hostMacs}}<br>Host MAC addresses: <code>{{hostMacs}}</code>{{/if}}
+		{{#if indexed}}<br><span class="vc-muted">COM servers checked: {{indexed}}, as of {{indexAt}}.</span>{{/if}}
+		<br>If the server is in COM, add the tag <code>com-serial=&lt;serial number&gt;</code> to this host.
+		{{#if comUiUrl}}<a href="{{comUiUrl}}" target="_blank" rel="noopener noreferrer">Open COM &#8599;</a>{{/if}}
+	</div>
+{{/if}}
+
+{{#if isConflict}}
+	<div class="vc-note vc-warn">
+		<strong>This host's MAC addresses appear on more than one COM server</strong>, so the plugin won't choose one.
+		Add the tag <code>com-serial=&lt;serial number&gt;</code> to this host to pick the right one.
+	</div>
+	<table>
+		<tr><th>Serial</th><th>Name</th><th>Model</th><th>Shared MACs</th><th></th></tr>
+		{{#each candidates}}
+		<tr><td>{{serial}}</td><td>{{name}}</td><td>{{model}}</td><td>{{shared}}</td>
+			<td>{{#if url}}<a href="{{url}}" target="_blank" rel="noopener noreferrer">Open in COM &#8599;</a>{{/if}}</td></tr>
+		{{/each}}
+	</table>
+{{/if}}
+
+{{#if isMatched}}
+	<div class="vc-head">
+		<span class="vc-title">{{model}} &middot; {{serial}}</span>
+		<span class="vc-links">
+			{{#if comUrl}}<a href="{{comUrl}}" target="_blank" rel="noopener noreferrer">Open in COM &#8599;</a>{{/if}}
+			{{#if iloUrl}}<a href="{{iloUrl}}" target="_blank" rel="noopener noreferrer">Open iLO &#8599;</a>{{/if}}
+		</span>
+	</div>
+
+	<div class="vc-chips">
+		<span class="vc-chip vc-{{overallLevel}}"><span class="vc-dot"></span>Health: {{overallHealth}}</span>
+		<span class="vc-chip vc-{{securityLevel}}"><span class="vc-dot"></span>iLO security: {{securityStatus}}</span>
+		<span class="vc-chip"><span class="vc-dot{{#if alertCount}} vc-warn{{else}} vc-ok{{/if}}"></span>Alerts: {{alertCount}}</span>
+		<span class="vc-chip">Power: {{power}}</span>
+		<span class="vc-chip vc-{{matchLevel}}" title="{{matchWhy}}"><span class="vc-dot"></span>Match: {{#if matchConfirmed}}confirmed by MAC{{/if}}{{#if matchProbable}}probable{{/if}}{{#if matchOverride}}set by tag{{/if}}</span>
+	</div>
+
+	{{#if actionsEnabled}}
+	<div class="vc-actions" data-server-id="{{hostId}}" hidden>
+		<button type="button" class="btn btn-default btn-sm vc-act" data-action="uidOn">UID light on</button>
+		<button type="button" class="btn btn-default btn-sm vc-act" data-action="uidOff">UID light off</button>
+		<button type="button" class="btn btn-default btn-sm vc-act" data-action="collectInventory">Collect inventory</button>
+		<button type="button" class="btn btn-default btn-sm vc-act" data-action="iloReset"
+			data-confirm="Reset the iLO of {{serial}}? The host and its VMs keep running, but the iLO, its web UI and COM's connection to it drop for a minute or two.">iLO reset</button>
+		<span class="vc-act-status" aria-live="polite"></span>
+	</div>
+	{{/if}}
+	{{#if matchProbable}}<div class="vc-note vc-warn">{{matchWhy}}</div>{{/if}}
+	{{#each notes}}<div class="vc-note vc-warn">{{this}}</div>{{/each}}
+
+	<div class="vc-tabs">
+		<input type="radio" name="vc-tabs" id="vc-t-sum" checked><label for="vc-t-sum">Summary</label>
+		<input type="radio" name="vc-tabs" id="vc-t-hea"><label for="vc-t-hea">Health</label>
+		<input type="radio" name="vc-tabs" id="vc-t-fw"><label for="vc-t-fw">Firmware ({{firmwareCount}})</label>
+		<input type="radio" name="vc-tabs" id="vc-t-hw"><label for="vc-t-hw">Hardware</label>
+		<input type="radio" name="vc-tabs" id="vc-t-st"><label for="vc-t-st">Storage</label>
+		<input type="radio" name="vc-tabs" id="vc-t-sup"><label for="vc-t-sup">Support</label>
+		<input type="radio" name="vc-tabs" id="vc-t-al"><label for="vc-t-al">Alerts ({{alertCount}})</label>
+
+		<div class="vc-pane vc-p-sum">
+			<table class="vc-kv">
+				{{#each summary}}
+				<tr><td>{{label}}</td><td class="{{#if level}}vc-{{level}}{{/if}}">{{#if level}}<span class="vc-dot"></span>{{/if}}{{#if href}}<a href="{{href}}" target="_blank" rel="noopener noreferrer">{{value}}</a>{{else}}{{value}}{{/if}}</td></tr>
+				{{/each}}
+			</table>
+			<p class="vc-muted">COM id <code>{{comId}}</code> &middot; {{matchWhy}}</p>
+		</div>
+
+		<div class="vc-pane vc-p-hea">
+			<table class="vc-kv">
+				<tr><td>Overall health</td><td class="vc-{{overallLevel}}"><span class="vc-dot"></span>{{overallHealth}}</td></tr>
+				{{#each health}}
+				<tr><td>{{label}}</td><td class="vc-{{level}}"><span class="vc-dot"></span>{{value}}</td></tr>
+				{{/each}}
+			</table>
+			{{#if security}}
+			<table>
+				<tr><th>iLO security setting</th><th>Status</th><th>Recommended action</th></tr>
+				{{#each security}}
+				<tr><td>{{name}}{{#if ignored}} <span class="vc-muted">(ignored)</span>{{/if}}</td>
+					<td class="vc-{{level}}"><span class="vc-dot"></span>{{status}}</td>
+					<td>{{#if action}}{{action}}{{else}}<span class="vc-muted">--</span>{{/if}}</td></tr>
+				{{/each}}
+			</table>
+			{{/if}}
+		</div>
+
+		<div class="vc-pane vc-p-fw">
+			{{#if lastFirmware}}<p class="vc-muted">Last firmware update: {{lastFirmware}}</p>{{/if}}
+			<table>
+				<tr><th>Component</th><th>Location</th><th>Version</th></tr>
+				{{#each firmware}}
+				<tr><td>{{name}}</td><td>{{location}}</td><td>{{version}}</td></tr>
+				{{/each}}
+			</table>
+		</div>
+
+		<div class="vc-pane vc-p-hw">
+			{{#if inv.hasInventory}}
+			<p class="vc-muted">Last inventory collection: {{inv.inventoryAt}}. Use "Collect inventory" to refresh it.</p>
+			<table class="vc-kv">
+				<tr><td>Form factor</td><td>{{inv.hardware.formFactor}}</td></tr>
+				<tr><td>Chassis type</td><td>{{inv.hardware.chassisType}}</td></tr>
+			</table>
+			<h4 class="vc-sub">Processors{{#if inv.hardware.cpuSummary}} <span class="vc-muted">({{inv.hardware.cpuSummary}})</span>{{/if}}</h4>
+			<table>
+				<tr><th>Socket</th><th>Model</th><th>Max speed</th><th>Rated speed</th><th>Cores</th><th>Threads</th><th>Health</th></tr>
+				{{#each inv.hardware.cpus}}
+				<tr><td>{{socket}}</td><td>{{model}}</td><td>{{maxSpeed}}</td><td>{{ratedSpeed}}</td><td>{{cores}}</td><td>{{threads}}</td><td class="vc-{{level}}"><span class="vc-dot"></span>{{health}}</td></tr>
+				{{/each}}
+			</table>
+			<h4 class="vc-sub">Memory{{#if inv.hardware.memorySummary}} <span class="vc-muted">({{inv.hardware.memorySummary}})</span>{{/if}}</h4>
+			<table>
+				<tr><th>Slot</th><th>Size</th><th>Type</th><th>Speed</th><th>Part number</th><th>Health</th></tr>
+				{{#each inv.hardware.memory}}
+				<tr><td>{{slot}}</td><td>{{size}}</td><td>{{type}}</td><td>{{speed}}</td><td>{{part}}</td><td class="vc-{{level}}"><span class="vc-dot"></span>{{health}}</td></tr>
+				{{/each}}
+			</table>
+			<h4 class="vc-sub">Network adapters</h4>
+			<table>
+				<tr><th>Adapter</th><th>Location</th><th>Ports</th><th>Firmware</th></tr>
+				{{#each inv.hardware.nics}}
+				<tr><td>{{name}}</td><td>{{location}}</td><td>{{ports}}</td><td>{{firmware}}</td></tr>
+				{{/each}}
+			</table>
+			<h4 class="vc-sub">Power supplies</h4>
+			<table>
+				<tr><th>Bay</th><th>Model</th><th>Capacity</th><th>Output</th><th>Firmware</th><th>Health</th></tr>
+				{{#each inv.hardware.psus}}
+				<tr><td>{{bay}}</td><td>{{model}}</td><td>{{capacity}}</td><td>{{output}}</td><td>{{firmware}}</td><td class="vc-{{level}}"><span class="vc-dot"></span>{{health}}</td></tr>
+				{{/each}}
+			</table>
+			{{else}}
+			<p>No hardware inventory from COM yet. Use "Collect inventory", or collect it in COM.</p>
+			{{/if}}
+		</div>
+
+		<div class="vc-pane vc-p-st">
+			{{#if inv.storage.hasStorage}}
+			{{#each inv.storage.controllers}}
+			<h4 class="vc-sub">{{name}} <span class="vc-muted">(firmware {{firmware}})</span> <span class="vc-{{level}}"><span class="vc-dot"></span>{{health}}</span></h4>
+			<table>
+				<tr><th>Volume</th><th>State</th><th>Capacity</th><th>RAID type</th><th>Drives</th><th>Spares</th></tr>
+				{{#each volumes}}
+				<tr><td>{{name}}</td><td>{{state}}</td><td>{{capacity}}</td><td>{{raid}}</td><td>{{drives}}</td><td>{{spares}}</td></tr>
+				{{else}}
+				<tr><td colspan="6" class="vc-muted">No volumes</td></tr>
+				{{/each}}
+			</table>
+			<table>
+				<tr><th>Drive</th><th>Model</th><th>Interface</th><th>Media</th><th>Capacity</th><th>Firmware</th><th>Health</th></tr>
+				{{#each drives}}
+				<tr><td>{{name}}</td><td>{{model}}</td><td>{{protocol}}</td><td>{{media}}</td><td>{{capacity}}</td><td>{{firmware}}</td><td class="vc-{{level}}"><span class="vc-dot"></span>{{health}}</td></tr>
+				{{/each}}
+			</table>
+			{{/each}}
+			{{else}}
+			<p>No internal storage inventory from COM.</p>
+			{{/if}}
+		</div>
+
+		<div class="vc-pane vc-p-sup">
+			<table class="vc-kv">
+				{{#each support}}
+				<tr><td>{{label}}</td><td class="{{#if level}}vc-{{level}}{{/if}}">{{#if level}}<span class="vc-dot"></span>{{/if}}{{value}}</td></tr>
+				{{/each}}
+			</table>
+			<p class="vc-muted">Support case details and automatic case warnings are in COM.{{#if comUrl}} <a href="{{comUrl}}" target="_blank" rel="noopener noreferrer">Open in COM &#8599;</a>{{/if}}</p>
+		</div>
+
+		<div class="vc-pane vc-p-al">
+			{{#if alerts}}
+			<table>
+				<tr><th>Severity</th><th>Created</th><th>Category</th><th>Description</th></tr>
+				{{#each alerts}}
+				<tr><td class="vc-{{level}}"><span class="vc-dot"></span>{{severity}}</td><td>{{created}}</td><td>{{category}}</td>
+					<td>{{description}}{{#if resolution}}<br><span class="vc-muted">{{resolution}}</span>{{/if}}</td></tr>
+				{{/each}}
+			</table>
+			{{else}}
+			<p>No active alerts.</p>
+			{{/if}}
+		</div>
+	</div>
+	<p class="vc-muted" style="margin-top: 8px;">From HPE Compute Ops Management. Data can be up to a minute old; inventory-based details are refreshed every few hours.<br>com-morpheus is an unofficial community plugin, not an HPE product and not supported by HPE.</p>
+{{/if}}
+
+{{#if routeDiagnostics}}
+	<div class="vc-note" id="vc-diag" style="margin-top: 14px;">
+		<strong>Plugin route diagnostics</strong> (turn off in the plugin settings when done). These calls read and change nothing.<br>
+		<span id="vc-diag-script">The test script hasn't loaded yet. It loads with the page while route diagnostics is on: reload the page once. If this message stays, use the links.</span>
+		<div style="margin: 6px 0;">Open each in a new tab (GET):
+			{{#each probeUrls}}<a href="{{this}}" target="_blank" rel="noopener noreferrer" class="vc-probe-url" style="margin-left: 10px;">{{this}}</a>{{/each}}
+		</div>
+		<button type="button" id="vc-diag-run" class="btn btn-default btn-sm">Test routes (GET and POST)</button>
+		<table id="vc-diag-out" style="margin-top: 8px;"><tr><th>Method</th><th>URL</th><th>Status</th><th>Response</th></tr></table>
+		<textarea id="vc-diag-copy" rows="4" style="width: 100%; font-family: monospace; font-size: 11px;" readonly placeholder="Results to copy appear here"></textarea>
+	</div>
+{{/if}}
+</div>

@@ -1,0 +1,12 @@
+## What does this change?
+
+## Why?
+
+## Checklist
+
+- [ ] `tools/build.sh` passes (both the `-vme9.0` and `-vme9.1` builds).
+- [ ] Tests added or updated for behaviour changes.
+- [ ] CHANGELOG.md updated (and README / docs/INSTALL.md for user-visible changes).
+- [ ] No real data (serials, IPs, MACs, names, IDs, tokens) in code, fixtures, screenshots or this description.
+- [ ] Any new source is cited in NOTICE.md. No code copied from sources whose licence doesn't allow it. The Morpheus plugin API is still compile-only.
+- [ ] New actions are off by default, permission-gated, re-checked on the server and limited to confirmed matches.

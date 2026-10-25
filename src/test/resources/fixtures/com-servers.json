@@ -1,0 +1,367 @@
+{
+ "offset": 0,
+ "count": 6,
+ "total": 6,
+ "items": [
+  {
+   "id": "869121-B21+TST0000ABS",
+   "name": "localhost.example.com",
+   "hardware": {
+    "serialNumber": "TST0000ABS",
+    "model": "ProLiant DL360 Gen10",
+    "uuid": "30303030-3030-5453-5430-303030414253",
+    "productId": "869121-B21",
+    "manufacturer": "HPE",
+    "manufacturingDate": "2021-01-15",
+    "powerState": "ON",
+    "indicatorLed": "OFF",
+    "memoryMb": null,
+    "platform": null,
+    "formFactor": null,
+    "health": {
+     "summary": "OK",
+     "healthLED": "OK",
+     "airFilter": "NOT_PRESENT",
+     "fans": "OK",
+     "fanRedundancy": "REDUNDANT",
+     "liquidCooling": "NOT_PRESENT",
+     "liquidCoolingRedundancy": "NOT_PRESENT",
+     "memory": "OK",
+     "network": "OK",
+     "powerSupplies": "OK",
+     "powerSupplyRedundancy": "REDUNDANT",
+     "processor": "OK",
+     "storage": "OK",
+     "temperature": "OK",
+     "bios": "OK",
+     "smartStorage": "OK"
+    },
+    "bmc": {
+     "mac": "00:00:60:58:6A:8E",
+     "ip": "192.0.2.23",
+     "hostname": "ILOTST0000ABS.example.com",
+     "license": null,
+     "model": "iLO 5",
+     "version": "iLO 5 v3.21"
+    }
+   },
+   "state": {
+    "managed": true,
+    "connected": true,
+    "connectedModifiedAt": "2026-10-13T09:36:35.642299+00:00",
+    "subscriptionState": "SUBSCRIBED",
+    "subscriptionTier": "ENHANCED",
+    "subscriptionKey": "KTEST0000",
+    "subscriptionExpiresAt": "2027-09-06T10:52:00.000000+00:00"
+   },
+   "host": {
+    "osName": "VMware ESXi",
+    "osVersion": "8.0.3 Build-24414501 Update 3 Patch 55",
+    "hostname": "localhost.example.com",
+    "osType": 25,
+    "osDescription": "VMkernel localhost.example.com 8.0.3 #1 SMP Release build-24414501 Dec  2 2024 00:06:11 x86_64 x86_64 x86_64 ESXi"
+   },
+   "connectionType": "DIRECT"
+  },
+  {
+   "id": "869121-B21+TST0000ABN",
+   "name": "TST0000ABN",
+   "hardware": {
+    "serialNumber": "TST0000ABN",
+    "model": "ProLiant DL360 Gen10",
+    "uuid": "30303030-3030-5453-5430-30303041424E",
+    "productId": "869121-B21",
+    "manufacturer": "HPE",
+    "manufacturingDate": "2021-01-15",
+    "powerState": "ON",
+    "indicatorLed": "OFF",
+    "memoryMb": null,
+    "platform": null,
+    "formFactor": null,
+    "health": {
+     "summary": "OK",
+     "healthLED": "OK",
+     "airFilter": "NOT_PRESENT",
+     "fans": "OK",
+     "fanRedundancy": "REDUNDANT",
+     "liquidCooling": "NOT_PRESENT",
+     "liquidCoolingRedundancy": "NOT_PRESENT",
+     "memory": "OK",
+     "network": "OK",
+     "powerSupplies": "OK",
+     "powerSupplyRedundancy": "REDUNDANT",
+     "processor": "OK",
+     "storage": "OK",
+     "temperature": "OK",
+     "bios": "OK",
+     "smartStorage": "OK"
+    },
+    "bmc": {
+     "mac": "00:00:60:58:6A:8C",
+     "ip": "192.0.2.78",
+     "hostname": "ILOTST0000ABN.example.com",
+     "license": null,
+     "model": null,
+     "version": null
+    }
+   },
+   "state": {
+    "managed": true,
+    "connected": true,
+    "connectedModifiedAt": "2026-10-19T03:02:43.049318+00:00",
+    "subscriptionState": "SUBSCRIBED",
+    "subscriptionTier": "ENHANCED",
+    "subscriptionKey": "KTEST0000",
+    "subscriptionExpiresAt": "2027-09-06T10:52:00.000000+00:00"
+   },
+   "host": {
+    "osName": "VMware ESXi",
+    "osVersion": "8.0.2 Build-22380479 Update 2",
+    "hostname": "",
+    "osType": 25,
+    "osDescription": "VMkernel localhost.example.com 8.0.2 #1 SMP Release build-22380479 Sep  4 2023 15:00:49 x86_64 x86_64 x86_64 ESXi"
+   },
+   "connectionType": "DIRECT"
+  },
+  {
+   "id": "869121-B21+TST0000ABM",
+   "name": "host-02",
+   "hardware": {
+    "serialNumber": "TST0000ABM",
+    "model": "ProLiant DL360 Gen10",
+    "uuid": "30303030-3030-5453-5430-30303041424D",
+    "productId": "869121-B21",
+    "manufacturer": "HPE",
+    "manufacturingDate": "2021-01-15",
+    "powerState": "ON",
+    "indicatorLed": "OFF",
+    "memoryMb": null,
+    "platform": null,
+    "formFactor": null,
+    "health": {
+     "summary": "OK",
+     "healthLED": "OK",
+     "airFilter": "NOT_PRESENT",
+     "fans": "OK",
+     "fanRedundancy": "REDUNDANT",
+     "liquidCooling": "NOT_PRESENT",
+     "liquidCoolingRedundancy": "NOT_PRESENT",
+     "memory": "OK",
+     "network": "OK",
+     "powerSupplies": "OK",
+     "powerSupplyRedundancy": "REDUNDANT",
+     "processor": "OK",
+     "storage": "OK",
+     "temperature": "OK",
+     "bios": "OK",
+     "smartStorage": "OK"
+    },
+    "bmc": {
+     "mac": "00:00:60:58:6A:98",
+     "ip": "192.0.2.74",
+     "hostname": "ilo-host02.example.com",
+     "license": null,
+     "model": "iLO 5",
+     "version": "iLO 5 v3.21"
+    }
+   },
+   "state": {
+    "managed": true,
+    "connected": true,
+    "connectedModifiedAt": "2026-10-19T02:59:56.753460+00:00",
+    "subscriptionState": "SUBSCRIBED",
+    "subscriptionTier": "ENHANCED",
+    "subscriptionKey": "KTEST0000",
+    "subscriptionExpiresAt": "2027-09-06T10:52:00.000000+00:00"
+   },
+   "host": {
+    "osName": "VMware ESXi",
+    "osVersion": "8.0.2 Build-22380479 Update 2",
+    "hostname": "host-02",
+    "osType": 25,
+    "osDescription": "VMkernel localhost.example.com 8.0.2 #1 SMP Release build-22380479 Sep  4 2023 15:00:49 x86_64 x86_64 x86_64 ESXi"
+   },
+   "connectionType": "DIRECT"
+  },
+  {
+   "id": "869121-B21+TST0000ABP",
+   "name": "host-01",
+   "hardware": {
+    "serialNumber": "TST0000ABP",
+    "model": "ProLiant DL360 Gen10",
+    "uuid": "30303030-3030-5453-5430-303030414250",
+    "productId": "869121-B21",
+    "manufacturer": "HPE",
+    "manufacturingDate": "2021-01-15",
+    "powerState": "ON",
+    "indicatorLed": "OFF",
+    "memoryMb": null,
+    "platform": null,
+    "formFactor": null,
+    "health": {
+     "summary": "OK",
+     "healthLED": "OK",
+     "airFilter": "NOT_PRESENT",
+     "fans": "OK",
+     "fanRedundancy": "REDUNDANT",
+     "liquidCooling": "NOT_PRESENT",
+     "liquidCoolingRedundancy": "NOT_PRESENT",
+     "memory": "OK",
+     "network": "UNKNOWN",
+     "powerSupplies": "OK",
+     "powerSupplyRedundancy": "REDUNDANT",
+     "processor": "OK",
+     "storage": "OK",
+     "temperature": "OK",
+     "bios": "OK",
+     "smartStorage": "OK"
+    },
+    "bmc": {
+     "mac": "00:00:60:58:7A:B2",
+     "ip": "192.0.2.21",
+     "hostname": "ILOTST0000ABP.example.com",
+     "license": null,
+     "model": "iLO 5",
+     "version": "iLO 5 v3.22"
+    }
+   },
+   "state": {
+    "managed": true,
+    "connected": true,
+    "connectedModifiedAt": "2026-10-13T10:04:17.814708+00:00",
+    "subscriptionState": "SUBSCRIBED",
+    "subscriptionTier": "ENHANCED",
+    "subscriptionKey": "KTEST0000",
+    "subscriptionExpiresAt": "2027-09-06T10:52:00.000000+00:00"
+   },
+   "host": {
+    "osName": "VMware ESXi",
+    "osVersion": "8.0.3 Build-24414501 Update 3 Patch 55",
+    "hostname": "host-01",
+    "osType": 25,
+    "osDescription": "VMkernel localhost.example.com 8.0.3 #1 SMP Release build-24414501 Dec  2 2024 00:06:11 x86_64 x86_64 x86_64 ESXi"
+   },
+   "connectionType": "DIRECT"
+  },
+  {
+   "id": "869121-B21+TST0000ABR",
+   "name": "localhost.example.com",
+   "hardware": {
+    "serialNumber": "TST0000ABR",
+    "model": "ProLiant DL360 Gen10",
+    "uuid": "30303030-3030-5453-5430-303030414252",
+    "productId": "869121-B21",
+    "manufacturer": "HPE",
+    "manufacturingDate": "2021-01-15",
+    "powerState": "ON",
+    "indicatorLed": "OFF",
+    "memoryMb": null,
+    "platform": null,
+    "formFactor": null,
+    "health": {
+     "summary": "OK",
+     "healthLED": "OK",
+     "airFilter": "NOT_PRESENT",
+     "fans": "OK",
+     "fanRedundancy": "REDUNDANT",
+     "liquidCooling": "NOT_PRESENT",
+     "liquidCoolingRedundancy": "NOT_PRESENT",
+     "memory": "OK",
+     "network": "OK",
+     "powerSupplies": "OK",
+     "powerSupplyRedundancy": "REDUNDANT",
+     "processor": "OK",
+     "storage": "OK",
+     "temperature": "OK",
+     "bios": "OK",
+     "smartStorage": "OK"
+    },
+    "bmc": {
+     "mac": "00:00:60:58:6A:80",
+     "ip": "192.0.2.26",
+     "hostname": "ILOTST0000ABR.example.com",
+     "license": null,
+     "model": "iLO 5",
+     "version": "iLO 5 v3.21"
+    }
+   },
+   "state": {
+    "managed": true,
+    "connected": true,
+    "connectedModifiedAt": "2026-10-19T02:57:54.891938+00:00",
+    "subscriptionState": "SUBSCRIBED",
+    "subscriptionTier": "ENHANCED",
+    "subscriptionKey": "KTEST0000",
+    "subscriptionExpiresAt": "2027-09-06T10:52:00.000000+00:00"
+   },
+   "host": {
+    "osName": "VMware ESXi",
+    "osVersion": "8.0.3 Build-24414501 Update 3 Patch 55",
+    "hostname": "localhost.example.com",
+    "osType": 25,
+    "osDescription": "VMkernel localhost.example.com 8.0.3 #1 SMP Release build-24414501 Dec  2 2024 00:06:11 x86_64 x86_64 x86_64 ESXi"
+   },
+   "connectionType": "DIRECT"
+  },
+  {
+   "id": "869121-B21+TST0000ABQ",
+   "name": "host-03",
+   "hardware": {
+    "serialNumber": "TST0000ABQ",
+    "model": "ProLiant DL360 Gen10",
+    "uuid": "30303030-3030-5453-5430-303030414251",
+    "productId": "869121-B21",
+    "manufacturer": "HPE",
+    "manufacturingDate": "2021-01-15",
+    "powerState": "ON",
+    "indicatorLed": "OFF",
+    "memoryMb": null,
+    "platform": null,
+    "formFactor": null,
+    "health": {
+     "summary": "OK",
+     "healthLED": "OK",
+     "airFilter": "NOT_PRESENT",
+     "fans": "OK",
+     "fanRedundancy": "REDUNDANT",
+     "liquidCooling": "NOT_PRESENT",
+     "liquidCoolingRedundancy": "NOT_PRESENT",
+     "memory": "OK",
+     "network": "OK",
+     "powerSupplies": "OK",
+     "powerSupplyRedundancy": "REDUNDANT",
+     "processor": "OK",
+     "storage": "OK",
+     "temperature": "OK",
+     "bios": "OK",
+     "smartStorage": "OK"
+    },
+    "bmc": {
+     "mac": "00:00:60:58:6A:82",
+     "ip": "192.0.2.76",
+     "hostname": "ILOTST0000ABQ.example.com",
+     "license": null,
+     "model": "iLO 5",
+     "version": "iLO 5 v3.21"
+    }
+   },
+   "state": {
+    "managed": true,
+    "connected": true,
+    "connectedModifiedAt": "2026-10-13T10:27:10.223939+00:00",
+    "subscriptionState": "SUBSCRIBED",
+    "subscriptionTier": "ENHANCED",
+    "subscriptionKey": "KTEST0000",
+    "subscriptionExpiresAt": "2027-09-06T10:52:00.000000+00:00"
+   },
+   "host": {
+    "osName": "VMware ESXi",
+    "osVersion": "8.0.2 Build-22380479 Update 2",
+    "hostname": "host-03",
+    "osType": 25,
+    "osDescription": "VMkernel localhost.example.com 8.0.2 #1 SMP Release build-22380479 Sep  4 2023 15:00:49 x86_64 x86_64 x86_64 ESXi"
+   },
+   "connectionType": "DIRECT"
+  }
+ ]
+}

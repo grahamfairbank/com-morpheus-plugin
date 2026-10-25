@@ -1,0 +1,4122 @@
+{
+ "id": "869121-B21+TST0000ABM",
+ "type": "compute-ops/server/inventory",
+ "serial": "SN-TEST-0001",
+ "productId": "869121-B21",
+ "lastFullInventoryCollectionAt": "2026-09-10T22:53:40.490320",
+ "lastFullInventoryCollectionPowerState": "On",
+ "storage": {
+  "modified": "2026-10-17T11:24:05.933010",
+  "data": [
+   {
+    "Id": "DE07C000",
+    "Name": "HPE Smart Array P408i-a SR Gen10",
+    "Drives": [
+     {
+      "Id": "0",
+      "Name": "480GB 6G SATA SSD",
+      "Links": {
+       "Storage": {
+        "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000"
+       },
+       "Volumes": [
+        {
+         "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Volumes/1"
+        }
+       ],
+       "Volumes@odata.count": 1
+      },
+      "Model": "MK000480GWSSC",
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK",
+       "Conditions": []
+      },
+      "Metrics": {
+       "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Drives/0/Metrics"
+      },
+      "Protocol": "SATA",
+      "Revision": "HPG3",
+      "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Drives/0",
+      "MediaType": "SSD",
+      "Multipath": false,
+      "Operations": [],
+      "@odata.etag": "\"8F75AAC3\"",
+      "@odata.type": "#Drive.v1_18_0.Drive",
+      "Identifiers": [
+       {
+        "DurableName": "31402EC0164A59B0",
+        "DurableNameFormat": "NAA"
+       }
+      ],
+      "HotspareType": "None",
+      "SerialNumber": "SN-TEST-0002",
+      "CapacityBytes": 480103981056,
+      "BlockSizeBytes": 512,
+      "CapableSpeedGbs": 6.0,
+      "DriveFormFactor": "Drive2_5",
+      "FirmwareVersion": "HPG3",
+      "StatusIndicator": "OK",
+      "FailurePredicted": false,
+      "PhysicalLocation": {
+       "PartLocation": {
+        "LocationType": "Bay",
+        "ServiceLabel": "Slot=0:Port=1I:Box=1:Bay=1",
+        "LocationOrdinalValue": 1
+       }
+      },
+      "EncryptionAbility": "None",
+      "WriteCacheEnabled": false,
+      "NegotiatedSpeedGbs": 6.0,
+      "SlotCapableProtocols": [
+       "SAS",
+       "SATA"
+      ],
+      "LocationIndicatorActive": false,
+      "@Redfish.WriteableProperties": [
+       "LocationIndicatorActive",
+       "HotspareType"
+      ],
+      "PredictedMediaLifeLeftPercent": 100.0,
+      "HotspareType@Redfish.AllowableValues": [
+       "None"
+      ]
+     },
+     {
+      "Id": "1",
+      "Name": "480GB 6G SATA SSD",
+      "Links": {
+       "Storage": {
+        "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000"
+       },
+       "Volumes": [
+        {
+         "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Volumes/1"
+        }
+       ],
+       "Volumes@odata.count": 1
+      },
+      "Model": "MK000480GWSSC",
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK",
+       "Conditions": []
+      },
+      "Metrics": {
+       "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Drives/1/Metrics"
+      },
+      "Protocol": "SATA",
+      "Revision": "HPG3",
+      "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Drives/1",
+      "MediaType": "SSD",
+      "Multipath": false,
+      "Operations": [],
+      "@odata.etag": "\"6C581BC8\"",
+      "@odata.type": "#Drive.v1_18_0.Drive",
+      "Identifiers": [
+       {
+        "DurableName": "31402EC0164A59B1",
+        "DurableNameFormat": "NAA"
+       }
+      ],
+      "HotspareType": "None",
+      "SerialNumber": "SN-TEST-0003",
+      "CapacityBytes": 480103981056,
+      "BlockSizeBytes": 512,
+      "CapableSpeedGbs": 6.0,
+      "DriveFormFactor": "Drive2_5",
+      "FirmwareVersion": "HPG3",
+      "StatusIndicator": "OK",
+      "FailurePredicted": false,
+      "PhysicalLocation": {
+       "PartLocation": {
+        "LocationType": "Bay",
+        "ServiceLabel": "Slot=0:Port=1I:Box=1:Bay=2",
+        "LocationOrdinalValue": 2
+       }
+      },
+      "EncryptionAbility": "None",
+      "WriteCacheEnabled": false,
+      "NegotiatedSpeedGbs": 6.0,
+      "SlotCapableProtocols": [
+       "SAS",
+       "SATA"
+      ],
+      "LocationIndicatorActive": false,
+      "@Redfish.WriteableProperties": [
+       "LocationIndicatorActive",
+       "HotspareType"
+      ],
+      "PredictedMediaLifeLeftPercent": 100.0,
+      "HotspareType@Redfish.AllowableValues": [
+       "None"
+      ]
+     }
+    ],
+    "Status": {
+     "State": "Enabled",
+     "HealthRollup": "OK"
+    },
+    "Actions": {
+     "#Storage.ResetToDefaults": {
+      "target": "/redfish/v1/Systems/1/Storage/DE07C000/Actions/Storage.ResetToDefaults",
+      "ResetType@Redfish.AllowableValues": [
+       "ResetAll",
+       "PreserveVolumes"
+      ]
+     },
+     "#Storage.SetEncryptionKey": {
+      "target": "/redfish/v1/Systems/1/Storage/DE07C000/Actions/Storage.SetEncryptionKey",
+      "EncryptionKey@Redfish.AllowablePattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!-/:-@[-`{-~])[!-~]{8,32}$",
+      "CurrentEncryptionKey@Redfish.AllowablePattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!-/:-@[-`{-~])[!-~]{8,32}$",
+      "EncryptionKeyIdentifier@Redfish.AllowablePattern": "^[ -~]{0,32}$"
+     }
+    },
+    "Volumes": [
+     {
+      "Id": "1",
+      "Name": "VOLUME-TEST-1",
+      "Links": {
+       "Drives": [
+        {
+         "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Drives/0"
+        },
+        {
+         "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Drives/1"
+        }
+       ],
+       "Drives@odata.count": 2,
+       "DedicatedSpareDrives": [],
+       "@Redfish.WriteableProperties": [],
+       "DedicatedSpareDrives@odata.count": 0
+      },
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK",
+       "Conditions": []
+      },
+      "RAIDType": "RAID1",
+      "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Volumes/1",
+      "Encrypted": false,
+      "Operations": [],
+      "@odata.etag": "\"EBFC3277\"",
+      "@odata.type": "#Volume.v1_9_0.Volume",
+      "DisplayName": "VOLUME-TEST-1",
+      "Identifiers": [
+       {
+        "DurableName": "600508B1001C99BDA41DE717842C7C44",
+        "DurableNameFormat": "NAA"
+       }
+      ],
+      "VolumeUsage": "Data",
+      "CapacityBytes": 480060241920,
+      "BlockSizeBytes": 512,
+      "StripSizeBytes": 262144,
+      "EncryptionTypes": [],
+      "ReadCachePolicy": "Off",
+      "WriteCachePolicy": "Off",
+      "IOPerfModeEnabled": true,
+      "LogicalUnitNumber": 1,
+      "OptimumIOSizeBytes": 262144,
+      "@Redfish.WriteableProperties": [
+       "DisplayName",
+       "IOPerfModeEnabled",
+       "ReadCachePolicy",
+       "WriteCachePolicy"
+      ],
+      "DisplayName@Redfish.AllowablePattern": "^[ !\"#$%&'()*+,-./\\w:;<=>?@[\\]\\^`{\\|}~]{1,64}$",
+      "ReadCachePolicy@Redfish.AllowableValues": [
+       "Off",
+       "ReadAhead"
+      ],
+      "WriteCachePolicy@Redfish.AllowableValues": [
+       "Off",
+       "ProtectedWriteBack",
+       "UnprotectedWriteBack"
+      ]
+     }
+    ],
+    "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000",
+    "@odata.etag": "\"966DA15E\"",
+    "@odata.type": "#Storage.v1_15_0.Storage",
+    "Annotations": {
+     "Volumes": {
+      "Id": "Capabilities",
+      "Name": "Capabilities for the volume collection",
+      "Links": {
+       "Drives@Redfish.RequiredOnCreate": true,
+       "DedicatedSpareDrives@Redfish.OptionalOnCreate": true,
+       "DedicatedSpareDrives@Redfish.UpdatableAfterCreate": true
+      },
+      "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Volumes/Capabilities",
+      "@odata.etag": "\"5612E24B\"",
+      "@odata.type": "#Volume.v1_9_0.Volume",
+      "Name@Redfish.AllowablePattern": "^[ !\"#$%&'()*+,-./\\w:;<=>?@[\\]\\^`{\\|}~]{1,64}$",
+      "Name@Redfish.OptionalOnCreate": true,
+      "Links@Redfish.RequiredOnCreate": true,
+      "RAIDType@Redfish.AllowableValues": [
+       "RAID0",
+       "RAID1",
+       "RAID10",
+       "RAID5",
+       "RAID50",
+       "RAID6",
+       "RAID60",
+       "RAID1Triple",
+       "RAID10Triple"
+      ],
+      "RAIDType@Redfish.RequiredOnCreate": true,
+      "Encrypted@Redfish.OptionalOnCreate": true,
+      "VolumeUsage@Redfish.AllowableValues": [
+       "Data"
+      ],
+      "DisplayName@Redfish.AllowablePattern": "^[ !\"#$%&'()*+,-./\\w:;<=>?@[\\]\\^`{\\|}~]{1,64}$",
+      "DisplayName@Redfish.OptionalOnCreate": true,
+      "VolumeUsage@Redfish.OptionalOnCreate": true,
+      "CapacityBytes@Redfish.AllowableNumbers": [
+       "16711680:20365312"
+      ],
+      "CapacityBytes@Redfish.OptionalOnCreate": true,
+      "EncryptionTypes@Redfish.AllowableValues": [
+       "NativeDriveEncryption"
+      ],
+      "MediaSpanCount@Redfish.AllowableNumbers": [],
+      "MediaSpanCount@Redfish.OptionalOnCreate": true,
+      "ReadCachePolicy@Redfish.AllowableValues": [
+       "Off",
+       "ReadAhead"
+      ],
+      "StripSizeBytes@Redfish.AllowableNumbers": [
+       "16384",
+       "32768",
+       "65536",
+       "131072",
+       "262144",
+       "524288",
+       "1048576"
+      ],
+      "StripSizeBytes@Redfish.OptionalOnCreate": true,
+      "DisplayName@Redfish.UpdatableAfterCreate": true,
+      "EncryptionTypes@Redfish.OptionalOnCreate": true,
+      "InitializeMethod@Redfish.AllowableValues": [
+       "Background",
+       "Foreground"
+      ],
+      "ReadCachePolicy@Redfish.OptionalOnCreate": true,
+      "WriteCachePolicy@Redfish.AllowableValues": [
+       "Off",
+       "ProtectedWriteBack",
+       "UnprotectedWriteBack"
+      ],
+      "InitializeMethod@Redfish.OptionalOnCreate": true,
+      "WriteCachePolicy@Redfish.OptionalOnCreate": true,
+      "IOPerfModeEnabled@Redfish.OptionalOnCreate": true,
+      "ReadCachePolicy@Redfish.UpdatableAfterCreate": true,
+      "WriteCachePolicy@Redfish.UpdatableAfterCreate": true,
+      "IOPerfModeEnabled@Redfish.UpdatableAfterCreate": true
+     }
+    },
+    "Controllers": [
+     {
+      "Id": "0",
+      "SKU": "836260-002",
+      "Name": "HPE Smart Array P408i-a SR Gen10",
+      "Links": {
+       "Batteries": [
+        {
+         "@odata.id": "/redfish/v1/Chassis/1"
+        }
+       ],
+       "PCIeFunctions": [
+        {
+         "@odata.id": "F0"
+        }
+       ],
+       "Batteries@odata.count": 1,
+       "PCIeFunctions@odata.count": 1
+      },
+      "Model": "HPE Smart Array P408i-a SR Gen10",
+      "Ports": {
+       "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Controllers/0/Ports"
+      },
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK",
+       "Conditions": []
+      },
+      "AssetTag": "",
+      "Location": {
+       "PartLocation": {
+        "LocationType": "Slot",
+        "ServiceLabel": "Slot=0",
+        "LocationOrdinalValue": 0
+       }
+      },
+      "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Controllers/0",
+      "SpeedGbps": 12.0,
+      "PartNumber": "804334-002",
+      "@odata.etag": "\"4398C7B1\"",
+      "@odata.type": "#StorageController.v1_7_2.StorageController",
+      "Identifiers": [
+       {
+        "DurableName": "51402EC0164A59B0",
+        "DurableNameFormat": "NAA"
+       }
+      ],
+      "CacheSummary": {
+       "Status": {
+        "State": "Disabled",
+        "Health": "OK"
+       },
+       "TotalCacheSizeMiB": 2048,
+       "PersistentCacheSizeMiB": 1808
+      },
+      "Manufacturer": "HPE",
+      "SerialNumber": "SN-TEST-0004",
+      "PCIeInterface": {
+       "MaxLanes": 8,
+       "PCIeType": "Gen3",
+       "LanesInUse": 8,
+       "MaxPCIeType": "Gen3"
+      },
+      "ControllerRates": {
+       "RebuildRatePercent": 100,
+       "TransformationRatePercent": 54,
+       "ConsistencyCheckRatePercent": 89,
+       "@Redfish.WriteableProperties": [
+        "ConsistencyCheckRatePercent",
+        "RebuildRatePercent",
+        "TransformationRatePercent"
+       ],
+       "RebuildRatePercent@Redfish.AllowableNumbers": [
+        ":100"
+       ],
+       "TransformationRatePercent@Redfish.AllowableNumbers": [
+        ":100"
+       ],
+       "ConsistencyCheckRatePercent@Redfish.AllowableNumbers": [
+        "0",
+        "2:100"
+       ]
+      },
+      "FirmwareVersion": "7.11",
+      "SupportedRAIDTypes": [
+       "RAID0",
+       "RAID1",
+       "RAID10",
+       "RAID5",
+       "RAID50",
+       "RAID6",
+       "RAID60",
+       "RAID1Triple",
+       "RAID10Triple",
+       "None"
+      ],
+      "SupportedDeviceProtocols": [
+       "SAS",
+       "SATA"
+      ],
+      "@Redfish.WriteableProperties": [
+       "AssetTag"
+      ],
+      "SupportedControllerProtocols": [
+       "PCIe"
+      ],
+      "AssetTag@Redfish.AllowablePattern": "SN-TEST-0005"
+     }
+    ],
+    "EncryptionMode": "Disabled",
+    "AutoVolumeCreate": "NonRAID",
+    "Drives@odata.count": 2,
+    "StorageControllers": [
+     {
+      "Id": "0",
+      "SKU": "836260-002",
+      "Name": "HPE Smart Array P408i-a SR Gen10",
+      "Links": {
+       "Batteries": [
+        {
+         "@odata.id": "/redfish/v1/Chassis/1"
+        }
+       ],
+       "PCIeFunctions": [
+        {
+         "@odata.id": "F0"
+        }
+       ],
+       "Batteries@odata.count": 1,
+       "PCIeFunctions@odata.count": 1
+      },
+      "Model": "HPE Smart Array P408i-a SR Gen10",
+      "Ports": {
+       "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Controllers/0/Ports"
+      },
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK",
+       "Conditions": []
+      },
+      "AssetTag": "",
+      "Location": {
+       "PartLocation": {
+        "LocationType": "Slot",
+        "ServiceLabel": "Slot=0",
+        "LocationOrdinalValue": 0
+       }
+      },
+      "@odata.id": "/redfish/v1/Systems/1/Storage/DE07C000/Controllers/0",
+      "SpeedGbps": 12.0,
+      "PartNumber": "804334-002",
+      "@odata.etag": "\"4398C7B1\"",
+      "@odata.type": "#StorageController.v1_7_2.StorageController",
+      "Identifiers": [
+       {
+        "DurableName": "51402EC0164A59B0",
+        "DurableNameFormat": "NAA"
+       }
+      ],
+      "CacheSummary": {
+       "Status": {
+        "State": "Disabled",
+        "Health": "OK"
+       },
+       "TotalCacheSizeMiB": 2048,
+       "PersistentCacheSizeMiB": 1808
+      },
+      "Manufacturer": "HPE",
+      "SerialNumber": "SN-TEST-0006",
+      "PCIeInterface": {
+       "MaxLanes": 8,
+       "PCIeType": "Gen3",
+       "LanesInUse": 8,
+       "MaxPCIeType": "Gen3"
+      },
+      "ControllerRates": {
+       "RebuildRatePercent": 100,
+       "TransformationRatePercent": 54,
+       "ConsistencyCheckRatePercent": 89,
+       "@Redfish.WriteableProperties": [
+        "ConsistencyCheckRatePercent",
+        "RebuildRatePercent",
+        "TransformationRatePercent"
+       ],
+       "RebuildRatePercent@Redfish.AllowableNumbers": [
+        ":100"
+       ],
+       "TransformationRatePercent@Redfish.AllowableNumbers": [
+        ":100"
+       ],
+       "ConsistencyCheckRatePercent@Redfish.AllowableNumbers": [
+        "0",
+        "2:100"
+       ]
+      },
+      "FirmwareVersion": "7.11",
+      "SupportedRAIDTypes": [
+       "RAID0",
+       "RAID1",
+       "RAID10",
+       "RAID5",
+       "RAID50",
+       "RAID6",
+       "RAID60",
+       "RAID1Triple",
+       "RAID10Triple",
+       "None"
+      ],
+      "SupportedDeviceProtocols": [
+       "SAS",
+       "SATA"
+      ],
+      "@Redfish.WriteableProperties": [
+       "AssetTag"
+      ],
+      "SupportedControllerProtocols": [
+       "PCIe"
+      ],
+      "AssetTag@Redfish.AllowablePattern": "SN-TEST-0007"
+     }
+    ],
+    "HotspareActivationPolicy": "OnDriveFailure",
+    "@Redfish.WriteableProperties": [
+     "EncryptionMode",
+     "HotspareActivationPolicy"
+    ],
+    "EncryptionMode@Redfish.AllowableValues": [
+     "Disabled",
+     "UseExternalKey"
+    ],
+    "HotspareActivationPolicy@Redfish.AllowableValues": [
+     "OnDriveFailure",
+     "OnDrivePredictedFailure"
+    ]
+   }
+  ],
+  "collectionState": "Success"
+ },
+ "smartStorage": {
+  "modified": "2026-10-17T11:24:05.933010",
+  "data": [
+   {
+    "Id": "0",
+    "Name": "Hpe Smart Storage Array Controller",
+    "Links": {
+     "LogicalDrives": {
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/LogicalDrives/"
+     },
+     "PhysicalDrives": {
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/DiskDrives/"
+     },
+     "StorageEnclosures": {
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/StorageEnclosures/"
+     },
+     "UnconfiguredDrives": {
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/UnconfiguredDrives/"
+     }
+    },
+    "Model": "HPE Smart Array P408i-a SR Gen10",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "Location": "Slot 0",
+    "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/",
+    "@odata.type": "#HpeSmartStorageArrayController.v2_2_0.HpeSmartStorageArrayController",
+    "AdapterType": "SmartArray",
+    "Description": "HPE Smart Storage Array Controller View",
+    "SerialNumber": "SN-TEST-0008",
+    "LogicalDrives": [
+     {
+      "Id": "1",
+      "Name": "HpeSmartStorageLogicalDrive",
+      "Raid": "1",
+      "Links": {
+       "DataDrives": {
+        "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/LogicalDrives/1/DataDrives/"
+       }
+      },
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK"
+      },
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/LogicalDrives/1/",
+      "MediaType": "SSD",
+      "DataDrives": [
+       {
+        "Id": "0",
+        "Name": "HpeSmartStorageDiskDrive",
+        "Model": "MK000480GWSSC",
+        "Status": {
+         "State": "Enabled",
+         "Health": "OK"
+        },
+        "Location": "1I:1:1",
+        "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/DiskDrives/0/",
+        "MediaType": "SSD",
+        "CapacityGB": 480,
+        "@odata.type": "#HpeSmartStorageDiskDrive.v2_1_0.HpeSmartStorageDiskDrive",
+        "CapacityMiB": 457862,
+        "Description": "HPE Smart Storage Disk Drive View",
+        "DiskDriveUse": "Data",
+        "PowerOnHours": 48739,
+        "SerialNumber": "SN-TEST-0009",
+        "InterfaceType": "SATA",
+        "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageDiskDrive.HpeSmartStorageDiskDrive",
+        "BlockSizeBytes": 512,
+        "EncryptedDrive": false,
+        "LocationFormat": "ControllerPort:Box:Bay",
+        "FirmwareVersion": {
+         "Current": {
+          "VersionString": "HPG3"
+         }
+        },
+        "InterfaceSpeedMbps": 6000,
+        "LegacyBootPriority": "None",
+        "CapacityLogicalBlocks": 937703088,
+        "UncorrectedReadErrors": 0,
+        "DiskDriveStatusReasons": [
+         "None"
+        ],
+        "UncorrectedWriteErrors": 0,
+        "CarrierApplicationVersion": "11",
+        "CurrentTemperatureCelsius": 16,
+        "MaximumTemperatureCelsius": 34,
+        "CarrierAuthenticationStatus": "OK",
+        "SSDEnduranceUtilizationPercentage": 0
+       },
+       {
+        "Id": "1",
+        "Name": "HpeSmartStorageDiskDrive",
+        "Model": "MK000480GWSSC",
+        "Status": {
+         "State": "Enabled",
+         "Health": "OK"
+        },
+        "Location": "1I:1:2",
+        "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/DiskDrives/1/",
+        "MediaType": "SSD",
+        "CapacityGB": 480,
+        "@odata.type": "#HpeSmartStorageDiskDrive.v2_1_0.HpeSmartStorageDiskDrive",
+        "CapacityMiB": 457862,
+        "Description": "HPE Smart Storage Disk Drive View",
+        "DiskDriveUse": "Data",
+        "PowerOnHours": 48739,
+        "SerialNumber": "SN-TEST-0010",
+        "InterfaceType": "SATA",
+        "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageDiskDrive.HpeSmartStorageDiskDrive",
+        "BlockSizeBytes": 512,
+        "EncryptedDrive": false,
+        "LocationFormat": "ControllerPort:Box:Bay",
+        "FirmwareVersion": {
+         "Current": {
+          "VersionString": "HPG3"
+         }
+        },
+        "InterfaceSpeedMbps": 6000,
+        "LegacyBootPriority": "None",
+        "CapacityLogicalBlocks": 937703088,
+        "UncorrectedReadErrors": 0,
+        "DiskDriveStatusReasons": [
+         "None"
+        ],
+        "UncorrectedWriteErrors": 0,
+        "CarrierApplicationVersion": "11",
+        "CurrentTemperatureCelsius": 17,
+        "MaximumTemperatureCelsius": 34,
+        "CarrierAuthenticationStatus": "OK",
+        "SSDEnduranceUtilizationPercentage": 0
+       }
+      ],
+      "@odata.etag": "W/\"D6B3F2D6\"",
+      "@odata.type": "#HpeSmartStorageLogicalDrive.v2_3_0.HpeSmartStorageLogicalDrive",
+      "CapacityMiB": 457821,
+      "Description": "HPE Smart Storage Logical Drive View",
+      "InterfaceType": "SATA",
+      "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageLogicalDrive.HpeSmartStorageLogicalDrive",
+      "StripeSizeBytes": 262144,
+      "LogicalDriveName": "VOLUME-TEST-1",
+      "LogicalDriveType": "Data",
+      "AccelerationMethod": "IOBypass",
+      "LegacyBootPriority": "None",
+      "LogicalDriveNumber": 1,
+      "LogicalDriveEncryption": false,
+      "VolumeUniqueIdentifier": "600508B1001C99BDA41DE717842C7C44",
+      "LogicalDriveStatusReasons": [
+       "Ok"
+      ]
+     }
+    ],
+    "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageArrayController.HpeSmartStorageArrayController",
+    "LocationFormat": "PCISlot",
+    "PhysicalDrives": [
+     {
+      "Id": "0",
+      "Name": "HpeSmartStorageDiskDrive",
+      "Model": "MK000480GWSSC",
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK"
+      },
+      "Location": "1I:1:1",
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/DiskDrives/0/",
+      "MediaType": "SSD",
+      "CapacityGB": 480,
+      "@odata.etag": "W/\"1F72EE7D\"",
+      "@odata.type": "#HpeSmartStorageDiskDrive.v2_1_0.HpeSmartStorageDiskDrive",
+      "CapacityMiB": 457862,
+      "Description": "HPE Smart Storage Disk Drive View",
+      "DiskDriveUse": "Data",
+      "PowerOnHours": 48739,
+      "SerialNumber": "SN-TEST-0011",
+      "InterfaceType": "SATA",
+      "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageDiskDrive.HpeSmartStorageDiskDrive",
+      "BlockSizeBytes": 512,
+      "EncryptedDrive": false,
+      "LocationFormat": "ControllerPort:Box:Bay",
+      "FirmwareVersion": {
+       "Current": {
+        "VersionString": "HPG3"
+       }
+      },
+      "InterfaceSpeedMbps": 6000,
+      "LegacyBootPriority": "None",
+      "CapacityLogicalBlocks": 937703088,
+      "UncorrectedReadErrors": 0,
+      "DiskDriveStatusReasons": [
+       "None"
+      ],
+      "UncorrectedWriteErrors": 0,
+      "CarrierApplicationVersion": "11",
+      "CurrentTemperatureCelsius": 16,
+      "MaximumTemperatureCelsius": 34,
+      "CarrierAuthenticationStatus": "OK",
+      "SSDEnduranceUtilizationPercentage": 0
+     },
+     {
+      "Id": "1",
+      "Name": "HpeSmartStorageDiskDrive",
+      "Model": "MK000480GWSSC",
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK"
+      },
+      "Location": "1I:1:2",
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/DiskDrives/1/",
+      "MediaType": "SSD",
+      "CapacityGB": 480,
+      "@odata.etag": "W/\"168C1B74\"",
+      "@odata.type": "#HpeSmartStorageDiskDrive.v2_1_0.HpeSmartStorageDiskDrive",
+      "CapacityMiB": 457862,
+      "Description": "HPE Smart Storage Disk Drive View",
+      "DiskDriveUse": "Data",
+      "PowerOnHours": 48739,
+      "SerialNumber": "SN-TEST-0012",
+      "InterfaceType": "SATA",
+      "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageDiskDrive.HpeSmartStorageDiskDrive",
+      "BlockSizeBytes": 512,
+      "EncryptedDrive": false,
+      "LocationFormat": "ControllerPort:Box:Bay",
+      "FirmwareVersion": {
+       "Current": {
+        "VersionString": "HPG3"
+       }
+      },
+      "InterfaceSpeedMbps": 6000,
+      "LegacyBootPriority": "None",
+      "CapacityLogicalBlocks": 937703088,
+      "UncorrectedReadErrors": 0,
+      "DiskDriveStatusReasons": [
+       "None"
+      ],
+      "UncorrectedWriteErrors": 0,
+      "CarrierApplicationVersion": "11",
+      "CurrentTemperatureCelsius": 17,
+      "MaximumTemperatureCelsius": 34,
+      "CarrierAuthenticationStatus": "OK",
+      "SSDEnduranceUtilizationPercentage": 0
+     }
+    ],
+    "ControllerBoard": {
+     "Status": {
+      "Health": "OK"
+     }
+    },
+    "DriveWriteCache": "Disabled",
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "7.11"
+     }
+    },
+    "HardwareRevision": "B",
+    "ReadCachePercent": 0,
+    "EncryptionEnabled": false,
+    "ExternalPortCount": 0,
+    "InternalPortCount": 2,
+    "StorageEnclosures": [
+     {
+      "Id": "0",
+      "Name": "HpeSmartStorageEnclosure",
+      "Model": "",
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK"
+      },
+      "Location": "1I:1",
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/StorageEnclosures/0/",
+      "@odata.etag": "W/\"A069CC8A\"",
+      "@odata.type": "#HpeSmartStorageStorageEnclosure.v2_0_0.HpeSmartStorageStorageEnclosure",
+      "Description": "HPE Smart Storage Enclosure View",
+      "SerialNumber": "",
+      "DriveBayCount": 4,
+      "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageStorageEnclosure.HpeSmartStorageStorageEnclosure",
+      "LocationFormat": "Port:Box",
+      "FirmwareVersion": {
+       "Current": {
+        "VersionString": ""
+       }
+      }
+     },
+     {
+      "Id": "1",
+      "Name": "HpeSmartStorageEnclosure",
+      "Model": "",
+      "Status": {
+       "State": "Enabled",
+       "Health": "OK"
+      },
+      "Location": "2I:0",
+      "@odata.id": "/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/StorageEnclosures/1/",
+      "@odata.etag": "W/\"D1F0D1F8\"",
+      "@odata.type": "#HpeSmartStorageStorageEnclosure.v2_0_0.HpeSmartStorageStorageEnclosure",
+      "Description": "HPE Smart Storage Enclosure View",
+      "SerialNumber": "",
+      "DriveBayCount": 4,
+      "@odata.context": "/redfish/v1/$metadata#HpeSmartStorageStorageEnclosure.HpeSmartStorageStorageEnclosure",
+      "LocationFormat": "Port:Box",
+      "FirmwareVersion": {
+       "Current": {
+        "VersionString": ""
+       }
+      }
+     }
+    ],
+    "EncryptionFwLocked": false,
+    "UnconfiguredDrives": [],
+    "ControllerPartNumber": "836260-002",
+    "CurrentOperatingMode": "Mixed",
+    "BackupPowerSourceStatus": "Present",
+    "EncryptionCspTestPassed": true,
+    "EncryptionSelfTestPassed": true,
+    "DualModeControllerSupported": true,
+    "EncryptionMixedVolumesEnabled": false,
+    "EncryptionStandaloneModeEnabled": false,
+    "EncryptionCryptoOfficerPasswordSet": false,
+    "WriteCacheWithoutBackupPowerEnabled": false,
+    "EncryptionHasLockedVolumesMissingBootPassword": false
+   }
+  ],
+  "collectionState": "Success"
+ },
+ "device": {
+  "modified": "2026-10-01T03:34:01.821593",
+  "data": [
+   {
+    "Id": "1",
+    "Name": "HPE Ethernet 10Gb 2-port 562SFP+ Adapter",
+    "Links": {
+     "PCISlot": {
+      "@odata.id": "/redfish/v1/Systems/1/PCISlots/1/"
+     }
+    },
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "Location": "PCI-E Slot 1",
+    "@odata.id": "/redfish/v1/Chassis/1/Devices/1/",
+    "DeviceType": "LOM/NIC",
+    "PartNumber": "790361-001",
+    "@odata.type": "#HpeServerDevice.v2_1_0.HpeServerDevice",
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0013",
+    "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+    "ProductVersion": "00",
+    "DeviceInstances": [
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/9/"
+     }
+    ],
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "11.1.7"
+     }
+    },
+    "ProductPartNumber": "784304-001",
+    "MCTPProtocolDisabled": false
+   },
+   {
+    "Id": "2",
+    "Name": "Empty slot 2",
+    "Links": {
+     "PCISlot": {
+      "@odata.id": "/redfish/v1/Systems/1/PCISlots/2/"
+     }
+    },
+    "Status": {
+     "State": "Absent"
+    },
+    "Location": "PCI-E Slot 2",
+    "@odata.id": "/redfish/v1/Chassis/1/Devices/2/",
+    "DeviceType": "Unknown",
+    "PartNumber": "",
+    "@odata.type": "#HpeServerDevice.v2_1_0.HpeServerDevice",
+    "Manufacturer": "",
+    "SerialNumber": "",
+    "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+    "ProductVersion": "",
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "N/A"
+     }
+    },
+    "ProductPartNumber": "",
+    "MCTPProtocolDisabled": false
+   },
+   {
+    "Id": "3",
+    "Name": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "Status": {
+     "State": null,
+     "Health": null
+    },
+    "Location": "Embedded LOM",
+    "@odata.id": "/redfish/v1/Chassis/1/Devices/3/",
+    "DeviceType": "LOM/NIC",
+    "PartNumber": "",
+    "@odata.type": "#HpeServerDevice.v2_1_0.HpeServerDevice",
+    "Manufacturer": "",
+    "SerialNumber": "SN-TEST-0014",
+    "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+    "ProductVersion": "",
+    "DeviceInstances": [
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/1/"
+     },
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/2/"
+     },
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/3/"
+     },
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/4/"
+     }
+    ],
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "20.31.41"
+     }
+    },
+    "ProductPartNumber": "N/A"
+   },
+   {
+    "Id": "4",
+    "Name": "HPE Ethernet 10Gb 2-port 562FLR-SFP+ Adpt",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "Location": "Embedded ALOM",
+    "@odata.id": "/redfish/v1/Chassis/1/Devices/4/",
+    "DeviceType": "LOM/NIC",
+    "PartNumber": "790317-001",
+    "@odata.type": "#HpeServerDevice.v2_1_0.HpeServerDevice",
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0015",
+    "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+    "ProductVersion": "00",
+    "DeviceInstances": [
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/5/"
+     },
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/6/"
+     }
+    ],
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "11.1.7"
+     }
+    },
+    "ProductPartNumber": "789004-001"
+   },
+   {
+    "Id": "5",
+    "Name": "HPE Smart Array P408i-a SR Gen10",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "Location": "Embedded RAID",
+    "@odata.id": "/redfish/v1/Chassis/1/Devices/5/",
+    "DeviceType": "Smart Storage",
+    "PartNumber": "836260-002",
+    "@odata.type": "#HpeServerDevice.v2_1_0.HpeServerDevice",
+    "Manufacturer": "",
+    "SerialNumber": "SN-TEST-0016",
+    "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+    "ProductVersion": "B",
+    "DeviceInstances": [
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/7/"
+     }
+    ],
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "7.11"
+     }
+    },
+    "ProductPartNumber": "804334-002"
+   },
+   {
+    "Id": "6",
+    "Name": "HPE Smart Stor Hybridcap",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "Location": "Embedded Device",
+    "@odata.id": "/redfish/v1/Chassis/1/Devices/6/",
+    "DeviceType": "Smart Storage Battery",
+    "PartNumber": "P07473-001",
+    "@odata.type": "#HpeServerDevice.v2_1_0.HpeServerDevice",
+    "Manufacturer": "STL",
+    "SerialNumber": "SN-TEST-0017",
+    "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+    "ProductVersion": "01",
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "0.70"
+     }
+    },
+    "ProductPartNumber": "P02377-B21"
+   },
+   {
+    "Id": "7",
+    "Name": "Embedded Video Controller",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "Location": "Embedded Device",
+    "@odata.id": "/redfish/v1/Chassis/1/Devices/7/",
+    "DeviceType": "Unknown",
+    "PartNumber": "",
+    "@odata.type": "#HpeServerDevice.v2_1_0.HpeServerDevice",
+    "Manufacturer": "",
+    "SerialNumber": "",
+    "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+    "ProductVersion": "",
+    "DeviceInstances": [
+     {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/8/"
+     }
+    ],
+    "FirmwareVersion": {
+     "Current": {
+      "VersionString": "2.5"
+     }
+    },
+    "ProductPartNumber": ""
+   }
+  ],
+  "collectionState": null
+ },
+ "chassis": {
+  "modified": "2026-09-10T22:53:40.506698",
+  "data": [
+   {
+    "Id": "1",
+    "Oem": {
+     "Hpe": {
+      "Links": {
+       "Devices": {
+        "@odata.id": "/redfish/v1/Chassis/1/Devices/"
+       }
+      },
+      "Actions": {
+       "#HpeServerChassis.FactoryResetMCTP": {
+        "target": "/redfish/v1/Chassis/1/Actions/Oem/Hpe/HpeServerChassis.FactoryResetMCTP/"
+       },
+       "#HpeServerChassis.DisableMCTPOnServer": {
+        "target": "/redfish/v1/Chassis/1/Actions/Oem/Hpe/HpeServerChassis.DisableMCTPOnServer/"
+       }
+      },
+      "Firmware": {
+       "SPSFirmwareVersionData": {
+        "Current": {
+         "VersionString": "4.1.5.2"
+        }
+       },
+       "PlatformDefinitionTable": {
+        "Current": {
+         "VersionString": "16.5.0 Build 24"
+        }
+       },
+       "PowerManagementController": {
+        "Current": {
+         "VersionString": "1.1.4"
+        }
+       },
+       "SystemProgrammableLogicDevice": {
+        "Current": {
+         "VersionString": "0x31"
+        }
+       },
+       "PowerManagementControllerBootloader": {
+        "Current": {
+         "Family": "25",
+         "VersionString": "1.1"
+        }
+       }
+      },
+      "FormFactor": "1U",
+      "@odata.type": "#HpeServerChassis.v2_4_0.HpeServerChassis",
+      "@odata.context": "/redfish/v1/$metadata#HpeServerChassis.HpeServerChassis",
+      "ElConfigOverride": false,
+      "MCTPEnabledOnServer": true,
+      "SmartStorageBattery": [
+       {
+        "Index": 1,
+        "Model": "P02377-B21",
+        "Status": {
+         "State": "Enabled",
+         "Health": "OK"
+        },
+        "ProductName": "HPE Smart Stor Hybridcap",
+        "SerialNumber": "SN-TEST-0018",
+        "FirmwareVersion": "0.70",
+        "MaximumCapWatts": 12,
+        "SparePartNumber": "P07473-001",
+        "ChargeLevelPercent": 100,
+        "RemainingChargeTimeSeconds": 0
+       }
+      ],
+      "SystemMaintenanceSwitches": {
+       "Sw1": "Off",
+       "Sw2": "Off",
+       "Sw3": "Off",
+       "Sw4": "Off",
+       "Sw5": "Off",
+       "Sw6": "Off",
+       "Sw7": "Off",
+       "Sw8": "Off",
+       "Sw9": "Off",
+       "Sw10": "Off",
+       "Sw11": "Off",
+       "Sw12": "Off"
+      }
+     }
+    },
+    "SKU": "869121-B21",
+    "Name": "Computer System Chassis",
+    "Links": {
+     "ManagedBy": [
+      {
+       "@odata.id": "/redfish/v1/Managers/1/"
+      }
+     ],
+     "ComputerSystems": [
+      {
+       "@odata.id": "/redfish/v1/Systems/1/"
+      }
+     ]
+    },
+    "Model": "ProLiant DL360 Gen10",
+    "Power": {
+     "@odata.id": "/redfish/v1/Chassis/1/Power/"
+    },
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "Thermal": {
+     "@odata.id": "/redfish/v1/Chassis/1/Thermal/"
+    },
+    "AssetTag": "",
+    "@odata.id": "/redfish/v1/Chassis/1/",
+    "PCIeSlots": {
+     "@odata.id": "/redfish/v1/Chassis/1/PCIeSlots/"
+    },
+    "PowerState": "On",
+    "@odata.type": "#Chassis.v1_23_0.Chassis",
+    "ChassisType": "RackMount",
+    "PCIeDevices": {
+     "@odata.id": "/redfish/v1/Chassis/1/PCIeDevices/"
+    },
+    "IndicatorLED": "Off",
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0019",
+    "@odata.context": "/redfish/v1/$metadata#Chassis.Chassis",
+    "NetworkAdapters": {
+     "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/"
+    },
+    "LocationIndicatorActive": false
+   }
+  ],
+  "collectionState": "Success"
+ },
+ "memory": {
+  "modified": "2026-09-10T22:53:40.506698",
+  "data": [
+   {
+    "Id": "proc1dimm1",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc1dimm1",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm1/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0020",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 1",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 1,
+     "Socket": 1,
+     "Channel": 6,
+     "MemoryController": 2
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm2",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc1dimm2",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm2/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0021",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 2",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 2,
+     "Socket": 1,
+     "Channel": 6,
+     "MemoryController": 2
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm3",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc1dimm3",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm3/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0022",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 3",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 3,
+     "Socket": 1,
+     "Channel": 5,
+     "MemoryController": 2
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm4",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc1dimm4",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm4/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0023",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 4",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 4,
+     "Socket": 1,
+     "Channel": 5,
+     "MemoryController": 2
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm5",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc1dimm5",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm5/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0024",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 5",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 5,
+     "Socket": 1,
+     "Channel": 4,
+     "MemoryController": 2
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm6",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc1dimm6",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm6/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0025",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 6",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 6,
+     "Socket": 1,
+     "Channel": 4,
+     "MemoryController": 2
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm7",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc1dimm7",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm7/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0026",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 7",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 7,
+     "Socket": 1,
+     "Channel": 1,
+     "MemoryController": 1
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm8",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc1dimm8",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm8/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0027",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 8",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 8,
+     "Socket": 1,
+     "Channel": 1,
+     "MemoryController": 1
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm9",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc1dimm9",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm9/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0028",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 9",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 9,
+     "Socket": 1,
+     "Channel": 2,
+     "MemoryController": 1
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm10",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc1dimm10",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm10/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0029",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 10",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 10,
+     "Socket": 1,
+     "Channel": 2,
+     "MemoryController": 1
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm11",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc1dimm11",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm11/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0030",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 11",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 11,
+     "Socket": 1,
+     "Channel": 3,
+     "MemoryController": 1
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc1dimm12",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc1dimm12",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm12/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0031",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 1 DIMM 12",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 12,
+     "Socket": 1,
+     "Channel": 3,
+     "MemoryController": 1
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm1",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc2dimm1",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm1/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0032",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 1",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 1,
+     "Socket": 2,
+     "Channel": 6,
+     "MemoryController": 4
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm2",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc2dimm2",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm2/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0033",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 2",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 2,
+     "Socket": 2,
+     "Channel": 6,
+     "MemoryController": 4
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm3",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc2dimm3",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm3/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0034",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 3",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 3,
+     "Socket": 2,
+     "Channel": 5,
+     "MemoryController": 4
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm4",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc2dimm4",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm4/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0035",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 4",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 4,
+     "Socket": 2,
+     "Channel": 5,
+     "MemoryController": 4
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm5",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc2dimm5",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm5/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0036",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 5",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 5,
+     "Socket": 2,
+     "Channel": 4,
+     "MemoryController": 4
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm6",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc2dimm6",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm6/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0037",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 6",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 6,
+     "Socket": 2,
+     "Channel": 4,
+     "MemoryController": 4
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm7",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc2dimm7",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm7/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0038",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 7",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 7,
+     "Socket": 2,
+     "Channel": 1,
+     "MemoryController": 3
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm8",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc2dimm8",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm8/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0039",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 8",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 8,
+     "Socket": 2,
+     "Channel": 1,
+     "MemoryController": 3
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm9",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc2dimm9",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm9/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0040",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 9",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 9,
+     "Socket": 2,
+     "Channel": 2,
+     "MemoryController": 3
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm10",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc2dimm10",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm10/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0041",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 10",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 10,
+     "Socket": 2,
+     "Channel": 2,
+     "MemoryController": 3
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm11",
+    "Oem": {
+     "Hpe": {
+      "DIMMStatus": "NotPresent",
+      "PartNumber": "Unknown",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "DIMMManufacturingDate": "",
+      "MinimumVoltageVoltsX10": 0
+     }
+    },
+    "Name": "proc2dimm11",
+    "Status": {
+     "State": "Absent",
+     "Health": "OK"
+    },
+    "VendorID": "0",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm11/",
+    "RankCount": null,
+    "MemoryType": "DRAM",
+    "PartNumber": "NOT AVAILABLE   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 0,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "SerialNumber": "SN-TEST-0042",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 11",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 11,
+     "Socket": 2,
+     "Channel": 3,
+     "MemoryController": 3
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 0,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 0,
+    "PersistentRegionSizeLimitMiB": 0
+   },
+   {
+    "Id": "proc2dimm12",
+    "Oem": {
+     "Hpe": {
+      "Attributes": [
+       "HpeSmartMemory"
+      ],
+      "DIMMStatus": "GoodInUse",
+      "PartNumber": "P03051-091",
+      "VendorName": "SK Hynix",
+      "@odata.type": "#HpeMemoryExt.v2_5_0.HpeMemoryExt",
+      "@odata.context": "/redfish/v1/$metadata#HpeMemoryExt.HpeMemoryExt",
+      "BaseModuleType": "RDIMM",
+      "MaxOperatingSpeedMTs": 3200,
+      "DIMMManufacturingDate": "2046",
+      "MinimumVoltageVoltsX10": 12
+     }
+    },
+    "Name": "proc2dimm12",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "VendorID": "44288",
+    "@odata.id": "/redfish/v1/Systems/1/Memory/proc2dimm12/",
+    "RankCount": 1,
+    "MemoryType": "DRAM",
+    "PartNumber": "HMA82GR7DJR4N-XN   ",
+    "@odata.type": "#Memory.v1_7_1.Memory",
+    "CapacityMiB": 16384,
+    "MemoryMedia": [
+     "DRAM"
+    ],
+    "BusWidthBits": 72,
+    "CacheSizeMiB": 0,
+    "Manufacturer": "HPE",
+    "SerialNumber": "SN-TEST-0043",
+    "DataWidthBits": 64,
+    "DeviceLocator": "PROC 2 DIMM 12",
+    "@odata.context": "/redfish/v1/$metadata#Memory.Memory",
+    "BaseModuleType": "RDIMM",
+    "LogicalSizeMiB": 0,
+    "MemoryLocation": {
+     "Slot": 12,
+     "Socket": 2,
+     "Channel": 3,
+     "MemoryController": 3
+    },
+    "ErrorCorrection": "MultiBitECC",
+    "VolatileSizeMiB": 16384,
+    "MemoryDeviceType": "DDR4",
+    "OperatingSpeedMhz": 2400,
+    "NonVolatileSizeMiB": 0,
+    "OperatingMemoryModes": [
+     "Volatile"
+    ],
+    "SecurityCapabilities": {},
+    "VolatileRegionSizeLimitMiB": 16384,
+    "PersistentRegionSizeLimitMiB": 0
+   }
+  ],
+  "collectionState": "Success"
+ },
+ "networkAdapter": {
+  "modified": "2026-09-10T22:53:40.506698",
+  "data": [
+   {
+    "Id": "DC07B000",
+    "Oem": {
+     "Hpe": {
+      "Actions": {
+       "#NetworkAdapter.FlushConfigurationToNVM": {
+        "title": "NOTE: Deprecated, will be removed in a future release. Replaced by HpeNetworkAdapter.FlushConfigurationToNVM. Force a save of current network adapter configuration to non-volatile storage.",
+        "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/Actions/Oem/Hpe/NetworkAdapter.FlushConfigurationToNVM/"
+       },
+       "#HpeNetworkAdapter.FlushConfigurationToNVM": {
+        "title": "Force a save of current network adapter configuration to non-volatile storage.",
+        "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/Actions/Oem/Hpe/HpeNetworkAdapter.FlushConfigurationToNVM/"
+       }
+      },
+      "CLPVersion": "",
+      "PCAVersion": "789004-001",
+      "@odata.type": "#HpeNetworkAdapter.v1_3_0.HpeNetworkAdapter",
+      "Controllers": [
+       {
+        "RDMASupport": [
+         "None"
+        ],
+        "FunctionTypes": [],
+        "FunctionTypeLimits": [],
+        "ConfigurationStatus": {
+         "Detail": [
+          {
+           "Group": 6,
+           "Summary": 0,
+           "SubGroup": 0
+          },
+          {
+           "Group": 8,
+           "Summary": 0,
+           "SubGroup": 1
+          },
+          {
+           "Group": 8,
+           "Summary": 0,
+           "SubGroup": 2
+          },
+          {
+           "Group": 38,
+           "Summary": 0,
+           "SubGroup": 0
+          },
+          {
+           "Group": 38,
+           "Summary": 0,
+           "SubGroup": 0
+          }
+         ],
+         "Summary": -1126372654
+        },
+        "EdgeVirtualBridging": {
+         "ChannelDescriptionTLVCapable": true,
+         "ChannelLinkControlTLVCapable": true
+        },
+        "UnderlyingDataSource": "DCi",
+        "EmbeddedLLDPFunctions": {
+         "Enabled": true,
+         "Optional": true
+        },
+        "DeviceLimitationsBitmap": 0,
+        "FactoryDefaultsCurrentlyActive": true,
+        "MostRecentConfigurationChangeSource": "None"
+       }
+      ],
+      "@odata.context": "/redfish/v1/$metadata#HpeNetworkAdapter.HpeNetworkAdapter",
+      "RedfishConfiguration": "Disabled",
+      "FactoryDefaultsActuationBehavior": "AtFullPower"
+     }
+    },
+    "SKU": "562FLR-SFP+",
+    "Name": "HPE Ethernet 10Gb 2-port 562FLR-SFP+ Adpt",
+    "Model": "HPE Ethernet 10Gb 2-port 562FLR-SFP+ Adpt",
+    "Ports": [
+     {
+      "Id": "1",
+      "Oem": {
+       "Hpe": {
+        "Actions": {
+         "#NetworkPort.DiagnosticsReset": {
+          "title": "NOTE: Deprecated, will be removed in a future release. Replaced by HpeNetworkPort.DiagnosticsReset. Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/1/Actions/Oem/Hpe/NetworkPort.DiagnosticsReset/"
+         },
+         "#HpeNetworkPort.DiagnosticsReset": {
+          "title": "Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/1/Actions/Oem/Hpe/HpeNetworkPort.DiagnosticsReset/"
+         }
+        },
+        "@odata.type": "#HpeNetworkPort.v1_3_2.HpeNetworkPort",
+        "@odata.context": "/redfish/v1/$metadata#HpeNetworkPort.HpeNetworkPort",
+        "AutoNegotiationCapable": true,
+        "ConfiguredNetworkLinks": [
+         {
+          "ConfiguredLinkSpeedGbps": 1
+         },
+         {
+          "ConfiguredLinkSpeedGbps": 10
+         }
+        ],
+        "PortDiagnosticsEnabled": false,
+        "VirtualFunctionAllocations": [],
+        "PortDiagnosticEnableLocalLoopback": false,
+        "PortDiagnosticEnableRemoteLoopback": false,
+        "PortDiagnosticLocalLoopbackCapable": true,
+        "PortDiagnosticRemoteLoopbackCapable": false
+       }
+      },
+      "Name": "Network adapter port",
+      "PortId": "1",
+      "Ethernet": {
+       "FlowControlStatus": "None",
+       "AssociatedMACAddresses": [
+        "00:00:5F:11:01:D0",
+        "AA:00:00:7E:CE:1D"
+       ],
+       "FlowControlConfiguration": "None",
+       "SupportedEthernetCapabilities": [
+        "WakeOnLAN"
+       ]
+      },
+      "Settings": {
+       "href": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/1/Settings/"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/1/",
+      "EEEEnabled": false,
+      "LinkStatus": "LinkUp",
+      "@odata.type": "#NetworkPort.v1_2_5.NetworkPort",
+      "Description": "Port status and active configuration data",
+      "PortProtocol": "Ethernet",
+      "@odata.context": "/redfish/v1/$metadata#NetworkPort.NetworkPort",
+      "PortMaximumMTU": 9710,
+      "SignalDetected": true,
+      "CurrentSpeedGbps": 10.0,
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/1/Settings/"
+       }
+      },
+      "LinkConfiguration": [
+       {
+        "CapableLinkSpeedGbps": [
+         1.0,
+         10.0
+        ],
+        "AutoSpeedNegotiationCapable": null
+       }
+      ],
+      "FunctionMaxBandwidth": [],
+      "FunctionMinBandwidth": [],
+      "LinkNetworkTechnology": "Ethernet"
+     },
+     {
+      "Id": "2",
+      "Oem": {
+       "Hpe": {
+        "Actions": {
+         "#NetworkPort.DiagnosticsReset": {
+          "title": "NOTE: Deprecated, will be removed in a future release. Replaced by HpeNetworkPort.DiagnosticsReset. Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/2/Actions/Oem/Hpe/NetworkPort.DiagnosticsReset/"
+         },
+         "#HpeNetworkPort.DiagnosticsReset": {
+          "title": "Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/2/Actions/Oem/Hpe/HpeNetworkPort.DiagnosticsReset/"
+         }
+        },
+        "@odata.type": "#HpeNetworkPort.v1_3_2.HpeNetworkPort",
+        "@odata.context": "/redfish/v1/$metadata#HpeNetworkPort.HpeNetworkPort",
+        "AutoNegotiationCapable": true,
+        "ConfiguredNetworkLinks": [
+         {
+          "ConfiguredLinkSpeedGbps": 1
+         },
+         {
+          "ConfiguredLinkSpeedGbps": 10
+         }
+        ],
+        "PortDiagnosticsEnabled": false,
+        "VirtualFunctionAllocations": [],
+        "PortDiagnosticEnableLocalLoopback": false,
+        "PortDiagnosticEnableRemoteLoopback": false,
+        "PortDiagnosticLocalLoopbackCapable": true,
+        "PortDiagnosticRemoteLoopbackCapable": false
+       }
+      },
+      "Name": "Network adapter port",
+      "PortId": "2",
+      "Ethernet": {
+       "FlowControlStatus": "None",
+       "AssociatedMACAddresses": [
+        "00:00:5F:11:01:D8"
+       ],
+       "FlowControlConfiguration": "None",
+       "SupportedEthernetCapabilities": [
+        "WakeOnLAN"
+       ]
+      },
+      "Settings": {
+       "href": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/2/Settings/"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/2/",
+      "EEEEnabled": false,
+      "LinkStatus": "LinkUp",
+      "@odata.type": "#NetworkPort.v1_2_5.NetworkPort",
+      "Description": "Port status and active configuration data",
+      "PortProtocol": "Ethernet",
+      "@odata.context": "/redfish/v1/$metadata#NetworkPort.NetworkPort",
+      "PortMaximumMTU": 9710,
+      "SignalDetected": true,
+      "CurrentSpeedGbps": 10.0,
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/2/Settings/"
+       }
+      },
+      "LinkConfiguration": [
+       {
+        "CapableLinkSpeedGbps": [
+         1.0,
+         10.0
+        ],
+        "AutoSpeedNegotiationCapable": null
+       }
+      ],
+      "FunctionMaxBandwidth": [],
+      "FunctionMinBandwidth": [],
+      "LinkNetworkTechnology": "Ethernet"
+     }
+    ],
+    "Actions": {
+     "#NetworkAdapter.ResetSettingsToDefault": {
+      "title": "Reset network adapter configuration to factory default values.",
+      "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/Actions/NetworkAdapter.ResetSettingsToDefault/"
+     }
+    },
+    "Settings": {
+     "href": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/Settings/"
+    },
+    "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/",
+    "PartNumber": "",
+    "@odata.type": "#NetworkAdapter.v1_5_0.NetworkAdapter",
+    "Controllers": [
+     {
+      "Links": {
+       "Ports": [
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/1/"
+        },
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkPorts/2/"
+        }
+       ]
+      },
+      "Location": {
+       "PartLocation": {
+        "LocationType": "Slot",
+        "ServiceLabel": "Embedded ALOM",
+        "LocationOrdinalValue": 0
+       }
+      },
+      "ControllerCapabilities": {
+       "NPAR": {
+        "NparEnabled": false
+       },
+       "NetworkPortCount": 2,
+       "DataCenterBridging": {
+        "Capable": true
+       },
+       "VirtualizationOffload": {
+        "SRIOV": {
+         "SRIOVVEPACapable": true
+        },
+        "VirtualFunction": {
+         "DeviceMaxCount": 128,
+         "NetworkPortMaxCount": 128,
+         "MinAssignmentGroupSize": 16
+        }
+       },
+       "NetworkDeviceFunctionCount": 2
+      },
+      "FirmwarePackageVersion": "11.1.7"
+     }
+    ],
+    "Description": "Device capabilities and characteristics with active configuration status",
+    "Manufacturer": "Hewlett Packard Enterprise",
+    "SerialNumber": "SN-TEST-0044",
+    "@odata.context": "/redfish/v1/$metadata#NetworkAdapter.NetworkAdapter",
+    "@Redfish.Settings": {
+     "SettingsObject": {
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/Settings/"
+     }
+    },
+    "NetworkDeviceFunctions": [
+     {
+      "Id": 1,
+      "Ethernet": {
+       "MACAddress": "00:00:5F:11:01:D0",
+       "PermanentMACAddress": "00:00:5F:11:01:D0"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkDeviceFunction/1",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkDeviceFunction/1/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/Ports/1/"
+      }
+     },
+     {
+      "Id": 2,
+      "Ethernet": {
+       "MACAddress": "00:00:5F:11:01:D8",
+       "PermanentMACAddress": "00:00:5F:11:01:D8"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkDeviceFunction/2",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/NetworkDeviceFunction/2/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC07B000/Ports/2/"
+      }
+     }
+    ]
+   },
+   {
+    "Id": "DC080000",
+    "Oem": {
+     "Hpe": {
+      "Actions": {
+       "#NetworkAdapter.FlushConfigurationToNVM": {
+        "title": "NOTE: Deprecated, will be removed in a future release. Replaced by HpeNetworkAdapter.FlushConfigurationToNVM. Force a save of current network adapter configuration to non-volatile storage.",
+        "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/Actions/Oem/Hpe/NetworkAdapter.FlushConfigurationToNVM/"
+       },
+       "#HpeNetworkAdapter.FlushConfigurationToNVM": {
+        "title": "Force a save of current network adapter configuration to non-volatile storage.",
+        "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/Actions/Oem/Hpe/HpeNetworkAdapter.FlushConfigurationToNVM/"
+       }
+      },
+      "CLPVersion": "",
+      "PCAVersion": "784304-001",
+      "@odata.type": "#HpeNetworkAdapter.v1_3_0.HpeNetworkAdapter",
+      "Controllers": [
+       {
+        "RDMASupport": [
+         "None"
+        ],
+        "FunctionTypes": [],
+        "FunctionTypeLimits": [],
+        "ConfigurationStatus": {
+         "Detail": [
+          {
+           "Group": 6,
+           "Summary": 0,
+           "SubGroup": 0
+          },
+          {
+           "Group": 8,
+           "Summary": 0,
+           "SubGroup": 1
+          },
+          {
+           "Group": 8,
+           "Summary": 0,
+           "SubGroup": 2
+          },
+          {
+           "Group": 8,
+           "Summary": 0,
+           "SubGroup": 2
+          },
+          {
+           "Group": 8,
+           "Summary": 0,
+           "SubGroup": 2
+          }
+         ],
+         "Summary": -694573583
+        },
+        "EdgeVirtualBridging": {
+         "ChannelDescriptionTLVCapable": true,
+         "ChannelLinkControlTLVCapable": true
+        },
+        "UnderlyingDataSource": "DCi",
+        "EmbeddedLLDPFunctions": {
+         "Enabled": true,
+         "Optional": true
+        },
+        "DeviceLimitationsBitmap": 1,
+        "FactoryDefaultsCurrentlyActive": true,
+        "MostRecentConfigurationChangeSource": "None"
+       }
+      ],
+      "@odata.context": "/redfish/v1/$metadata#HpeNetworkAdapter.HpeNetworkAdapter",
+      "RedfishConfiguration": "Disabled",
+      "FactoryDefaultsActuationBehavior": "AtFullPower"
+     }
+    },
+    "SKU": "562SFP+",
+    "Name": "HPE Ethernet 10Gb 2-port 562SFP+ Adapter",
+    "Model": "HPE Ethernet 10Gb 2-port 562SFP+ Adptr",
+    "Ports": [
+     {
+      "Id": "1",
+      "Oem": {
+       "Hpe": {
+        "Actions": {
+         "#NetworkPort.DiagnosticsReset": {
+          "title": "NOTE: Deprecated, will be removed in a future release. Replaced by HpeNetworkPort.DiagnosticsReset. Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/1/Actions/Oem/Hpe/NetworkPort.DiagnosticsReset/"
+         },
+         "#HpeNetworkPort.DiagnosticsReset": {
+          "title": "Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/1/Actions/Oem/Hpe/HpeNetworkPort.DiagnosticsReset/"
+         }
+        },
+        "@odata.type": "#HpeNetworkPort.v1_3_2.HpeNetworkPort",
+        "@odata.context": "/redfish/v1/$metadata#HpeNetworkPort.HpeNetworkPort",
+        "AutoNegotiationCapable": true,
+        "ConfiguredNetworkLinks": [
+         {
+          "ConfiguredLinkSpeedGbps": 1
+         },
+         {
+          "ConfiguredLinkSpeedGbps": 10
+         }
+        ],
+        "PortDiagnosticsEnabled": false,
+        "VirtualFunctionAllocations": [],
+        "PortDiagnosticEnableLocalLoopback": false,
+        "PortDiagnosticEnableRemoteLoopback": false,
+        "PortDiagnosticLocalLoopbackCapable": true,
+        "PortDiagnosticRemoteLoopbackCapable": false
+       }
+      },
+      "Name": "Network adapter port",
+      "PortId": "1",
+      "Ethernet": {
+       "FlowControlStatus": "None",
+       "AssociatedMACAddresses": [
+        "00:00:5F:26:BC:30",
+        "AA:00:00:7E:CE:1D"
+       ],
+       "FlowControlConfiguration": "None",
+       "SupportedEthernetCapabilities": []
+      },
+      "Settings": {
+       "href": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/1/Settings/"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/1/",
+      "EEEEnabled": false,
+      "LinkStatus": "LinkUp",
+      "@odata.type": "#NetworkPort.v1_2_5.NetworkPort",
+      "Description": "Port status and active configuration data",
+      "PortProtocol": "Ethernet",
+      "@odata.context": "/redfish/v1/$metadata#NetworkPort.NetworkPort",
+      "PortMaximumMTU": 9710,
+      "SignalDetected": true,
+      "CurrentSpeedGbps": 10.0,
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/1/Settings/"
+       }
+      },
+      "LinkConfiguration": [
+       {
+        "CapableLinkSpeedGbps": [
+         1.0,
+         10.0
+        ],
+        "AutoSpeedNegotiationCapable": null
+       }
+      ],
+      "FunctionMaxBandwidth": [],
+      "FunctionMinBandwidth": [],
+      "LinkNetworkTechnology": "Ethernet"
+     },
+     {
+      "Id": "2",
+      "Oem": {
+       "Hpe": {
+        "Actions": {
+         "#NetworkPort.DiagnosticsReset": {
+          "title": "NOTE: Deprecated, will be removed in a future release. Replaced by HpeNetworkPort.DiagnosticsReset. Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/2/Actions/Oem/Hpe/NetworkPort.DiagnosticsReset/"
+         },
+         "#HpeNetworkPort.DiagnosticsReset": {
+          "title": "Reset diagnostic capabilities on this port to an inactive state.",
+          "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/2/Actions/Oem/Hpe/HpeNetworkPort.DiagnosticsReset/"
+         }
+        },
+        "@odata.type": "#HpeNetworkPort.v1_3_2.HpeNetworkPort",
+        "@odata.context": "/redfish/v1/$metadata#HpeNetworkPort.HpeNetworkPort",
+        "AutoNegotiationCapable": true,
+        "ConfiguredNetworkLinks": [
+         {
+          "ConfiguredLinkSpeedGbps": 1
+         },
+         {
+          "ConfiguredLinkSpeedGbps": 10
+         }
+        ],
+        "PortDiagnosticsEnabled": false,
+        "VirtualFunctionAllocations": [],
+        "PortDiagnosticEnableLocalLoopback": false,
+        "PortDiagnosticEnableRemoteLoopback": false,
+        "PortDiagnosticLocalLoopbackCapable": true,
+        "PortDiagnosticRemoteLoopbackCapable": false
+       }
+      },
+      "Name": "Network adapter port",
+      "PortId": "2",
+      "Ethernet": {
+       "FlowControlStatus": "None",
+       "AssociatedMACAddresses": [
+        "00:00:5F:26:BC:38"
+       ],
+       "FlowControlConfiguration": "None",
+       "SupportedEthernetCapabilities": []
+      },
+      "Settings": {
+       "href": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/2/Settings/"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/2/",
+      "EEEEnabled": false,
+      "LinkStatus": "LinkUp",
+      "@odata.type": "#NetworkPort.v1_2_5.NetworkPort",
+      "Description": "Port status and active configuration data",
+      "PortProtocol": "Ethernet",
+      "@odata.context": "/redfish/v1/$metadata#NetworkPort.NetworkPort",
+      "PortMaximumMTU": 9710,
+      "SignalDetected": true,
+      "CurrentSpeedGbps": 10.0,
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/2/Settings/"
+       }
+      },
+      "LinkConfiguration": [
+       {
+        "CapableLinkSpeedGbps": [
+         1.0,
+         10.0
+        ],
+        "AutoSpeedNegotiationCapable": null
+       }
+      ],
+      "FunctionMaxBandwidth": [],
+      "FunctionMinBandwidth": [],
+      "LinkNetworkTechnology": "Ethernet"
+     }
+    ],
+    "Actions": {
+     "#NetworkAdapter.ResetSettingsToDefault": {
+      "title": "Reset network adapter configuration to factory default values.",
+      "target": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/Actions/NetworkAdapter.ResetSettingsToDefault/"
+     }
+    },
+    "Settings": {
+     "href": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/Settings/"
+    },
+    "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/",
+    "PartNumber": "",
+    "@odata.type": "#NetworkAdapter.v1_5_0.NetworkAdapter",
+    "Controllers": [
+     {
+      "Links": {
+       "Ports": [
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/1/"
+        },
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkPorts/2/"
+        }
+       ]
+      },
+      "Location": {
+       "PartLocation": {
+        "LocationType": "Slot",
+        "ServiceLabel": "PCI-E Slot 1",
+        "LocationOrdinalValue": 1
+       }
+      },
+      "ControllerCapabilities": {
+       "NPAR": {
+        "NparEnabled": false
+       },
+       "NetworkPortCount": 2,
+       "DataCenterBridging": {
+        "Capable": true
+       },
+       "VirtualizationOffload": {
+        "SRIOV": {
+         "SRIOVVEPACapable": true
+        },
+        "VirtualFunction": {
+         "DeviceMaxCount": 128,
+         "NetworkPortMaxCount": 128,
+         "MinAssignmentGroupSize": 16
+        }
+       },
+       "NetworkDeviceFunctionCount": 2
+      },
+      "FirmwarePackageVersion": "11.1.7"
+     }
+    ],
+    "Description": "Device capabilities and characteristics with active configuration status",
+    "Manufacturer": "Hewlett Packard Enterprise",
+    "SerialNumber": "SN-TEST-0045",
+    "@odata.context": "/redfish/v1/$metadata#NetworkAdapter.NetworkAdapter",
+    "@Redfish.Settings": {
+     "SettingsObject": {
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/Settings/"
+     }
+    },
+    "NetworkDeviceFunctions": [
+     {
+      "Id": 1,
+      "Ethernet": {
+       "MACAddress": "00:00:5F:26:BC:30",
+       "PermanentMACAddress": "00:00:5F:26:BC:30"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkDeviceFunction/1",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkDeviceFunction/1/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/Ports/1/"
+      }
+     },
+     {
+      "Id": 2,
+      "Ethernet": {
+       "MACAddress": "00:00:5F:26:BC:38",
+       "PermanentMACAddress": "00:00:5F:26:BC:38"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkDeviceFunction/2",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/NetworkDeviceFunction/2/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/DC080000/Ports/2/"
+      }
+     }
+    ]
+   },
+   {
+    "Id": "2",
+    "Oem": {
+     "Hpe": {
+      "FcPorts": [],
+      "@odata.type": "#HpeBaseNetworkAdapter.v2_0_0.HpeBaseNetworkAdapter",
+      "PhysicalPorts": [
+       {
+        "Oem": {
+         "Hpe": {
+          "PortNumber": 1,
+          "@odata.type": "#HpeBaseNetworkAdapterExt.v2_1_0.HpeBaseNetworkAdapterExt",
+          "BadReceives": 0,
+          "BadTransmits": 0,
+          "GoodReceives": 0,
+          "GoodTransmits": 0,
+          "@odata.context": "/redfish/v1/$metadata#HpeBaseNetworkAdapterExt.HpeBaseNetworkAdapterExt"
+         }
+        },
+        "Name": "",
+        "SpeedMbps": 0,
+        "FullDuplex": false,
+        "LinkStatus": null,
+        "MacAddress": "00:00:5E:44:b5:f0",
+        "IPv4Addresses": [],
+        "IPv6Addresses": []
+       },
+       {
+        "Oem": {
+         "Hpe": {
+          "PortNumber": 2,
+          "@odata.type": "#HpeBaseNetworkAdapterExt.v2_1_0.HpeBaseNetworkAdapterExt",
+          "BadReceives": 0,
+          "BadTransmits": 0,
+          "GoodReceives": 0,
+          "GoodTransmits": 0,
+          "@odata.context": "/redfish/v1/$metadata#HpeBaseNetworkAdapterExt.HpeBaseNetworkAdapterExt"
+         }
+        },
+        "Name": "",
+        "SpeedMbps": 0,
+        "FullDuplex": false,
+        "LinkStatus": null,
+        "MacAddress": "00:00:5E:44:b5:f1",
+        "IPv4Addresses": [],
+        "IPv6Addresses": []
+       },
+       {
+        "Oem": {
+         "Hpe": {
+          "PortNumber": 3,
+          "@odata.type": "#HpeBaseNetworkAdapterExt.v2_1_0.HpeBaseNetworkAdapterExt",
+          "BadReceives": 0,
+          "BadTransmits": 0,
+          "GoodReceives": 0,
+          "GoodTransmits": 0,
+          "@odata.context": "/redfish/v1/$metadata#HpeBaseNetworkAdapterExt.HpeBaseNetworkAdapterExt"
+         }
+        },
+        "Name": "",
+        "SpeedMbps": 0,
+        "FullDuplex": false,
+        "LinkStatus": null,
+        "MacAddress": "00:00:5E:44:b5:f2",
+        "IPv4Addresses": [],
+        "IPv6Addresses": []
+       },
+       {
+        "Oem": {
+         "Hpe": {
+          "PortNumber": 4,
+          "@odata.type": "#HpeBaseNetworkAdapterExt.v2_1_0.HpeBaseNetworkAdapterExt",
+          "BadReceives": 0,
+          "BadTransmits": 0,
+          "GoodReceives": 0,
+          "GoodTransmits": 0,
+          "@odata.context": "/redfish/v1/$metadata#HpeBaseNetworkAdapterExt.HpeBaseNetworkAdapterExt"
+         }
+        },
+        "Name": "",
+        "SpeedMbps": 0,
+        "FullDuplex": false,
+        "LinkStatus": null,
+        "MacAddress": "00:00:5E:44:b5:f3",
+        "IPv4Addresses": [],
+        "IPv6Addresses": []
+       }
+      ],
+      "@odata.context": "/redfish/v1/$metadata#HpeNetworkAdapter.HpeNetworkAdapter",
+      "StructuredName": "NIC.LOM.1.1",
+      "UEFIDevicePath": "PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x0)"
+     }
+    },
+    "Name": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "Model": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "Ports": [
+     {
+      "Id": "1",
+      "Name": "Network adapter port",
+      "PortId": "1",
+      "Ethernet": {
+       "AssociatedMACAddresses": [
+        "00:00:5E:44:b5:f0"
+       ]
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/1",
+      "LinkStatus": "LinkDown",
+      "@odata.type": "#Port.v1_6_1.Port",
+      "Description": "Port status and active configuration data",
+      "@odata.context": "/redfish/v1/$metadata#Port.Port",
+      "CurrentSpeedGbps": 0.0,
+      "LinkNetworkTechnology": "Ethernet"
+     },
+     {
+      "Id": "2",
+      "Name": "Network adapter port",
+      "PortId": "2",
+      "Ethernet": {
+       "AssociatedMACAddresses": [
+        "00:00:5E:44:b5:f1"
+       ]
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/2",
+      "LinkStatus": "LinkDown",
+      "@odata.type": "#Port.v1_6_1.Port",
+      "Description": "Port status and active configuration data",
+      "@odata.context": "/redfish/v1/$metadata#Port.Port",
+      "CurrentSpeedGbps": 0.0,
+      "LinkNetworkTechnology": "Ethernet"
+     },
+     {
+      "Id": "3",
+      "Name": "Network adapter port",
+      "PortId": "3",
+      "Ethernet": {
+       "AssociatedMACAddresses": [
+        "00:00:5E:44:b5:f2"
+       ]
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/3",
+      "LinkStatus": "LinkDown",
+      "@odata.type": "#Port.v1_6_1.Port",
+      "Description": "Port status and active configuration data",
+      "@odata.context": "/redfish/v1/$metadata#Port.Port",
+      "CurrentSpeedGbps": 0.0,
+      "LinkNetworkTechnology": "Ethernet"
+     },
+     {
+      "Id": "4",
+      "Name": "Network adapter port",
+      "PortId": "4",
+      "Ethernet": {
+       "AssociatedMACAddresses": [
+        "00:00:5E:44:b5:f3"
+       ]
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/4",
+      "LinkStatus": "LinkDown",
+      "@odata.type": "#Port.v1_6_1.Port",
+      "Description": "Port status and active configuration data",
+      "@odata.context": "/redfish/v1/$metadata#Port.Port",
+      "CurrentSpeedGbps": 0.0,
+      "LinkNetworkTechnology": "Ethernet"
+     }
+    ],
+    "Status": {
+     "State": null,
+     "Health": null
+    },
+    "Location": {
+     "PartLocation": {
+      "LocationType": "Slot",
+      "ServiceLabel": "Embedded LOM",
+      "LocationOrdinalValue": -1
+     }
+    },
+    "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2",
+    "PartNumber": null,
+    "@odata.etag": null,
+    "@odata.type": "#HpeBaseNetworkAdapter.v2_0_0.HpeBaseNetworkAdapter",
+    "Controllers": [
+     {
+      "Links": {
+       "Ports": [
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/1"
+        },
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/2"
+        },
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/3"
+        },
+        {
+         "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/4"
+        }
+       ]
+      },
+      "Location": {
+       "PartLocation": {
+        "LocationType": "Slot",
+        "ServiceLabel": "Embedded LOM",
+        "LocationOrdinalValue": -1
+       }
+      },
+      "ControllerCapabilities": {
+       "NetworkPortCount": 4
+      },
+      "FirmwarePackageVersion": "20.31.41"
+     }
+    ],
+    "Description": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "Manufacturer": null,
+    "SerialNumber": "SN-TEST-0046",
+    "@odata.context": "/redfish/v1/$metadata#HpeBaseNetworkAdapter.HpeBaseNetworkAdapter",
+    "NetworkDeviceFunctions": [
+     {
+      "Id": 1,
+      "Ethernet": {
+       "MACAddress": "00:00:5E:44:b5:f0",
+       "PermanentMACAddress": "00:00:5E:44:b5:f0"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/1",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/1/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/1"
+      }
+     },
+     {
+      "Id": 2,
+      "Ethernet": {
+       "MACAddress": "00:00:5E:44:b5:f1",
+       "PermanentMACAddress": "00:00:5E:44:b5:f1"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/2",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/2/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/2"
+      }
+     },
+     {
+      "Id": 3,
+      "Ethernet": {
+       "MACAddress": "00:00:5E:44:b5:f2",
+       "PermanentMACAddress": "00:00:5E:44:b5:f2"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/3",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/3/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/3"
+      }
+     },
+     {
+      "Id": 4,
+      "Ethernet": {
+       "MACAddress": "00:00:5E:44:b5:f3",
+       "PermanentMACAddress": "00:00:5E:44:b5:f3"
+      },
+      "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/4",
+      "@odata.type": "#NetworkDeviceFunction.v1_5_0.NetworkDeviceFunction",
+      "@odata.context": "/redfish/v1/$metadata#NetworkDeviceFunction.NetworkDeviceFunction",
+      "NetDevFuncType": "Ethernet",
+      "@Redfish.Settings": {
+       "SettingsObject": {
+        "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/NetworkDeviceFunction/4/Settings/"
+       }
+      },
+      "NetDevFuncCapabilities": [
+       "Ethernet"
+      ],
+      "PhysicalNetworkPortAssignment": {
+       "@odata.id": "/redfish/v1/Chassis/1/NetworkAdapters/2/Ports/4"
+      }
+     }
+    ]
+   }
+  ],
+  "collectionState": "Success"
+ },
+ "processor": {
+  "modified": "2026-09-10T22:53:40.506698",
+  "data": [
+   {
+    "Id": "1",
+    "Oem": {
+     "Hpe": {
+      "Cache": [
+       {
+        "Name": "L1-Cache",
+        "Policy": "WriteBack",
+        "EccType": "SingleBitECC",
+        "Location": "Internal",
+        "Socketed": false,
+        "CacheSpeedns": 0,
+        "Associativity": "8waySetAssociative",
+        "MaximumSizeKB": 640,
+        "CurrentSRAMType": [
+         "Synchronous"
+        ],
+        "InstalledSizeKB": 640,
+        "SystemCacheType": "Unified",
+        "SupportedSRAMType": [
+         "Synchronous"
+        ]
+       },
+       {
+        "Name": "L2-Cache",
+        "Policy": "Varies",
+        "EccType": "SingleBitECC",
+        "Location": "Internal",
+        "Socketed": false,
+        "CacheSpeedns": 0,
+        "Associativity": "16waySetAssociative",
+        "MaximumSizeKB": 10240,
+        "CurrentSRAMType": [
+         "Synchronous"
+        ],
+        "InstalledSizeKB": 10240,
+        "SystemCacheType": "Unified",
+        "SupportedSRAMType": [
+         "Synchronous"
+        ]
+       },
+       {
+        "Name": "L3-Cache",
+        "Policy": "Varies",
+        "EccType": "SingleBitECC",
+        "Location": "Internal",
+        "Socketed": false,
+        "CacheSpeedns": 0,
+        "Associativity": "FullyAssociative",
+        "MaximumSizeKB": 14080,
+        "CurrentSRAMType": [
+         "Synchronous"
+        ],
+        "InstalledSizeKB": 14080,
+        "SystemCacheType": "Unified",
+        "SupportedSRAMType": [
+         "Synchronous"
+        ]
+       }
+      ],
+      "AssetTag": "SN-TEST-0047",
+      "PartNumber": "",
+      "@odata.type": "#HpeProcessorExt.v2_0_1.HpeProcessorExt",
+      "ConfigStatus": {
+       "State": "Enabled",
+       "Populated": true
+      },
+      "CoresEnabled": 10,
+      "SerialNumber": "",
+      "RatedSpeedMHz": 2200,
+      "@odata.context": "/redfish/v1/$metadata#HpeProcessorExt.HpeProcessorExt",
+      "Characteristics": [
+       "64Bit",
+       "MultiCore",
+       "HwThread",
+       "ExecuteProtection",
+       "EnhancedVirtualization",
+       "PowerPerfControl"
+      ],
+      "VoltageVoltsX10": 16,
+      "ExternalClockMHz": 100,
+      "MicrocodePatches": [
+       {
+        "Date": "2023-03-06T00:00:00Z",
+        "CpuId": "0x00050654",
+        "PatchId": "0x02007006"
+       },
+       {
+        "Date": "2018-11-16T00:00:00Z",
+        "CpuId": "0x00050655",
+        "PatchId": "0x03000010"
+       },
+       {
+        "Date": "2024-03-01T00:00:00Z",
+        "CpuId": "0x00050656",
+        "PatchId": "0x04003707"
+       },
+       {
+        "Date": "2024-03-01T00:00:00Z",
+        "CpuId": "0x00050657",
+        "PatchId": "0x05003707"
+       }
+      ]
+     }
+    },
+    "Name": "Processors",
+    "Model": "Intel(R) Xeon(R) Silver 4210 CPU @ 2.20GHz",
+    "Socket": "Proc 1",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "@odata.id": "/redfish/v1/Systems/1/Processors/1/",
+    "PartNumber": "",
+    "TotalCores": 10,
+    "@odata.type": "#Processor.v1_7_2.Processor",
+    "MaxSpeedMHz": 4000,
+    "ProcessorId": {
+     "Step": "7",
+     "VendorId": "Intel(R) Corporation",
+     "MicrocodeInfo": null,
+     "EffectiveModel": "5",
+     "EffectiveFamily": "179",
+     "IdentificationRegisters": "0x06570005fbffbfeb"
+    },
+    "Manufacturer": "Intel(R) Corporation",
+    "SerialNumber": "",
+    "TotalThreads": 20,
+    "ProcessorType": "CPU",
+    "@odata.context": "/redfish/v1/$metadata#Processor.Processor",
+    "InstructionSet": "x86-64",
+    "ProcessorArchitecture": "x86"
+   },
+   {
+    "Id": "2",
+    "Oem": {
+     "Hpe": {
+      "Cache": [
+       {
+        "Name": "L1-Cache",
+        "Policy": "WriteBack",
+        "EccType": "SingleBitECC",
+        "Location": "Internal",
+        "Socketed": false,
+        "CacheSpeedns": 0,
+        "Associativity": "8waySetAssociative",
+        "MaximumSizeKB": 640,
+        "CurrentSRAMType": [
+         "Synchronous"
+        ],
+        "InstalledSizeKB": 640,
+        "SystemCacheType": "Unified",
+        "SupportedSRAMType": [
+         "Synchronous"
+        ]
+       },
+       {
+        "Name": "L2-Cache",
+        "Policy": "Varies",
+        "EccType": "SingleBitECC",
+        "Location": "Internal",
+        "Socketed": false,
+        "CacheSpeedns": 0,
+        "Associativity": "16waySetAssociative",
+        "MaximumSizeKB": 10240,
+        "CurrentSRAMType": [
+         "Synchronous"
+        ],
+        "InstalledSizeKB": 10240,
+        "SystemCacheType": "Unified",
+        "SupportedSRAMType": [
+         "Synchronous"
+        ]
+       },
+       {
+        "Name": "L3-Cache",
+        "Policy": "Varies",
+        "EccType": "SingleBitECC",
+        "Location": "Internal",
+        "Socketed": false,
+        "CacheSpeedns": 0,
+        "Associativity": "FullyAssociative",
+        "MaximumSizeKB": 14080,
+        "CurrentSRAMType": [
+         "Synchronous"
+        ],
+        "InstalledSizeKB": 14080,
+        "SystemCacheType": "Unified",
+        "SupportedSRAMType": [
+         "Synchronous"
+        ]
+       }
+      ],
+      "AssetTag": "SN-TEST-0048",
+      "PartNumber": "",
+      "@odata.type": "#HpeProcessorExt.v2_0_1.HpeProcessorExt",
+      "ConfigStatus": {
+       "State": "Enabled",
+       "Populated": true
+      },
+      "CoresEnabled": 10,
+      "SerialNumber": "",
+      "RatedSpeedMHz": 2200,
+      "@odata.context": "/redfish/v1/$metadata#HpeProcessorExt.HpeProcessorExt",
+      "Characteristics": [
+       "64Bit",
+       "MultiCore",
+       "HwThread",
+       "ExecuteProtection",
+       "EnhancedVirtualization",
+       "PowerPerfControl"
+      ],
+      "VoltageVoltsX10": 16,
+      "ExternalClockMHz": 100,
+      "MicrocodePatches": [
+       {
+        "Date": "2023-03-06T00:00:00Z",
+        "CpuId": "0x00050654",
+        "PatchId": "0x02007006"
+       },
+       {
+        "Date": "2018-11-16T00:00:00Z",
+        "CpuId": "0x00050655",
+        "PatchId": "0x03000010"
+       },
+       {
+        "Date": "2024-03-01T00:00:00Z",
+        "CpuId": "0x00050656",
+        "PatchId": "0x04003707"
+       },
+       {
+        "Date": "2024-03-01T00:00:00Z",
+        "CpuId": "0x00050657",
+        "PatchId": "0x05003707"
+       }
+      ]
+     }
+    },
+    "Name": "Processors",
+    "Model": "Intel(R) Xeon(R) Silver 4210 CPU @ 2.20GHz",
+    "Socket": "Proc 2",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "@odata.id": "/redfish/v1/Systems/1/Processors/2/",
+    "PartNumber": "",
+    "TotalCores": 10,
+    "@odata.type": "#Processor.v1_7_2.Processor",
+    "MaxSpeedMHz": 4000,
+    "ProcessorId": {
+     "Step": "7",
+     "VendorId": "Intel(R) Corporation",
+     "MicrocodeInfo": null,
+     "EffectiveModel": "5",
+     "EffectiveFamily": "179",
+     "IdentificationRegisters": "0x06570005fbffbfeb"
+    },
+    "Manufacturer": "Intel(R) Corporation",
+    "SerialNumber": "",
+    "TotalThreads": 20,
+    "ProcessorType": "CPU",
+    "@odata.context": "/redfish/v1/$metadata#Processor.Processor",
+    "InstructionSet": "x86-64",
+    "ProcessorArchitecture": "x86"
+   }
+  ],
+  "collectionState": "Success"
+ },
+ "powerSupply": {
+  "modified": "2026-09-10T22:53:40.506698",
+  "data": [
+   {
+    "Oem": {
+     "Hpe": {
+      "BayNumber": 1,
+      "Mismatched": false,
+      "@odata.type": "#HpeServerPowerSupply.v2_0_0.HpeServerPowerSupply",
+      "iPDUCapable": false,
+      "@odata.context": "/redfish/v1/$metadata#HpeServerPowerSupply.HpeServerPowerSupply",
+      "HotplugCapable": true,
+      "PowerSupplyStatus": {
+       "State": "Ok"
+      },
+      "MaxPowerOutputWatts": 85,
+      "AveragePowerOutputWatts": 66
+     }
+    },
+    "Name": "HpeServerPowerSupply",
+    "Model": "865408-B21",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "MemberId": "0",
+    "@odata.id": "/redfish/v1/Chassis/1/Power/#PowerSupplies/0",
+    "Manufacturer": "DELTA",
+    "SerialNumber": "SN-TEST-0049",
+    "FirmwareVersion": "1.00",
+    "PowerSupplyType": "AC",
+    "SparePartNumber": "866729-001",
+    "LineInputVoltage": 208,
+    "PowerCapacityWatts": 500,
+    "LastPowerOutputWatts": 66,
+    "LineInputVoltageType": "ACHighLine"
+   },
+   {
+    "Oem": {
+     "Hpe": {
+      "BayNumber": 2,
+      "Mismatched": false,
+      "@odata.type": "#HpeServerPowerSupply.v2_0_0.HpeServerPowerSupply",
+      "iPDUCapable": false,
+      "@odata.context": "/redfish/v1/$metadata#HpeServerPowerSupply.HpeServerPowerSupply",
+      "HotplugCapable": true,
+      "PowerSupplyStatus": {
+       "State": "Ok"
+      },
+      "MaxPowerOutputWatts": 80,
+      "AveragePowerOutputWatts": 60
+     }
+    },
+    "Name": "HpeServerPowerSupply",
+    "Model": "865408-B21",
+    "Status": {
+     "State": "Enabled",
+     "Health": "OK"
+    },
+    "MemberId": "1",
+    "@odata.id": "/redfish/v1/Chassis/1/Power/#PowerSupplies/1",
+    "Manufacturer": "DELTA",
+    "SerialNumber": "SN-TEST-0050",
+    "FirmwareVersion": "1.00",
+    "PowerSupplyType": "AC",
+    "SparePartNumber": "866729-001",
+    "LineInputVoltage": 205,
+    "PowerCapacityWatts": 500,
+    "LastPowerOutputWatts": 60,
+    "LineInputVoltageType": "ACHighLine"
+   }
+  ],
+  "collectionState": "Success"
+ },
+ "pciDevice": {
+  "modified": "2026-10-01T03:34:01.821593",
+  "data": [
+   {
+    "Id": "1",
+    "Name": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "DeviceID": 5719,
+    "VendorID": 5348,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/1/",
+    "BusNumber": 2,
+    "ClassCode": 2,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Embedded LOM",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 0,
+    "LocationString": "Embedded LOM 1",
+    "StructuredName": "NIC.LOM.1.1",
+    "UEFIDevicePath": "PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x0)",
+    "DeviceSubInstance": 1,
+    "SubsystemDeviceID": 8894,
+    "SubsystemVendorID": 4156
+   },
+   {
+    "Id": "2",
+    "Name": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "DeviceID": 5719,
+    "VendorID": 5348,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/2/",
+    "BusNumber": 2,
+    "ClassCode": 2,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Embedded LOM",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 1,
+    "LocationString": "Embedded LOM 1",
+    "StructuredName": "NIC.LOM.1.2",
+    "UEFIDevicePath": "PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x1)",
+    "DeviceSubInstance": 2,
+    "SubsystemDeviceID": 8894,
+    "SubsystemVendorID": 4156
+   },
+   {
+    "Id": "3",
+    "Name": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "DeviceID": 5719,
+    "VendorID": 5348,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/3/",
+    "BusNumber": 2,
+    "ClassCode": 2,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Embedded LOM",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 2,
+    "LocationString": "Embedded LOM 1",
+    "StructuredName": "NIC.LOM.1.3",
+    "UEFIDevicePath": "PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x2)",
+    "DeviceSubInstance": 3,
+    "SubsystemDeviceID": 8894,
+    "SubsystemVendorID": 4156
+   },
+   {
+    "Id": "4",
+    "Name": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+    "DeviceID": 5719,
+    "VendorID": 5348,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/4/",
+    "BusNumber": 2,
+    "ClassCode": 2,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Embedded LOM",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 3,
+    "LocationString": "Embedded LOM 1",
+    "StructuredName": "NIC.LOM.1.4",
+    "UEFIDevicePath": "PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x3)",
+    "DeviceSubInstance": 4,
+    "SubsystemDeviceID": 8894,
+    "SubsystemVendorID": 4156
+   },
+   {
+    "Id": "5",
+    "Name": "HPE Ethernet 10Gb 2-port 562FLR-SFP+ Adpt",
+    "DeviceID": 5490,
+    "VendorID": 32902,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/5/",
+    "BusNumber": 93,
+    "ClassCode": 2,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Flexible LOM",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 0,
+    "LocationString": "Embedded FlexibleLOM 1",
+    "StructuredName": "NIC.FlexLOM.1.1",
+    "UEFIDevicePath": "PciRoot(0x3)/Pci(0x2,0x0)/Pci(0x0,0x0)",
+    "DeviceSubInstance": 1,
+    "SubsystemDeviceID": 8956,
+    "SubsystemVendorID": 4156
+   },
+   {
+    "Id": "6",
+    "Name": "HPE Ethernet 10Gb 562SFP+ Adapter - NIC",
+    "DeviceID": 5490,
+    "VendorID": 32902,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/6/",
+    "BusNumber": 93,
+    "ClassCode": 2,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Flexible LOM",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 1,
+    "LocationString": "Embedded FlexibleLOM 1",
+    "StructuredName": "NIC.FlexLOM.1.2",
+    "UEFIDevicePath": "PciRoot(0x3)/Pci(0x2,0x0)/Pci(0x0,0x1)",
+    "DeviceSubInstance": 2,
+    "SubsystemDeviceID": 0,
+    "SubsystemVendorID": 4156
+   },
+   {
+    "Id": "7",
+    "Name": "HPE Smart Array P408i-a SR Gen10",
+    "DeviceID": 655,
+    "VendorID": 36869,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/7/",
+    "BusNumber": 92,
+    "ClassCode": 1,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Storage Array Controller",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 7,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 0,
+    "LocationString": "Embedded RAID 1",
+    "StructuredName": "RAID.Emb.1.1",
+    "UEFIDevicePath": "PciRoot(0x3)/Pci(0x0,0x0)/Pci(0x0,0x0)",
+    "DeviceSubInstance": 1,
+    "SubsystemDeviceID": 1538,
+    "SubsystemVendorID": 4156
+   },
+   {
+    "Id": "8",
+    "Name": "Embedded Video Controller",
+    "DeviceID": 1336,
+    "VendorID": 4139,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/8/",
+    "BusNumber": 1,
+    "ClassCode": 3,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "Video",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "Embedded",
+    "FunctionNumber": 1,
+    "LocationString": "Embedded Video Controller",
+    "StructuredName": "PCI.Emb.1.1",
+    "UEFIDevicePath": "PciRoot(0x0)/Pci(0x1C,0x4)/Pci(0x0,0x1)",
+    "DeviceSubInstance": 1,
+    "SubsystemDeviceID": 228,
+    "SubsystemVendorID": 5520
+   },
+   {
+    "Id": "9",
+    "Name": "HPE Ethernet 10Gb 2-port 562SFP+ Adapter",
+    "DeviceID": 5490,
+    "VendorID": 32902,
+    "@odata.id": "/redfish/v1/Systems/1/PCIDevices/9/",
+    "BusNumber": 18,
+    "ClassCode": 2,
+    "Bifurcated": "BifurcationNotSupported",
+    "DeviceType": "NIC",
+    "@odata.type": "#HpeServerPciDevice.v2_0_0.HpeServerPciDevice",
+    "DeviceNumber": 0,
+    "SubclassCode": 0,
+    "SegmentNumber": 0,
+    "@odata.context": "/redfish/v1/$metadata#HpeServerPciDevice.HpeServerPciDevice",
+    "DeviceInstance": 1,
+    "DeviceLocation": "PCI-E Slot 1",
+    "FunctionNumber": 0,
+    "LocationString": "Slot 1",
+    "StructuredName": "NIC.Slot.1.1",
+    "UEFIDevicePath": "PciRoot(0x1)/Pci(0x0,0x0)/Pci(0x0,0x0)",
+    "DeviceSubInstance": 1,
+    "SubsystemDeviceID": 8957,
+    "SubsystemVendorID": 4156
+   }
+  ],
+  "collectionState": null
+ }
+}

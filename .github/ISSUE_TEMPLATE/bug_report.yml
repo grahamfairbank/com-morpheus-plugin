@@ -1,0 +1,57 @@
+name: Bug report
+description: Something doesn't work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Please redact real data** before posting: serial numbers, UUIDs, IP and MAC addresses, host/tenant/cluster names, GreenLake workspace or API client IDs, tokens. Use solid boxes on screenshots, not blur.
+        This is an unofficial community project. Please don't contact HPE support about it.
+  - type: input
+    id: plugin
+    attributes:
+      label: Plugin version and jar
+      placeholder: "0.2.0, com-morpheus-plugin-0.2.0-vme9.0.jar"
+    validations:
+      required: true
+  - type: input
+    id: morpheus
+    attributes:
+      label: Morpheus / VM Essentials version
+      placeholder: "9.0.1"
+    validations:
+      required: true
+  - type: input
+    id: server
+    attributes:
+      label: Server model and iLO generation
+      placeholder: "ProLiant DL360 Gen10, iLO 5"
+  - type: input
+    id: region
+    attributes:
+      label: COM region
+      placeholder: "us-west / eu-central / ap-northeast"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      description: What does the HPE COM tab show? Include the message text if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log lines (redacted)
+      description: "From the Morpheus log, lines containing `com-morpheus:` (/var/log/morpheus/morpheus-ui/current)."
+      render: text
+  - type: checkboxes
+    id: redacted
+    attributes:
+      label: Redaction
+      options:
+        - label: I have removed serial numbers, addresses, names, IDs and tokens from everything above.
+          required: true

@@ -1,0 +1,107 @@
+{
+ "id": "869121-B21+TST0000ABM",
+ "type": "/compute-ops/server/security-parameters",
+ "resourceUri": "/compute-ops/v1beta2/servers/869121-B21+TST0000ABM/security-parameters",
+ "overallSecurityStatus": "RISK",
+ "IloSecurityParams": [
+  {
+   "name": "SNMPv1",
+   "securityStatus": "RISK",
+   "id": "8",
+   "ignore": false,
+   "description": "SNMPv1 is enabled. This configuration increases system vulnerability to attack.",
+   "recommendedAction": "Disable the SNMPv1 protocol.",
+   "state": "ENABLED"
+  },
+  {
+   "name": "Secure Boot",
+   "securityStatus": "OK",
+   "id": "5",
+   "ignore": false,
+   "description": "The UEFI Secure Boot setting is enabled. In this configuration, the UEFI system firmware validates the boot loader, Option ROM firmware, and other system software executables for trusted signatures.",
+   "recommendedAction": null,
+   "state": "ENABLED"
+  },
+  {
+   "name": "IPMI/DCMI Over LAN",
+   "securityStatus": "OK",
+   "id": "1",
+   "ignore": false,
+   "description": "The IPMI/DCMI over LAN feature is disabled. This configuration protects the server to known IPMI security vulnerabilities.",
+   "recommendedAction": null,
+   "state": "DISABLED"
+  },
+  {
+   "name": "Password Complexity",
+   "securityStatus": "RISK",
+   "id": "6",
+   "ignore": false,
+   "description": "The Password Complexity setting is disabled. This configuration increases system vulnerability to attack.",
+   "recommendedAction": "Enable the \"Password Complexity\" setting.",
+   "state": "DISABLED"
+  },
+  {
+   "name": "Minimum Password Length",
+   "securityStatus": "OK",
+   "id": "2",
+   "ignore": false,
+   "description": "The Minimum Password Length is set to 8 characters or more. This configuration improves system security against attacks.",
+   "recommendedAction": null,
+   "state": "OK"
+  },
+  {
+   "name": "Security Override Switch",
+   "securityStatus": "OK",
+   "id": "0",
+   "ignore": false,
+   "description": "The server Security Override Switch (system maintenance switch) is disabled. In this configuration, iLO login authentication is enabled.",
+   "recommendedAction": null,
+   "state": "OFF"
+  },
+  {
+   "name": "Last Firmware Scan Result",
+   "securityStatus": "OK",
+   "id": "10",
+   "ignore": false,
+   "description": "Last run firmware verification test has passed.",
+   "recommendedAction": null,
+   "state": "OK"
+  },
+  {
+   "name": "Require Login for iLO RBSU",
+   "securityStatus": "RISK",
+   "id": "3",
+   "ignore": false,
+   "description": "The Require Login for iLO RBSU setting is disabled. This configuration allows unauthenticated iLO access through the UEFI System Utilities.",
+   "recommendedAction": "Enable the Require Login for iLO RBSU setting.",
+   "state": "DISABLED"
+  },
+  {
+   "name": "Require Host Authentication",
+   "securityStatus": "OK",
+   "id": "7",
+   "ignore": false,
+   "description": "The Require Host Authentication setting is enabled.",
+   "recommendedAction": null,
+   "state": "DISABLED"
+  },
+  {
+   "name": "Authentication Failure Logging",
+   "securityStatus": "OK",
+   "id": "4",
+   "ignore": false,
+   "description": "iLO is configured to log authentication failures in the event log.",
+   "recommendedAction": null,
+   "state": "ENABLED"
+  },
+  {
+   "name": "Default SSL Certificate In Use",
+   "securityStatus": "RISK",
+   "id": "9",
+   "ignore": false,
+   "description": "Management processor's default self-signed certificate is in use.",
+   "recommendedAction": "Import a certificate signed by a trusted certificate authority.",
+   "state": "TRUE"
+  }
+ ]
+}

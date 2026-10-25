@@ -1,0 +1,109 @@
+// com-morpheus-plugin: shows HPE Compute Ops Management (COM) data on physical host pages in HPE VM Essentials.
+// Layout follows the Morpheus plugin generator: Gradle + shadow "fat jar" + asset pipeline +
+// morpheus-plugin-gradle. Build with ./gradlew shadowJar (or tools/build.sh, which needs only Docker).
+
+buildscript {
+	repositories {
+		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+	dependencies {
+		classpath "com.github.johnrengelman:shadow:$shadowVersion"
+		classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
+		classpath "com.morpheusdata:morpheus-plugin-gradle:$morphPluginGradleVersion"
+	}
+}
+
+// One source tree, one jar per VME line. Pick with -PvmeTarget=9.0 or 9.1 (default 9.1).
+// VME 9.0.x runs Plugin API 1.4.1 and 9.1.x runs 1.5.0 (morpheus-docs release_notes/compatibility.rst).
+// The plugin compiles and passes its tests against both Plugin API versions.
+ext.vmeTargets = [
+	'9.0': [api: '1.4.1', minAppliance: '9.0.0'],
+	'9.1': [api: '1.5.0', minAppliance: '9.1.0']
+]
+ext.vmeTarget = (project.findProperty('vmeTarget') ?: '9.1').toString()
+if (!vmeTargets.containsKey(vmeTarget)) throw new GradleException("vmeTarget must be one of ${vmeTargets.keySet()}, not ${vmeTarget}")
+ext.morphPluginApiVersion = vmeTargets[vmeTarget].api
+// Separate output per target so the two builds never overwrite each other.
+layout.buildDirectory = layout.projectDirectory.dir("build/vme${vmeTarget}")
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'asset-pipeline'
+apply plugin: 'com.morpheusdata.morpheus-plugin-gradle'
+
+group = 'io.github.grahamfairbank'
+
+java {
+	// VME 9.1 runs plugins on a newer JVM; Plugin API 1.5.0 itself targets Java 11.
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	provided
+}
+
+dependencies {
+	// Supplied by VME at runtime: never bundled into the plugin jar.
+	provided "com.morpheusdata:morpheus-plugin-api:$morphPluginApiVersion"
+	provided "org.codehaus.groovy:groovy:$groovyVersion"
+	provided "org.codehaus.groovy:groovy-json:$groovyVersion"
+	provided "io.reactivex.rxjava3:rxjava:3.1.7"
+	provided "org.slf4j:slf4j-api:$slf4jVersion"
+
+	testImplementation "com.morpheusdata:morpheus-plugin-api:$morphPluginApiVersion"
+	testImplementation "org.codehaus.groovy:groovy:$groovyVersion"
+	testImplementation "org.codehaus.groovy:groovy-json:$groovyVersion"
+	testImplementation "io.reactivex.rxjava3:rxjava:3.1.7"
+	testImplementation "org.spockframework:spock-core:$spockVersion"
+	testRuntimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
+}
+
+sourceSets {
+	main {
+		compileClasspath += configurations.provided
+	}
+}
+
+assets {
+	packagePlugin = false
+}
+
+jar {
+	manifest {
+		attributes(
+			'Plugin-Class': 'io.github.grahamfairbank.commorpheus.ComMorpheusPlugin',
+			'Plugin-Version': project.version,
+			'Morpheus-Name': 'com-morpheus',
+			'Morpheus-Organization': 'com-morpheus community project',
+			'Morpheus-Code': 'com-morpheus-plugin',
+			'Morpheus-Description': 'Unofficial community plugin, not an HPE product and not supported by HPE. Shows HPE Compute Ops Management health, firmware, hardware, storage, support and alerts on physical HPE host pages, with optional UID, inventory and iLO-reset actions.',
+			'Morpheus-Logo': 'assets/com-morpheus.svg',
+			'Morpheus-Logo-Dark': 'assets/com-morpheus.svg',
+			'Morpheus-Labels': 'Plugin, Monitoring, HPE, Compute Ops Management, Tab',
+			'Morpheus-Repo': 'https://github.com/grahamfairbank/com-morpheus-plugin',
+			'Morpheus-Min-Appliance-Version': vmeTargets[vmeTarget].minAppliance
+		)
+	}
+}
+
+tasks.withType(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	// Nothing needs bundling today; keep the plugin jar small and the name predictable.
+	archiveClassifier.set("vme${vmeTarget}")
+	archiveBaseName.set('com-morpheus-plugin')
+}
+
+test {
+	useJUnitPlatform()
+	// Opt-in checks are driven by env vars; make them part of the task inputs so changing them re-runs tests.
+	['COM_MOCK', 'PREVIEW_OUT', 'LOAD_JARS'].each { inputs.property(it, System.getenv(it) ?: '') }
+	testLogging { exceptionFormat = 'full' }
+}
+
+tasks.assemble.dependsOn tasks.shadowJar

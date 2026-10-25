@@ -1,0 +1,251 @@
+{
+ "id": "869121-B21+TST0000ABM",
+ "type": "compute-ops-mgmt/server",
+ "platformFamily": "PROLIANT",
+ "deviceClaimType": "UNKNOWN",
+ "resourceUri": "/compute-ops-mgmt/v1/servers/869121-B21+TST0000ABM",
+ "name": "host-02",
+ "createdAt": "2023-04-25T12:56:27.557228+00:00",
+ "updatedAt": "2026-10-19T02:59:56.793014+00:00",
+ "generation": 1865,
+ "hardware": {
+  "serialNumber": "TST0000ABM",
+  "model": "ProLiant DL360 Gen10",
+  "uuid": "30303030-3030-5453-5430-30303041424D",
+  "productId": "869121-B21",
+  "manufacturer": "HPE",
+  "manufacturingDate": "2021-01-15",
+  "powerState": "ON",
+  "indicatorLed": "OFF",
+  "memoryMb": null,
+  "platform": null,
+  "formFactor": null,
+  "health": {
+   "summary": "OK",
+   "healthLED": "OK",
+   "airFilter": "NOT_PRESENT",
+   "fans": "OK",
+   "fanRedundancy": "REDUNDANT",
+   "liquidCooling": "NOT_PRESENT",
+   "liquidCoolingRedundancy": "NOT_PRESENT",
+   "memory": "OK",
+   "network": "OK",
+   "powerSupplies": "OK",
+   "powerSupplyRedundancy": "REDUNDANT",
+   "processor": "OK",
+   "storage": "OK",
+   "temperature": "OK",
+   "bios": "OK",
+   "smartStorage": "OK"
+  },
+  "bmc": {
+   "mac": "00:00:60:58:6A:98",
+   "ip": "192.0.2.74",
+   "hostname": "ilo-host02.example.com",
+   "license": null,
+   "model": "iLO 5",
+   "version": "iLO 5 v3.21"
+  }
+ },
+ "state": {
+  "managed": true,
+  "connected": true,
+  "connectedModifiedAt": "2026-10-19T02:59:56.753460+00:00",
+  "subscriptionState": "SUBSCRIBED",
+  "subscriptionTier": "ENHANCED",
+  "subscriptionKey": "KTEST0000",
+  "subscriptionExpiresAt": "2027-09-06T10:52:00.000000+00:00"
+ },
+ "firmwareInventory": [
+  {
+   "name": "iLO 5",
+   "version": "3.22 Sep 21 2026",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "System ROM",
+   "version": "U32 v3.34 (09/30/2024)",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Intelligent Platform Abstraction Data",
+   "version": "16.5.0 Build 24",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "System Programmable Logic Device",
+   "version": "0x31",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Power Management Controller Firmware",
+   "version": "1.1.4",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Power Supply Firmware",
+   "version": "1.00",
+   "deviceContext": "Bay 1"
+  },
+  {
+   "name": "Power Supply Firmware",
+   "version": "1.00",
+   "deviceContext": "Bay 2"
+  },
+  {
+   "name": "Innovation Engine (IE) Firmware",
+   "version": "0.2.3.0",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Server Platform Services (SPS) Firmware",
+   "version": "4.1.5.2",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Server Platform Services (SPS) Descriptor",
+   "version": "1.2 0",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Redundant System ROM",
+   "version": "U32 v3.30 (07/31/2024)",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Intelligent Provisioning",
+   "version": "3.50.100",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "Power Management Controller FW Bootloader",
+   "version": "1.1",
+   "deviceContext": "System Board"
+  },
+  {
+   "name": "HPE Smart Storage Energy Pack 1 Firmware",
+   "version": "0.70",
+   "deviceContext": "Embedded Device"
+  },
+  {
+   "name": "HPE Ethernet 10Gb 2-port 562SFP+ Adapter",
+   "version": "11.1.7",
+   "deviceContext": "PCI-E Slot 1"
+  },
+  {
+   "name": "HPE Ethernet 1Gb 4-port 331i Adapter - NIC",
+   "version": "20.31.41",
+   "deviceContext": "Embedded LOM"
+  },
+  {
+   "name": "HPE Ethernet 10Gb 2-port 562FLR-SFP+ Adpt",
+   "version": "11.1.7",
+   "deviceContext": "Embedded ALOM"
+  },
+  {
+   "name": "HPE Smart Array P408i-a SR Gen10",
+   "version": "7.11",
+   "deviceContext": "Embedded RAID"
+  },
+  {
+   "name": "Embedded Video Controller",
+   "version": "2.5",
+   "deviceContext": "Embedded Device"
+  },
+  {
+   "name": "480GB 6G SATA SSD",
+   "version": "HPG3",
+   "deviceContext": "Slot=0:Port=1I:Box=1:Bay=1"
+  },
+  {
+   "name": "480GB 6G SATA SSD",
+   "version": "HPG3",
+   "deviceContext": "Slot=0:Port=1I:Box=1:Bay=2"
+  }
+ ],
+ "softwareInventory": [
+  {
+   "name": "Software Inventory Collection",
+   "version": "N/A",
+   "deviceContext": "Software Inventory Collection"
+  }
+ ],
+ "lastFirmwareUpdate": {
+  "status": "OK",
+  "attemptedAt": "2025-03-05T13:54:51.826872+00:00",
+  "attemptedBaselineUri": "/v1/firmware-bundles/09be5021080f4741b90bc793766c9dd7",
+  "firmwareInventoryUpdates": [
+   {
+    "name": "FW for HPE ProLiant DL360 Gen10 (U32) Servers",
+    "version": "3.34_09-30-2024",
+    "status": "OK"
+   },
+   {
+    "name": "Integrated Smart Update Tools 5.3.0 for ESXi 8.0",
+    "version": "2024.11.00",
+    "status": "OK"
+   },
+   {
+    "name": "HPE Agentless Management Bundle Smart Component on ESXi for Gen",
+    "version": "2024.03.01",
+    "status": "OK"
+   },
+   {
+    "name": "HPE ProLiant Gen10 Smart Array and Gen10 Plus and Gen11 Smart R",
+    "version": "2024.10.01",
+    "status": "OK"
+   },
+   {
+    "name": "HPE Intel i40en Driver for VMware vSphere 8.0",
+    "version": "2024.11.00",
+    "status": "OK"
+   },
+   {
+    "name": "Smart Storage Administrator (SSA) CLI Smart Component for ESXi ",
+    "version": "2024.10.01",
+    "status": "OK"
+   },
+   {
+    "name": "HPE iLO Driver Bundle Smart Component for ESXi 8.0",
+    "version": "2025.01.00",
+    "status": "OK"
+   },
+   {
+    "name": "HPE Broadcom NX1 Online Firmware Upgrade Utility Windows Server",
+    "version": "5.4.3.0",
+    "status": "OK"
+   }
+  ],
+  "installSwDrivers": true,
+  "downgrade": false,
+  "powerOff": true,
+  "completedAt": "2025-03-05T14:16:42.164589+00:00",
+  "bundleUpdateMethod": "Update"
+ },
+ "host": {
+  "osName": "VMware ESXi",
+  "osVersion": "8.0.2 Build-22380479 Update 2",
+  "hostname": "host-02",
+  "osType": 25,
+  "osDescription": "VMkernel localhost.example.com 8.0.2 #1 SMP Release build-22380479 Sep  4 2023 15:00:49 x86_64 x86_64 x86_64 ESXi"
+ },
+ "firmwareBundleUri": "/v1/firmware-bundles/09be5021080f4741b90bc793766c9dd7",
+ "tags": {},
+ "biosFamily": "U32",
+ "processorVendor": "Intel(R) Xeon(R) Silver 4210 CPU @ 2.20GHz",
+ "autoIloFwUpdate": true,
+ "serverGeneration": "GEN_10",
+ "lastFullInventoryCollectionAt": "2026-09-10T22:53:40.490320+00:00",
+ "lastServerLogCollectionAt": null,
+ "lastServerLogCollectionAtByComponent": null,
+ "lastFullInventoryCollectionPowerState": "On",
+ "connectionType": "DIRECT",
+ "managedBy": null,
+ "maintenanceMode": false,
+ "autoCaseCreationState": "ENABLED",
+ "oneview": null,
+ "appliance": {
+  "applianceUri": null,
+  "applianceId": null
+ }
+}
