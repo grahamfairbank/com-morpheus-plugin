@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 (2026-10-25)
+
+- **One jar for Morpheus / VM Essentials 9.0 and 9.1:** `com-morpheus-plugin-<version>.jar`, with a minimum appliance version of 9.0.0. This replaces 0.2.0's `-vme9.0` / `-vme9.1` pair. It came from a post-0.2.0 finding: the 9.1 build runs unchanged on a 9.0 appliance.
+  - The jar is compiled against the oldest supported Plugin API (1.4.1), so it can't use anything newer.
+  - `tools/build.sh` repeats the whole test suite against Plugin API 1.5.0.
+  - The same jar loads with its route controller through the plugin manager of both API versions.
+- **Release-time compatibility check:** `tools/check-plugin-core.sh` compares HPE's published sources with `compat/plugin-core-baseline.properties`:
+  - the latest Plugin API on Maven Central;
+  - new release tags and branches in morpheus-plugin-core;
+  - commits that touch the API classes this plugin uses, the plugin loader or the renderer;
+  - the release notes;
+  - morpheus-docs' Plugin API statements.
+- Install guide: removed the claim that Morpheus refuses jars built for a newer release; 9.0.1 accepted one.
+
 ## 0.2.0 (2026-10-25): first public release
 
 - **Pull requests welcome:** CONTRIBUTING.md, issue templates (bug, feature), a pull-request template and private security reporting.

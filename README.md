@@ -67,12 +67,9 @@ Power on, power off, restart, firmware updates and configuration changes are **n
 
 ## Download
 
-Use the prebuilt jars from the [Releases](../../releases) page. There's no need to build anything. Pick the jar that matches your appliance:
+Use the prebuilt jar from the [Releases](../../releases) page. There's no need to build anything.
 
-| Jar | For | Built against Plugin API |
-|---|---|---|
-| `com-morpheus-plugin-<version>-vme9.0.jar` | Morpheus / VM Essentials 9.0.x | 1.4.1 |
-| `com-morpheus-plugin-<version>-vme9.1.jar` | Morpheus / VM Essentials 9.1.x | 1.5.0 |
+**One jar, `com-morpheus-plugin-<version>.jar`, works on Morpheus / VM Essentials 9.0.x and 9.1.x.** It's compiled against the oldest supported Plugin API (1.4.1, Morpheus 9.0), and its whole test suite also runs against Plugin API 1.5.0 (Morpheus 9.1). Before each release, `tools/check-plugin-core.sh` checks HPE's published plugin sources and docs for any compatibility change.
 
 Each release includes `SHA256SUMS`. Check the download with `sha256sum -c SHA256SUMS`.
 
@@ -135,7 +132,7 @@ You need only Docker; the build runs in a JDK 17 container.
 tools/build.sh
 ```
 
-This builds and tests both jars into `dist/`. A first build downloads Gradle and its dependencies; later builds take a few minutes. `VME_TARGETS=9.0 tools/build.sh` builds just one.
+This builds and tests the jar into `dist/`, then repeats the test suite against the newer Plugin API (1.5.0). A first build downloads Gradle and its dependencies; later builds take a few minutes.
 
 Optional checks (opt-in, off by default):
 - `COM_MOCK=1` runs the real HTTP client against HPE's public COM mock server (`LiveChecksSpec`).
@@ -146,7 +143,7 @@ Optional checks (opt-in, off by default):
 
 - One COM workspace and region per Morpheus appliance.
 - The COM web UI address is confirmed for US West (`us-west2.compute.cloud.hpe.com`). EU Central and AP Northeast follow the same pattern but are unverified; the **COM web UI URL** setting overrides it.
-- Two jars are maintained, one per Morpheus line. Install the one that matches your appliance.
+- Supported: Morpheus / VM Essentials 9.0.x and 9.1.x. A new Morpheus release with a new Plugin API is checked with `tools/check-plugin-core.sh` and the compatibility test run before it's listed as supported.
 
 ## Contributing
 

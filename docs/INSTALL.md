@@ -23,14 +23,9 @@ You need:
 
 ## 2. Upload the plugin (Morpheus)
 
-Pick the jar for your manager's version (**Administration → Health** shows it):
+Download `com-morpheus-plugin-<version>.jar` from the [Releases](https://github.com/grahamfairbank/com-morpheus-plugin/releases) page and check it with `sha256sum -c SHA256SUMS`. **The same jar works on Morpheus / VM Essentials 9.0.x and 9.1.x.** Then go to **Administration → Integrations → Plugins → Add** and upload it.
 
-- VME 9.0.x: `com-morpheus-plugin-<version>-vme9.0.jar`
-- VME 9.1.x: `com-morpheus-plugin-<version>-vme9.1.jar`
-
-Then go to **Administration → Integrations → Plugins → Add** and upload it. Morpheus refuses a jar whose minimum version is higher than the appliance's. Don't install the 9.0 jar on a 9.1 appliance: it is built against the older plugin API.
-
-**Upgrading:** upload the new jar of the same line over the old one; settings are kept. **Removing:** delete the plugin in the same list. The plugin leaves nothing behind on hosts or in COM.
+**Upgrading:** upload the new jar over the old one; settings are kept. Upgrading from 0.2.0 (which had `-vme9.0` / `-vme9.1` jars) works the same way. **Removing:** delete the plugin in the same list. The plugin leaves nothing behind on hosts or in COM.
 
 ## 3. Settings
 
@@ -83,6 +78,6 @@ Why only these actions, and why iLO reset is a safe one, is explained under [Why
 | Match: probable | Only some MACs match (a replaced NIC, or a stale COM inventory). Confirm with `com-serial=<serial>`, or run an inventory collection in COM. Actions stay disabled until it's confirmed. |
 | No action buttons | Check that **Enable actions** is on, that your role has **Run HPE COM actions** at **Full**, and that you have reloaded the page. |
 | "the API client needs a COM role that can run server jobs (HTTP 403)" | The COM API client is read-only. Give it an operator role in GreenLake. |
-| "Upload: nothing happens" / "Failed to parse plugin file" | The wrong jar for the appliance line, or a corrupt download. Check `SHA256SUMS`, and use `-vme9.0` for 9.0.x and `-vme9.1` for 9.1.x. |
+| "Upload: nothing happens" / "Failed to parse plugin file" | A corrupt or incomplete download: check it with `SHA256SUMS`. The upload's exact reason is in the browser's developer tools (Network → the upload request's response) and in the Morpheus log. |
 
 The plugin logs to the Morpheus application log (`/var/log/morpheus/morpheus-ui/current`, or **Administration → Health → Morpheus Logs**) with the prefix `com-morpheus:`. Every action records the Morpheus user, the host and the COM job id.

@@ -18,7 +18,9 @@ You only need Docker:
 tools/build.sh
 ```
 
-This builds and tests both jars (`-vme9.0` against Plugin API 1.4.1, `-vme9.1` against 1.5.0) into `dist/`. Every change must keep both builds green.
+This builds and tests one jar into `dist/`. It's compiled against Plugin API 1.4.1 (Morpheus 9.0), and the whole test suite is repeated against 1.5.0 (Morpheus 9.1). Every change must keep both test runs green, and must not use anything that's missing from 1.4.1.
+
+Maintainers: before a release, run `tools/check-plugin-core.sh`. It reports any change in HPE's published morpheus-plugin-core or morpheus-docs that could affect compatibility, such as a new Plugin API version or changes to classes this plugin uses.
 
 Useful opt-in checks:
 - `PREVIEW_OUT=<dir>` renders the tab to HTML from the test data (good for screenshots of UI changes).

@@ -4,7 +4,7 @@
 
 ## Checklist
 
-- [ ] `tools/build.sh` passes (both the `-vme9.0` and `-vme9.1` builds).
+- [ ] `tools/build.sh` passes (the build against Plugin API 1.4.1 and the compatibility tests against 1.5.0).
 - [ ] Tests added or updated for behaviour changes.
 - [ ] CHANGELOG.md updated (and README / docs/INSTALL.md for user-visible changes).
 - [ ] No real data (serials, IPs, MACs, names, IDs, tokens) in code, fixtures, screenshots or this description.

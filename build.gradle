@@ -14,18 +14,17 @@ buildscript {
 	}
 }
 
-// One source tree, one jar per VME line. Pick with -PvmeTarget=9.0 or 9.1 (default 9.1).
-// VME 9.0.x runs Plugin API 1.4.1 and 9.1.x runs 1.5.0 (morpheus-docs release_notes/compatibility.rst).
-// The plugin compiles and passes its tests against both Plugin API versions.
-ext.vmeTargets = [
-	'9.0': [api: '1.4.1', minAppliance: '9.0.0'],
-	'9.1': [api: '1.5.0', minAppliance: '9.1.0']
-]
-ext.vmeTarget = (project.findProperty('vmeTarget') ?: '9.1').toString()
-if (!vmeTargets.containsKey(vmeTarget)) throw new GradleException("vmeTarget must be one of ${vmeTargets.keySet()}, not ${vmeTarget}")
-ext.morphPluginApiVersion = vmeTargets[vmeTarget].api
-// Separate output per target so the two builds never overwrite each other.
-layout.buildDirectory = layout.projectDirectory.dir("build/vme${vmeTarget}")
+// One jar for Morpheus 9.0 and 9.1. It is compiled against the OLDEST supported Plugin API (1.4.1, Morpheus 9.0),
+// so it can't use anything newer. Morpheus 9.1 ships Plugin API 1.5.0, which is compatible for every class this
+// plugin uses: the test suite runs against it too (-PtestApiVersion=1.5.0, see tools/build.sh), and a jar built
+// against 1.5.0 was confirmed running on a 9.0 appliance (2026-10-25). Before each release,
+// tools/check-plugin-core.sh reports any change in HPE's published plugin-core and docs that could affect this.
+ext.morphPluginApiVersion = '1.4.1'
+ext.testApiVersion = (project.findProperty('testApiVersion') ?: morphPluginApiVersion).toString()
+if (testApiVersion != morphPluginApiVersion) {
+	// A compatibility test run: keep its output apart from the real build.
+	layout.buildDirectory = layout.projectDirectory.dir("build/api-${testApiVersion}")
+}
 
 apply plugin: 'java'
 apply plugin: 'groovy'
@@ -36,7 +35,7 @@ apply plugin: 'com.morpheusdata.morpheus-plugin-gradle'
 group = 'io.github.grahamfairbank'
 
 java {
-	// VME 9.1 runs plugins on a newer JVM; Plugin API 1.5.0 itself targets Java 11.
+	// Morpheus runs plugins on a newer JVM; the Plugin API targets Java 11.
 	sourceCompatibility = JavaVersion.VERSION_11
 	targetCompatibility = JavaVersion.VERSION_11
 }
@@ -50,14 +49,14 @@ configurations {
 }
 
 dependencies {
-	// Supplied by VME at runtime: never bundled into the plugin jar.
+	// Supplied by Morpheus at runtime: never bundled into the plugin jar.
 	provided "com.morpheusdata:morpheus-plugin-api:$morphPluginApiVersion"
 	provided "org.codehaus.groovy:groovy:$groovyVersion"
 	provided "org.codehaus.groovy:groovy-json:$groovyVersion"
 	provided "io.reactivex.rxjava3:rxjava:3.1.7"
 	provided "org.slf4j:slf4j-api:$slf4jVersion"
 
-	testImplementation "com.morpheusdata:morpheus-plugin-api:$morphPluginApiVersion"
+	testImplementation "com.morpheusdata:morpheus-plugin-api:$testApiVersion"
 	testImplementation "org.codehaus.groovy:groovy:$groovyVersion"
 	testImplementation "org.codehaus.groovy:groovy-json:$groovyVersion"
 	testImplementation "io.reactivex.rxjava3:rxjava:3.1.7"
@@ -88,14 +87,14 @@ jar {
 			'Morpheus-Logo-Dark': 'assets/com-morpheus.svg',
 			'Morpheus-Labels': 'Plugin, Monitoring, HPE, Compute Ops Management, Tab',
 			'Morpheus-Repo': 'https://github.com/grahamfairbank/com-morpheus-plugin',
-			'Morpheus-Min-Appliance-Version': vmeTargets[vmeTarget].minAppliance
+			'Morpheus-Min-Appliance-Version': '9.0.0'
 		)
 	}
 }
 
 tasks.withType(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 	// Nothing needs bundling today; keep the plugin jar small and the name predictable.
-	archiveClassifier.set("vme${vmeTarget}")
+	archiveClassifier.set('')
 	archiveBaseName.set('com-morpheus-plugin')
 }
 
