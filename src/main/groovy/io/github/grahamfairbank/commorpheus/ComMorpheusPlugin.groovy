@@ -41,6 +41,7 @@ class ComMorpheusPlugin extends Plugin {
 		])
 		this.registerProvider(new ComServerTabProvider(this, morpheus))
 		this.registerProvider(new ComUiLoaderProvider(this, morpheus))
+		this.registerProvider(new ComClusterTabProvider(this, morpheus))
 		// The plugin brings its own renderer, as other community plugins with web routes do, so Morpheus 9.0 loads
 		// it with its controller. The tab and loader providers build their own renderers either way.
 		this.setRenderer(new HandlebarsRenderer('renderer', this.getClassLoader() ?: this.class.classLoader))

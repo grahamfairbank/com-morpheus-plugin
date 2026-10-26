@@ -215,6 +215,83 @@ class ComService {
 		}
 	}
 
+	// ---- cluster summary (0.4.0, read-only) ----------------------------------------------------
+
+	static final long SUMMARY_TTL_MS = 60_000L
+
+	/**
+	 * One row per hypervisor host of a cluster, from the same matching as the host tab, plus three bulk COM
+	 * reads shared by all rows (server list, alerts, warranty), so a cluster costs the same COM calls as one host.
+	 * Read-only: no actions, no tokens. Never throws.
+	 */
+	Map cluster(String clusterName, List<HostFacts> hosts, ComSettings s) {
+		Map base = [clusterName: clusterName, comUiUrl: s.uiUrl]
+		if (!s.configured) return base + [state: 'unconfigured']
+		List<HostFacts> hvs = (hosts ?: []).findAll { isHost(it) }.sort { (it.name ?: '').toLowerCase() }
+		if (!hvs) return base + [state: 'empty']
+		try {
+			List<Map> rows = hvs.collect { HostFacts h -> [host: h, m: resolve(h, s)] }.collect { Map x -> clusterRow((HostFacts) x.host, (Map) x.m) }
+			if (rows.every { it.status == 'building' }) return base + [state: 'building']
+			ComClient c = clientFor(s)
+			List<String> notes = []
+			Map<String, Map> servers = ((List<Map>) (optional(notes, 'server list') { c.serverSummaries(SUMMARY_TTL_MS) } ?: []))
+				.collectEntries { [(it.id as String): it] }
+			Map<String, Integer> alertCounts = [:]
+			((List<Map>) (optional(notes, 'alerts') { c.activeAlerts(SUMMARY_TTL_MS) } ?: [])).each { Map a ->
+				String sid = (a.serverId ?: ((Map) (a.device ?: [:])).id) as String
+				if (sid && !a.clearedAt && a.cleared != true) alertCounts[sid] = (alertCounts[sid] ?: 0) + 1
+			}
+			Map<String, Map> warranty = ((List<Map>) (optional(notes, 'warranty') { c.warranties(WARRANTY_TTL_MS) } ?: []))
+				.collectEntries { [(it.deviceId as String): it] }
+			rows.each { Map r ->
+				if (!r.comId) return
+				Map sv = servers[r.comId as String]
+				if (!sv) { r.status = 'missing'; r.statusText = 'Not in COM'; r.statusLevel = 'warn'; return }
+				Map hw = (Map) (sv.hardware ?: [:])
+				Map health = (Map) (hw.health ?: [:])
+				Map w = warranty[r.comId as String]
+				int alerts = alertCounts[r.comId as String] ?: 0
+				r.putAll([serial: hw.serialNumber ?: '--', model: hw.model ?: '--',
+				          health: ComView.words(health.summary), healthLevel: ComView.level(health.summary),
+				          power: ComView.words(hw.powerState), powerLevel: hw.powerState == 'ON' ? 'ok' : null,
+				          alerts: alerts, alertsLevel: alerts ? 'warn' : 'ok',
+				          support: w ? ComView.words(w.supportState) : '--', supportLevel: w ? ComView.level(w.supportState) : null,
+				          maintenance: sv.maintenanceMode == true ? 'Yes' : 'No', maintenanceLevel: sv.maintenanceMode == true ? 'warn' : null,
+				          connected: ((Map) (sv.state ?: [:])).connected != false,
+				          comUrl: s.serverPageUrl(r.comId as String)])
+			}
+			List<Map> matched = rows.findAll { it.serial }
+			Map totals = [hosts: rows.size(), matched: matched.size(),
+			              ok: matched.count { it.healthLevel == 'ok' }, warn: matched.count { it.healthLevel == 'warn' },
+			              bad: matched.count { it.healthLevel == 'bad' }, withAlerts: matched.count { it.alerts > 0 },
+			              alerts: matched.sum(0) { it.alerts }, maintenance: matched.count { it.maintenance == 'Yes' },
+			              supportIssues: matched.count { it.supportLevel == 'bad' || it.supportLevel == 'warn' },
+			              unmatched: rows.size() - matched.size()]
+			return base + [state: 'summary', rows: rows, totals: totals, notes: notes]
+		} catch (ComException e) {
+			return base + [state: 'error', error: e.message]
+		} catch (Throwable e) {
+			return base + [state: 'error', error: unexpected("cluster summary for ${clusterName}", e)]
+		}
+	}
+
+	/** The Morpheus side of a cluster row: which COM server, or why none. */
+	static Map clusterRow(HostFacts h, Map m) {
+		Map r = [hostId: h.id, hostName: h.name ?: h.hostname ?: "host ${h.id}".toString(),
+		         hostUrl: h.id != null ? "/infrastructure/servers/${h.id}".toString() : null, comId: m.comId]
+		if (m.comId) {
+			r.status = 'matched'
+			r.statusText = m.how == 'confirmed' ? 'Confirmed' : (m.how == 'override' ? 'Set by tag' : 'Probable')
+			r.statusLevel = m.how == 'probable' ? 'warn' : 'ok'
+		} else {
+			r.status = (m.state ?: 'nomatch') as String
+			r.statusText = [notHpe: 'Not an HPE server', building: 'Matching…', conflict: 'Several COM servers',
+			                nomatch: 'No COM match', error: 'Error', unconfigured: 'Not configured'][r.status] ?: (r.status as String)
+			r.statusLevel = r.status in ['notHpe', 'building'] ? null : 'warn'
+		}
+		return r
+	}
+
 	/**
 	 * Whether a tag override may be used for ACTIONS: the tagged COM server must be in the index, share at
 	 * least one of this host's globally unique MAC addresses, and no other COM server may have any of them.
@@ -233,7 +310,8 @@ class ComService {
 	// ---- actions (phase 2) ---------------------------------------------------------------------
 
 	static final Map<String, String> ACTION_LABELS = [uidOn: 'UID light on', uidOff: 'UID light off',
-		collectInventory: 'Collect inventory', iloReset: 'iLO reset']
+		collectInventory: 'Collect inventory', iloReset: 'iLO reset',
+		comMaintenanceOn: 'Enter COM maintenance', comMaintenanceOff: 'Exit COM maintenance']
 
 	/** Minimum time between two actions on the same COM server (0.3.1: no tight loops of iLO resets). */
 	static final long ACTION_COOLDOWN_MS = 30_000L
@@ -259,9 +337,16 @@ class ComService {
 				lastActionAt[comId] = now
 				cooling = comId
 			}
+			String already = maintenanceAlready(action, comId, s)   // after the cooldown, so repeated clicks don't each read COM
+			if (already) {
+				lastActionAt.remove(comId)   // a refused no-op doesn't use up the cooldown
+				return [ok: false, error: already]
+			}
 			if (m.how == 'override') log.warn("com-morpheus: ${user} is acting on host ${host?.id} ${host?.name} through a tag override (${m.why}), confirmed by ${m.corroboratedBy} MAC address(es)")
 			Map job = clientFor(s).createJob(action, comId)
-			log.info("com-morpheus: ${user} started ${action} (job ${job?.id}) on host ${host?.id} ${host?.name} = COM ${m.comId}")
+			String started = "com-morpheus: ${user} started ${action} (job ${job?.id}) on host ${host?.id} ${host?.name} = COM ${m.comId}"
+			if (action == 'comMaintenanceOn') log.warn("${started}: COM won't open support cases or send notifications for this server until maintenance ends")
+			else log.info(started)
 			return [ok: true, action: action, label: ACTION_LABELS[action], jobId: job?.id, state: job?.state ?: 'PENDING', comId: m.comId]
 		} catch (ComException e) {
 			if (cooling) lastActionAt.remove(cooling) // COM refused it: allow a retry straight away
@@ -271,6 +356,19 @@ class ComService {
 			if (cooling) lastActionAt.remove(cooling)
 			return [ok: false, error: unexpected("${user} ${action} on host ${host?.id}", e)]
 		}
+	}
+
+	/**
+	 * For COM maintenance actions: re-reads the server uncached and refuses a change to the state it's already in,
+	 * so a button left over from an older page can't do the opposite of what it says. Null when the action may go ahead.
+	 */
+	private String maintenanceAlready(String action, String comId, ComSettings s) {
+		if (!(action in ['comMaintenanceOn', 'comMaintenanceOff'])) return null
+		Map sv = clientFor(s).server(comId, 0L)
+		boolean on = sv?.maintenanceMode == true
+		if (action == 'comMaintenanceOn' && on) return 'This server is already in COM maintenance mode. Reload the page.'
+		if (action == 'comMaintenanceOff' && !on) return "This server isn't in COM maintenance mode. Reload the page."
+		return null
 	}
 
 	/** Logs an unexpected error in full and returns a short message with a reference to find it in the log. */

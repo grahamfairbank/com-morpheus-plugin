@@ -1,0 +1,56 @@
+{{!-- com-morpheus "HPE COM" cluster tab: read-only summary, one row per hypervisor host. No scripts. --}}
+<div class="com-morpheus com-morpheus-cluster">
+<style>
+.com-morpheus-cluster { padding: 8px 0; font-size: 13px; }
+.com-morpheus-cluster .vc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.com-morpheus-cluster .vc-chip { border: 1px solid rgba(128,128,128,.35); border-radius: 12px; padding: 2px 10px; white-space: nowrap; }
+.com-morpheus-cluster .vc-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: #8a8f98; }
+.com-morpheus-cluster .vc-ok .vc-dot, .com-morpheus-cluster .vc-dot.vc-ok { background: #01a982; }
+.com-morpheus-cluster .vc-warn .vc-dot, .com-morpheus-cluster .vc-dot.vc-warn { background: #f0a500; }
+.com-morpheus-cluster .vc-bad .vc-dot, .com-morpheus-cluster .vc-dot.vc-bad { background: #d0312d; }
+.com-morpheus-cluster table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.com-morpheus-cluster th, .com-morpheus-cluster td { text-align: left; padding: 4px 8px; vertical-align: top; border-bottom: 1px solid rgba(128,128,128,.18); }
+.com-morpheus-cluster th { font-weight: 600; }
+.com-morpheus-cluster .vc-muted { opacity: .7; }
+.com-morpheus-cluster .vc-note { padding: 8px 10px; border-left: 3px solid #8a8f98; background: rgba(128,128,128,.08); margin: 8px 0; }
+.com-morpheus-cluster .vc-note.vc-warn { border-left-color: #f0a500; }
+.com-morpheus-cluster .vc-note.vc-bad { border-left-color: #d0312d; }
+</style>
+
+{{#if isUnconfigured}}<div class="vc-note">The com-morpheus plugin has no COM API client yet. An administrator can add one in Administration &gt; Integrations &gt; Plugins.</div>{{/if}}
+{{#if isEmpty}}<div class="vc-note">This cluster has no hypervisor hosts yet.</div>{{/if}}
+{{#if isBuilding}}<div class="vc-note">Matching hosts to HPE Compute Ops Management: the plugin is reading the COM server list and inventories. This takes up to a minute the first time. Reopen this tab shortly.</div>{{/if}}
+{{#if isError}}<div class="vc-note vc-bad"><strong>Couldn't load HPE Compute Ops Management data.</strong><br>{{error}}</div>{{/if}}
+
+{{#if isSummary}}
+	<div class="vc-chips">
+		<span class="vc-chip">Hosts: {{totals.hosts}} ({{totals.matched}} in COM)</span>
+		<span class="vc-chip vc-ok"><span class="vc-dot"></span>Healthy: {{totals.ok}}</span>
+		{{#if totals.warn}}<span class="vc-chip vc-warn"><span class="vc-dot"></span>Warning: {{totals.warn}}</span>{{/if}}
+		{{#if totals.bad}}<span class="vc-chip vc-bad"><span class="vc-dot"></span>Critical: {{totals.bad}}</span>{{/if}}
+		<span class="vc-chip"><span class="vc-dot{{#if totals.alerts}} vc-warn{{else}} vc-ok{{/if}}"></span>Active alerts: {{totals.alerts}} on {{totals.withAlerts}} host(s)</span>
+		{{#if totals.supportIssues}}<span class="vc-chip vc-bad"><span class="vc-dot"></span>Support issues: {{totals.supportIssues}}</span>{{/if}}
+		{{#if totals.maintenance}}<span class="vc-chip vc-warn"><span class="vc-dot"></span>In COM maintenance: {{totals.maintenance}}</span>{{/if}}
+		{{#if totals.unmatched}}<span class="vc-chip vc-warn"><span class="vc-dot"></span>Not matched: {{totals.unmatched}}</span>{{/if}}
+	</div>
+	{{#each notes}}<div class="vc-note vc-warn">{{this}}</div>{{/each}}
+	<table>
+		<tr><th>Host</th><th>COM match</th><th>Model</th><th>Serial</th><th>Health</th><th>Power</th><th>Active alerts</th><th>Support</th><th>COM maintenance</th><th></th></tr>
+		{{#each rows}}
+		<tr>
+			<td>{{#if hostUrl}}<a href="{{hostUrl}}">{{hostName}}</a>{{else}}{{hostName}}{{/if}}</td>
+			<td class="{{#if statusLevel}}vc-{{statusLevel}}{{/if}}">{{#if statusLevel}}<span class="vc-dot"></span>{{/if}}{{statusText}}</td>
+			<td>{{#if model}}{{model}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td>{{#if serial}}{{serial}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td class="{{#if healthLevel}}vc-{{healthLevel}}{{/if}}">{{#if health}}<span class="vc-dot"></span>{{health}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td class="{{#if powerLevel}}vc-{{powerLevel}}{{/if}}">{{#if power}}{{#if powerLevel}}<span class="vc-dot"></span>{{/if}}{{power}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td class="{{#if serial}}vc-{{alertsLevel}}{{/if}}">{{#if serial}}<span class="vc-dot"></span>{{alerts}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td class="{{#if supportLevel}}vc-{{supportLevel}}{{/if}}">{{#if support}}{{#if supportLevel}}<span class="vc-dot"></span>{{/if}}{{support}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td class="{{#if maintenanceLevel}}vc-{{maintenanceLevel}}{{/if}}">{{#if maintenance}}{{#if maintenanceLevel}}<span class="vc-dot"></span>{{/if}}{{maintenance}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td>{{#if comUrl}}<a href="{{comUrl}}" target="_blank" rel="noopener noreferrer">Open in COM &#8599;</a>{{/if}}</td>
+		</tr>
+		{{/each}}
+	</table>
+	<p class="vc-muted">Each host's own <strong>HPE COM</strong> tab has its full details and actions. Data from HPE Compute Ops Management, up to a minute old.<br>com-morpheus is an unofficial community plugin, not an HPE product and not supported by HPE.</p>
+{{/if}}
+</div>

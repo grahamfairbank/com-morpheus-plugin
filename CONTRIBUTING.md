@@ -32,15 +32,15 @@ Useful opt-in checks:
   - New actions must be off unless enabled, gated by a permission, re-checked on the server, and limited to confirmed matches.
   - Actions that reconfigure servers or change power need a design discussion in an issue first. See [Why these actions](README.md#why-these-actions).
 - **The plugin never runs commands on hosts.**
-- **Tests:** add or update Spock specs for behaviour changes. The fixtures in `src/test/resources/fixtures` are anonymised, so keep them that way.
+- **Tests:** add or update Spock specs for behavior changes. The fixtures in `src/test/resources/fixtures` are anonymized, so keep them that way.
 - **No real data in issues, PRs, fixtures or screenshots.** Redact serial numbers, UUIDs, IPs, MACs, host and tenant names, API client IDs and tokens. Use solid boxes, not blur (see [docs/images/SCREENSHOT-SPEC.md](docs/images/SCREENSHOT-SPEC.md)).
-- **Licences:**
-  - Don't copy code or text from sources whose licence doesn't allow it.
+- **Licenses:**
+  - Don't copy code or text from sources whose license doesn't allow it.
   - The Morpheus plugin API is compile-only and must never be bundled into the jar.
   - Cite new sources in [NOTICE.md](NOTICE.md).
 - **Style:** follow the existing code. Keep comments short and explain *why*.
 - Update [CHANGELOG.md](CHANGELOG.md) and, for user-visible changes, the README or [docs/INSTALL.md](docs/INSTALL.md).
 
-## Licence of contributions
+## License of contributions
 
-By contributing, you agree that your contribution is licensed under the project's [MIT licence](LICENSE).
+By contributing, you agree that your contribution is licensed under the project's [MIT license](LICENSE).

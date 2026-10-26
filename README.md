@@ -6,9 +6,9 @@ A plugin for **HPE Morpheus** (including **HPE VM Essentials**) 9.0 and 9.1. It 
 
 ![HPE COM tab, Summary](docs/images/tab-summary.png)
 
-*Screenshots are rendered from anonymised test data.*
+*Screenshots are rendered from anonymized test data.*
 
-## What it does (0.2.0)
+## What it does (0.4.0)
 
 - **Appears only where it makes sense:** on hypervisor hosts whose hardware vendor is HPE and that aren't virtual machines.
 - **Finds the matching COM server automatically.** Morpheus already stores each host's factory network-adapter MAC addresses, and COM's inventory lists the same adapters. The plugin matches them, so it never needs access to the host itself. For special cases, a `com-serial=<serial>` or `com-id=<COM id>` tag on the host overrides the match.
@@ -23,7 +23,8 @@ A plugin for **HPE Morpheus** (including **HPE VM Essentials**) 9.0 and 9.1. It 
 - **Links:**
   - **Open in COM** goes to the server's page in COM.
   - **Open iLO** goes to the iLO's address, as COM's own Remote console link does.
-- **Optional action buttons:** UID light on/off, Collect inventory and iLO reset, run as COM jobs with live progress. See [Why these actions](#why-these-actions) and [Security](#security).
+- **Cluster summary (new in 0.4.0):** an **HPE COM** tab on each cluster's page lists every host with its COM match, model, serial, health, power, active alerts, support state and COM maintenance mode, with totals and links to each host and its COM page. It's read-only and uses three bulk COM reads for the whole cluster, not one per host.
+- **Optional action buttons:** UID light on/off, Collect inventory, iLO reset, and Enter/Exit COM maintenance (new in 0.4.0), run as COM jobs with live progress. See [Why these actions](#why-these-actions) and [Security](#security).
 
 | Health | Hardware | Storage |
 |---|---|---|
@@ -37,7 +38,7 @@ The action set is small on purpose. Each button **restores, observes or refreshe
 
 The iLO is the server's independent management brain. It sits beside the host and is used for monitoring, remote console, Redfish, and the link to Compute Ops Management. Like any embedded controller, it can occasionally become sluggish or unresponsive: the web UI stops loading, remote console sessions hang, or COM reports the server as disconnected. A reset is the controller's equivalent of "turn it off and on again", and it's almost ideal for a one-click action:
 
-- **It changes nothing, it restores.** The iLO restarts with exactly the settings, users, certificates and licences it had. No configuration is written, so there's nothing to review, roll back or drift.
+- **It changes nothing, it restores.** The iLO restarts with exactly the settings, users, certificates and licenses it had. No configuration is written, so there's nothing to review, roll back or drift.
 - **The workload is left alone.** Only the management controller restarts. The hypervisor host keeps running, and so do its VMs and storage. The only interruption is to management, for a minute or two: the iLO web UI, open remote console sessions and COM's connection. All of them come back on their own.
 - **It's a small, predictable blast radius.** One server's controller, one well-understood outcome, and repeating it is harmless.
 - **It goes through the front door.** The reset is a COM job under the same governed identity as everything else. It's recorded in COM, and in Morpheus with the user who asked for it. It needs no iLO credentials in Morpheus and no network path from a browser to the iLO.
@@ -47,8 +48,16 @@ It still asks for confirmation first, because a reset briefly drops the manageme
 
 ### UID light and Collect inventory
 
-- **UID light on/off** turns the blue locator LED on the chassis on or off. It's the safest possible action, and it answers the most practical data-centre question: *which box is it?*
+- **UID light on/off** turns the blue locator LED on the chassis on or off. It's the safest possible action, and it answers the most practical data-center question: *which box is it?*
 - **Collect inventory** asks COM to refresh what it knows about the server. Hardware, storage and network adapters are re-read, so the Hardware and Storage sub-tabs and the MAC matching reflect reality after a change, such as a replaced DIMM or NIC.
+
+### COM maintenance mode: quiet the alerts, not the server
+
+**Enter COM maintenance** and **Exit COM maintenance** switch the server's maintenance mode **in COM**. While it's on, COM suspends automatic support case creation, ServiceNow incidents and email notifications for that server ([HPE developer documentation](https://developer.greenlake.hpe.com/docs/greenlake/services/compute-ops-mgmt/jobs)). Use it before planned hardware work, so a pulled drive or a power-off doesn't open a support case.
+
+- **It changes COM's bookkeeping, not the server.** Nothing is written to the server, its iLO, the host or its VMs.
+- **It's separate from Morpheus maintenance mode on purpose.** The plugin never turns one on because of the other. Putting a host into Morpheus maintenance moves workloads; COM maintenance only mutes COM's notifications. Use whichever you need, or both.
+- **Both buttons ask to confirm,** because while COM maintenance is on, real faults on that server won't raise cases or notifications. The tab shows which state the server is in, and offers only the opposite action.
 
 ### What's deliberately left out
 
@@ -87,7 +96,7 @@ The plugin uses **one GreenLake API client for the whole Morpheus appliance**: e
 - **The client depends on its owner.** If that GreenLake user leaves or loses access, the plugin stops working. Until then, their name is on every action in COM.
 
 **Therefore:**
-1. Create the API client under a **dedicated GreenLake account** (a service or shared admin account under your organisation's rules), not a person's own account.
+1. Create the API client under a **dedicated GreenLake account** (a service or shared admin account under your organization's rules), not a person's own account.
 2. Give that account the **smallest COM role** that works: view-only while **Enable actions** is off; an operator role only if you turn actions on. Limit it to the relevant servers if your workspace supports scoped access.
 3. Grant **Run HPE COM actions** only to roles you would trust with that account.
 4. Keep Morpheus's log, which ties each job to a Morpheus user.
@@ -107,7 +116,8 @@ The plugin uses **one GreenLake API client for the whole Morpheus appliance**: e
   - **Ownership:** the user's tenant must own the host (or the user is in the master tenant), and the host must be a hypervisor host.
   - **Which server:** the host's COM server is found again from Morpheus data, never from the browser.
     - Only **confirmed** matches qualify: all of the host's MAC addresses match one COM server.
-    - A `com-serial` / `com-id` **tag** only changes which server is *shown*. For actions, a tag must agree with the host's own hardware: at least one of its MAC addresses must be in that server's inventory, and none in another server's. So a user who can edit tags can't aim a job at someone else's server. A tag still decides which server's data the tab *displays*. Because everything is read through the one shared GreenLake client, a user who can edit a host's tags can view (not act on) any server in the COM workspace. Limit the client's COM scope if that matters to you.
+    - A `com-serial` / `com-id` **tag** only changes which server is *shown*. For actions, a tag must agree with the host's own hardware: at least one of its MAC addresses must be in that server's inventory, and none in another server's. So a user who can edit tags can't aim a job at someone else's server. A tag still decides which server's data the tab *displays*. Because everything is read through the one shared GreenLake client, a user who can edit a host's tags can view (not act on) any server in the COM workspace, on the host tab and in the cluster summary. Limit the client's COM scope if that matters to you.
+  - **Cluster summary:** it lists only hosts owned by the cluster's tenant, and only users of that tenant (or the master tenant) can open it.
   - **Results:** job progress is shown only for that server's own jobs. Unknown, foreign and malformed jobs all get the same answer.
   - **Rate:** one action per server every 30 seconds.
   - **Errors:** unexpected errors return a reference number; the details stay in the Morpheus log.
@@ -123,21 +133,20 @@ Before 0.3.1, the action routes, permission model and browser script were review
 
 All of them are fixed in 0.3.1, each with tests, and the fixes were re-reviewed. Versions 0.2.0 and 0.3.0 are affected when **Enable actions** is on: upgrade to 0.3.1. Exploiting any of them required a signed-in Morpheus user with the actions permission; none was reachable anonymously.
 
+Before 0.4.0, the same reviewer checked the new cluster summary and COM maintenance actions. It found two Medium issues (the cluster tab didn't check tenants, and it read the workspace's whole alert history on each refresh) and two Low ones (COM maintenance needed more safeguards, and the tab appeared on clusters without HPE hosts). All were fixed before release, with tests, and no released version was affected.
+
 ## How it works
 
-```
-Browser ── Morpheus host page ── "HPE COM" tab (rendered on the Morpheus appliance)
-                                   │
-                         com-morpheus plugin
-                           ├─ MAC index: COM server list + each server's inventory MACs
-                           │    (built in the background, kept 6 h)
-                           ├─ matches the host's stored MACs to one COM server
-                           ├─ fetches that server, alerts, iLO security, warranty, baseline, group, inventory
-                           └─ action routes /plugin/comMorpheus/{caps,action,job} (POST, permission-checked)
-                                   │  HTTPS, OAuth2 client credentials
-                                   ▼
-                     HPE GreenLake COM API  (<region>.api.greenlake.hpe.com)
-```
+![How com-morpheus-plugin works: the browser, the plugin inside the Morpheus appliance, and the COM API in HPE GreenLake, with the matching, tab, cluster summary and action flows](docs/images/how-it-works.svg)
+
+In short:
+
+- **Only the Morpheus appliance talks to GreenLake,** over outbound HTTPS with one OAuth2 API client. The browser gets HTML rendered on the appliance, and sends action requests back to it.
+- **Matching uses data Morpheus and COM already have.** A host's stored network-interface MACs are compared with the adapter MACs in COM's inventory. Nothing runs on the host.
+- **Reads are cached** (1 minute for server state and alerts, up to 24 hours for firmware bundles), so opening tabs doesn't hammer the COM API.
+- **Actions pass a chain of checks on the appliance** before a COM job is created. See [Safeguards in the plugin](#safeguards-in-the-plugin).
+
+The infographic is generated by [`tools/draw-how-it-works.py`](tools/draw-how-it-works.py); edit the text there and run it again to update it.
 
 The source is commented throughout: `ComService` (matching and actions), `ComClient` (COM API), `ComController` (routes), `ComView` / `ComInventoryView` (what the tab shows).
 
@@ -168,7 +177,7 @@ Optional checks (opt-in, off by default):
 
 ## Sources, attribution and trademarks
 
-This plugin was written from scratch, using HPE's public documentation and the Morpheus plugin API as references. **[NOTICE.md](NOTICE.md)** lists every source, its licence and exactly how it was used, plus the trademark notices.
+This plugin was written from scratch, using HPE's public documentation and the Morpheus plugin API as references. **[NOTICE.md](NOTICE.md)** lists every source, its license and exactly how it was used, plus the trademark notices.
 
 ## License
 

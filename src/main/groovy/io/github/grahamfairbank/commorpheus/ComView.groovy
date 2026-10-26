@@ -33,7 +33,7 @@ class ComView {
 		return s
 	}
 
-	/** Status colour class for a health/security/support value. */
+	/** Status color class for a health/security/support value. */
 	static String level(Object v) {
 		String s = v?.toString()?.toUpperCase() ?: ''
 		if (s in ['OK', 'REDUNDANT', 'ACTIVE']) return 'ok'
@@ -165,6 +165,7 @@ class ComView {
 
 		return [
 			comId          : comId,
+			maintenanceOn  : server?.maintenanceMode == true,
 			comUrl         : settings.serverPageUrl(comId),
 			iloUrl         : bmc.ip ? "https://${bmc.ip}/" : null,
 			name           : server?.name,
@@ -193,7 +194,7 @@ class ComView {
 		return ['/plugin' + ComController.PROBE, ComController.PROBE, '/plugin' + ComController.PROBE_OPEN, ComController.PROBE_OPEN]
 	}
 
-	/** Adds is<State> flags (Handlebars has no equality helper) and the match colour. */
+	/** Adds is<State> flags (Handlebars has no equality helper) and the match color. */
 	static Map withFlags(Map model) {
 		Map m = new LinkedHashMap(model ?: [state: 'error', error: 'No data'])
 		String st = (m.state ?: 'error') as String

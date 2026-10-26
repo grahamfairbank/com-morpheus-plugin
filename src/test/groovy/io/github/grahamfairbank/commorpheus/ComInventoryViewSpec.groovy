@@ -2,7 +2,7 @@ package io.github.grahamfairbank.commorpheus
 
 import spock.lang.Specification
 
-/** Hardware and Storage from the (anonymised) inventory of the reference DL360 Gen10. */
+/** Hardware and Storage from the (anonymized) inventory of the reference DL360 Gen10. */
 class ComInventoryViewSpec extends Specification {
 
 	Map inv = (Map) Fixtures.json('com-inventory.json')

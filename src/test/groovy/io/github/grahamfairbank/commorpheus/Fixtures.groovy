@@ -7,7 +7,7 @@ import java.util.concurrent.AbstractExecutorService
 import java.util.concurrent.TimeUnit
 
 /**
- * Test data from a live COM workspace and VME host (2026-10-22/23), anonymised: serials TST0000AB?,
+ * Test data from a live COM workspace and VME host (2026-10-22/23), anonymized: serials TST0000AB?,
  * IPs from documentation ranges, MAC vendor prefixes replaced consistently in both COM and VME data.
  * The matched server is 869121-B21+TST0000ABM.
  */
@@ -50,6 +50,8 @@ class FakeCom implements ComTransport {
 	int jobPostStatus = 201                  // status for POST /v1/jobs
 	Map<String, Map> jobs = [:]              // created jobs by id
 	List<Map> jobBodies = []                 // bodies POSTed to /v1/jobs
+	Boolean maintenanceMode = null           // overrides the server fixture's maintenanceMode when set
+	int filteredAlertsStatus = 200           // status for /v1/alerts?filter=... (400 = COM refuses the filter)
 
 	HttpResult send(String method, String url, Map<String, String> headers, String body) {
 		calls << "${method} ${url}".toString()
@@ -80,7 +82,11 @@ class FakeCom implements ComTransport {
 		String id = URLDecoder.decode(p.tokenize('/')[2] ?: '', 'UTF-8')
 		switch (p) {
 			case '/v1/servers': return page('com-servers.json', q)
-			case ~'/v1/servers/[^/]+': return id == Fixtures.MATCHED_ID ? ok(Fixtures.text('com-server.json')) : new HttpResult(404, '{}')
+			case ~'/v1/servers/[^/]+':
+				if (id != Fixtures.MATCHED_ID) return new HttpResult(404, '{}')
+				Map sv = (Map) Fixtures.json('com-server.json')
+				if (maintenanceMode != null) sv.maintenanceMode = maintenanceMode
+				return ok(JsonOutput.toJson(sv))
 			case ~'/v1/servers/[^/]+/inventory':
 				if (id == Fixtures.MATCHED_ID) return ok(Fixtures.text('com-inventory.json'))
 				int n = id.hashCode() & 0xff
@@ -90,6 +96,9 @@ class FakeCom implements ComTransport {
 			case '/v1beta2/server-warranty': return page('com-warranty.json', q)
 			case ~'/v1/firmware-bundles/[^/]+': return ok('{"id":"b","name":"bundle","releaseVersion":"2025.01.00.00"}')
 			case '/v1/groups': return page('com-groups.json', q)
+			case '/v1/alerts':
+				if (q.filter && filteredAlertsStatus != 200) return new HttpResult(filteredAlertsStatus, '{"message":"bad filter"}')
+				return page('com-alerts.json', q)
 			case ~'/v1/jobs/[^/]+': return jobs[id] ? ok(JsonOutput.toJson(jobs[id])) : new HttpResult(404, '{}')
 			case ~'/v1/groups/[^/]+/devices': return ok('{"items":[],"count":0,"total":0}')
 		}
@@ -98,7 +107,7 @@ class FakeCom implements ComTransport {
 
 	private static HttpResult ok(String body) { new HttpResult(200, body) }
 
-	/** Serves a collection fixture honouring offset/limit, like COM. */
+	/** Serves a collection fixture honoring offset/limit, like COM. */
 	private static HttpResult page(String fixture, Map q) {
 		Map all = (Map) Fixtures.json(fixture)
 		List items = (List) all.items

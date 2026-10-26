@@ -60,12 +60,33 @@ class ComClient {
 
 	// ---- endpoints (all read-only) -------------------------------------------------------------
 
-	/** Every server in the workspace (paged). Only the fields the index and matching need. */
+	/**
+	 * Every server in the workspace (paged), with only the fields the index, matching and cluster summary need.
+	 * One query for both, so a cluster summary can reuse a fresh index read and vice versa.
+	 */
 	List<Map> servers(long ttlMs) {
-		return listAll("${BASE}/v1/servers?select=${enc('id,name,hardware,host,state,lastFullInventoryCollectionAt')}", ttlMs)
+		return listAll("${BASE}/v1/servers?select=${enc('id,name,hardware,host,state,maintenanceMode,connectionType,lastFullInventoryCollectionAt')}", ttlMs)
 	}
 
 	Map server(String id, long ttlMs) { (Map) getJson("${BASE}/v1/servers/${enc(id)}", ttlMs) }
+
+	/** The cluster summary's server list (0.4.0): the same query as {@link #servers}. */
+	List<Map> serverSummaries(long ttlMs) { servers(ttlMs) }
+
+	/**
+	 * Active (uncleared) alerts across the workspace, with only the fields needed to count them per server
+	 * (0.4.0). COM documents `clearedAt eq null` and `select` for this collection. If COM refuses the
+	 * query (400), falls back to every alert, which the caller filters itself.
+	 */
+	List<Map> activeAlerts(long ttlMs) {
+		try {
+			return listAll("${BASE}/v1/alerts?filter=${enc('clearedAt eq null')}&select=${enc('id,serverId,device/id,clearedAt')}", ttlMs, 1000)
+		} catch (ComException e) {
+			if (e.status != 400) throw e
+			log.warn("com-morpheus: COM refused the filtered alerts query (${e.message}); reading all alerts instead")
+			return listAll("${BASE}/v1/alerts", ttlMs, 1000)
+		}
+	}
 
 	List<Map> alerts(String id, long ttlMs) { listAll("${BASE}/v1/servers/${enc(id)}/alerts", ttlMs, 1000) }
 
@@ -91,7 +112,11 @@ class ComClient {
 		uidOn           : 'a46b210a-b0c7-4223-ab43-c4c1e77e680c',
 		uidOff          : 'fd837434-a2f2-4bc8-b1b4-ec068bd036aa',
 		collectInventory: 'd6595f1b-84e6-4587-ade5-656e2a5ea20d',
-		iloReset        : '394b492c-8d88-4e4e-a775-1a95cb5f1065'
+		iloReset        : '394b492c-8d88-4e4e-a775-1a95cb5f1065',
+		// COM maintenance mode: COM's own flag only (suspends automatic support cases, ServiceNow incidents and
+		// email notifications for the server). Never coupled to Morpheus maintenance mode (HLD D5).
+		comMaintenanceOn : '4eb92af1-1ce4-4cb0-8581-fb5a7dcdbf2b',
+		comMaintenanceOff: '2798720f-b090-427d-b210-e48d33ce2f27'
 	]
 
 	/** Starts a COM job on a server. Returns the job (id, state, ...). Never cached. */
@@ -125,7 +150,16 @@ class ComClient {
 	void clearCache() { cache.clear() }
 
 	/** Paged GET of a collection: follows offset until total is reached (or MAX_PAGES as a safety stop). */
+	/** One lock per collection, so viewers arriving together share one read instead of each paging it (0.4.0). */
+	private final java.util.concurrent.ConcurrentHashMap<String, Object> listLocks = new java.util.concurrent.ConcurrentHashMap<>()
+
 	List<Map> listAll(String path, long ttlMs, int pageSize = PAGE) {
+		if (ttlMs <= 0) return listPages(path, ttlMs, pageSize)
+		Object lock = listLocks.computeIfAbsent(path) { new Object() }
+		synchronized (lock) { return listPages(path, ttlMs, pageSize) }   // a waiter then finds the pages cached
+	}
+
+	private List<Map> listPages(String path, long ttlMs, int pageSize) {
 		List<Map> all = []
 		int offset = 0
 		for (int page = 0; page < MAX_PAGES; page++) {
@@ -238,5 +272,6 @@ class ComClient {
 	}
 
 	/** URL-encodes a path segment or value. COM server ids contain '+', which must be %2B. */
-	static String enc(String s) { URLEncoder.encode(s ?: '', 'UTF-8') }
+	/** Percent-encodes a path segment or query value; spaces become %20 (not '+'), as COM's OData filters expect. */
+	static String enc(String s) { URLEncoder.encode(s ?: '', 'UTF-8').replace('+', '%20') }
 }

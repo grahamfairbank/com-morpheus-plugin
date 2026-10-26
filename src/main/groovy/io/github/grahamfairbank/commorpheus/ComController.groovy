@@ -98,7 +98,7 @@ class ComController implements PluginController {
 	}
 
 	/**
-	 * The plugin's own defence against cross-site and forged requests (0.3.1), on top of Morpheus's CSRF filter:
+	 * The plugin's own defense against cross-site and forged requests (0.3.1), on top of Morpheus's CSRF filter:
 	 * POST only (an unknown method is refused), the X-Requested-With header that a cross-site form or image
 	 * can't send, and, when the browser says where the request came from, the same origin as the appliance.
 	 * Returns null when the request passes.

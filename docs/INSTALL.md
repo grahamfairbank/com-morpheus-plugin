@@ -11,7 +11,7 @@ You need:
 
 > **The plugin acts in COM as the GreenLake user who owns this API client,** for all Morpheus users and tenants. A personal API client inherits its creator's roles. COM's log will show that user for every read and every action. See [Security](../README.md#security) in the README.
 
-1. Sign in to HPE GreenLake as a **dedicated account** for this integration (a service or shared admin account under your organisation's rules), not your personal account. Give that account the **smallest COM role** that works:
+1. Sign in to HPE GreenLake as a **dedicated account** for this integration (a service or shared admin account under your organization's rules), not your personal account. Give that account the **smallest COM role** that works:
    - **view-only** while actions are off;
    - an **operator** role (one that can run server jobs) only if you will turn on **Enable actions**.
 
@@ -41,7 +41,7 @@ Open the plugin in **Administration → Integrations → Plugins** and edit its 
 | COM web UI URL | leave blank; set only if "Open in COM" opens the wrong region |
 | HTTP proxy | `http://proxy:port` if the manager needs one to reach GreenLake (no proxy authentication) |
 | Only show to roles with the com-morpheus permission | off = everyone who can see the host; on = only roles granted **com-morpheus: View HPE COM tab** |
-| Enable actions | off by default. On: shows UID light on/off, Collect inventory and iLO reset buttons to roles with **com-morpheus: Run HPE COM actions** at full access (Administration → Roles) |
+| Enable actions | off by default. On: shows UID light on/off, Collect inventory, iLO reset and Enter/Exit COM maintenance buttons to roles with **com-morpheus: Run HPE COM actions** at full access (Administration → Roles) |
 | Show the tab on non-HPE hosts | diagnostics only; shows what the plugin sees on every hypervisor host |
 | Show plugin route diagnostics on the tab | diagnostics only (0.1.1+); tests whether the browser can reach the plugin's web routes |
 
@@ -58,13 +58,16 @@ Why only these actions, and why iLO reset is a safe one, is explained under [Why
 
 ## 5. Check it
 
-![The HPE COM tab, Summary sub-tab (rendered from anonymised test data)](images/tab-summary.png)
+![The HPE COM tab, Summary sub-tab (rendered from anonymized test data)](images/tab-summary.png)
 
 
 1. Open a physical HPE host in **Infrastructure → Hosts**. The **HPE COM** tab may be under the ▼ overflow menu.
 2. The first time, the tab says it is matching hosts to COM. It reads the COM server list and each server's inventory, which takes up to a minute. Reopen the tab.
 3. You should see the server's summary, with **Match: confirmed by MAC**.
-4. If actions are on and your role has the actions permission, the **UID light on / off, Collect inventory, iLO reset** buttons appear above the sub-tabs, after a page reload. Try **UID light on** first. It only lights the blue locator LED, and the status beside the buttons follows the COM job until it's done.
+4. If actions are on and your role has the actions permission, the **UID light on / off, Collect inventory, iLO reset** and **Enter COM maintenance** (or **Exit COM maintenance**) buttons appear above the sub-tabs, after a page reload. Try **UID light on** first. It only lights the blue locator LED, and the status beside the buttons follows the COM job until it's done.
+5. Open a cluster in **Infrastructure → Clusters** and choose its **HPE COM** tab (new in 0.4.0). It lists every host in the cluster with its COM match, health, alerts, support state and COM maintenance mode. Hosts that aren't HPE servers are listed as such.
+
+How the pieces fit together is shown in the [How it works](../README.md#how-it-works) infographic.
 
 ## Troubleshooting
 

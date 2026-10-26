@@ -47,6 +47,8 @@ class ComActionsSpec extends Specification {
 		given:
 		service.tab(Fixtures.host(), ON)
 
+		fake.maintenanceMode = action == 'comMaintenanceOff'   // so the maintenance change isn't a no-op
+
 		expect:
 		service.startAction(Fixtures.host(), ON, action, 'alice').ok
 		fake.jobBodies.last().jobTemplate == template
@@ -56,6 +58,8 @@ class ComActionsSpec extends Specification {
 		'uidOff'           | 'fd837434-a2f2-4bc8-b1b4-ec068bd036aa'
 		'collectInventory' | 'd6595f1b-84e6-4587-ade5-656e2a5ea20d'
 		'iloReset'         | '394b492c-8d88-4e4e-a775-1a95cb5f1065'
+		'comMaintenanceOn' | '4eb92af1-1ce4-4cb0-8581-fb5a7dcdbf2b'
+		'comMaintenanceOff'| '2798720f-b090-427d-b210-e48d33ce2f27'
 	}
 
 	def "refuses when actions are off, unknown, unmatched or only probable"() {
@@ -71,7 +75,54 @@ class ComActionsSpec extends Specification {
 		service.startAction(Fixtures.host(), ON, 'powerOff', 'a').error.contains('Unknown action')
 		service.startAction(nomatch, ON, 'uidOn', 'a').error.contains("isn't matched")
 		service.startAction(probable, ON, 'uidOn', 'a').error.contains('only probable')
+		service.startAction(nomatch, ON, 'comMaintenanceOn', 'a').error.contains("isn't matched")
+		service.startAction(probable, ON, 'comMaintenanceOn', 'a').error.contains('only probable')
 		fake.jobBodies.isEmpty()
+	}
+
+	def "COM maintenance: refused when the server is already in that state (read uncached)"() {
+		given:
+		service.tab(Fixtures.host(), ON)
+		fake.maintenanceMode = on
+
+		when:
+		Map r = service.startAction(Fixtures.host(), ON, action, 'a')
+
+		then:
+		r.ok == allowed
+		allowed || r.error.contains(words)
+		fake.jobBodies.size() == (allowed ? 1 : 0)
+
+		where:
+		on    | action              | allowed | words
+		true  | 'comMaintenanceOn'  | false   | 'already in COM maintenance'
+		false | 'comMaintenanceOff' | false   | "isn't in COM maintenance"
+		false | 'comMaintenanceOn'  | true    | ''
+		true  | 'comMaintenanceOff' | true    | ''
+	}
+
+	def "a stale cached server record doesn't decide the maintenance check"() {
+		given:
+		service.tab(Fixtures.host(), ON)   // caches the server with maintenanceMode false
+		fake.maintenanceMode = true        // then someone turns it on in COM
+
+		expect:
+		service.startAction(Fixtures.host(), ON, 'comMaintenanceOn', 'a').error.contains('already in COM maintenance')
+		service.startAction(Fixtures.host(), ON, 'comMaintenanceOff', 'a').ok   // the refusal didn't use up the cooldown
+	}
+
+	def "COM maintenance: the uncached state read happens only after the cooldown check"() {
+		given:
+		service.tab(Fixtures.host(), ON)
+		service.startAction(Fixtures.host(), ON, 'uidOn', 'a')
+		int reads = fake.calls.count { it =~ /\/v1\/servers\/[^\/?]+$/ }
+
+		when:
+		Map r = service.startAction(Fixtures.host(), ON, 'comMaintenanceOn', 'a')
+
+		then:
+		r.error.contains('less than 30 seconds')
+		fake.calls.count { it =~ /\/v1\/servers\/[^\/?]+$/ } == reads
 	}
 
 	def "COM refusing the job (role without job rights) is explained"() {

@@ -11,9 +11,11 @@
   var API = '/plugin/comMorpheus';
   // 0.3.1: everything the page could influence is fixed here instead of read from the DOM, so injected
   // markup elsewhere in Morpheus can't trigger an action or a probe.
-  var ACTIONS = { uidOn: true, uidOff: true, collectInventory: true, iloReset: true };
+  var ACTIONS = { uidOn: true, uidOff: true, collectInventory: true, iloReset: true, comMaintenanceOn: true, comMaintenanceOff: true };
   var CONFIRM = {
-    iloReset: "Reset this server's iLO? The host and its VMs keep running, but the iLO, its web UI and COM's connection to it drop for a minute or two."
+    iloReset: "Reset this server's iLO? The host and its VMs keep running, but the iLO, its web UI and COM's connection to it drop for a minute or two.",
+    comMaintenanceOn: "Put this server in COM maintenance mode? COM suspends automatic support case creation, ServiceNow incidents and email notifications for it until you take it out. This doesn't change Morpheus maintenance mode, the host or its VMs.",
+    comMaintenanceOff: "Take this server out of COM maintenance mode? COM resumes automatic support cases, ServiceNow incidents and email notifications for it."
   };
   var PROBE_URLS = ['/plugin/comMorpheus/probe', '/comMorpheus/probe', '/plugin/comMorpheus/probeOpen', '/comMorpheus/probeOpen'];
   var ROOT = '.com-morpheus'; // the plugin's own tab container

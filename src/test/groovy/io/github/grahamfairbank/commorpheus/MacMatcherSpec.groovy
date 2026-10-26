@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class MacMatcherSpec extends Specification {
 
-	def "normalises and classifies MACs"() {
+	def "normalizes and classifies MACs"() {
 		expect:
 		MacMatcher.normalize(raw) == norm
 		MacMatcher.isGloballyUnique(raw) == global

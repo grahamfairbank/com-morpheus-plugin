@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1339" viewBox="0 0 1400 1339" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title>How com-morpheus-plugin works</title>
+<desc>Architecture and request flows of com-morpheus-plugin: the browser, the plugin inside the Morpheus appliance, and the HPE Compute Ops Management API in GreenLake.</desc>
+<defs>
+<marker id="a2a6bb8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a6bb8"/></marker>
+<marker id="a3f7a1d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3f7a1d"/></marker>
+<marker id="aa35f00" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a35f00"/></marker>
+</defs>
+<rect width="1400" height="1339" fill="#ffffff"/>
+<text x="24" y="48" font-size="30" font-weight="bold" fill="#1b1f24">How com-morpheus-plugin works</text>
+<text x="24" y="76" font-size="15" fill="#57606a">Shows HPE Compute Ops Management (COM) data for physical HPE servers inside Morpheus, and runs a few safe COM jobs.</text>
+<rect x="24" y="108" width="306" height="660" rx="14" fill="#eaf2fc" stroke="#2a6bb8" stroke-width="2"/>
+<text x="42" y="138" font-size="19" font-weight="bold" fill="#2a6bb8" text-anchor="start">① Your browser</text>
+<text x="42" y="158" font-size="13" font-weight="normal" fill="#57606a" text-anchor="start">Morpheus web UI: nothing to install</text>
+<rect x="400" y="108" width="600" height="660" rx="14" fill="#ecf6f2" stroke="#1c7a5c" stroke-width="2"/>
+<text x="418" y="138" font-size="19" font-weight="bold" fill="#1c7a5c" text-anchor="start">② Morpheus appliance</text>
+<text x="418" y="158" font-size="13" font-weight="normal" fill="#57606a" text-anchor="start">com-morpheus-plugin jar, running inside Morpheus</text>
+<rect x="1070" y="108" width="306" height="660" rx="14" fill="#eef7e6" stroke="#3f7a1d" stroke-width="2"/>
+<text x="1088" y="138" font-size="19" font-weight="bold" fill="#3f7a1d" text-anchor="start">③ HPE GreenLake (cloud)</text>
+<text x="1088" y="158" font-size="13" font-weight="normal" fill="#57606a" text-anchor="start">Compute Ops Management API</text>
+<rect x="38" y="174" width="278" height="123" rx="8" fill="#ffffff" stroke="#2a6bb8" stroke-width="1.2"/>
+<text x="52" y="203" font-size="15" font-weight="bold" fill="#2a6bb8" text-anchor="start">Host page › HPE COM tab</text>
+<text x="52" y="226" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="226" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Seven sub-tabs: Summary, Health,</text>
+<text x="66" y="243" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Firmware, Hardware, Storage,</text>
+<text x="66" y="260" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Support, Alerts</text>
+<text x="52" y="281" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="281" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Links: Open in COM, Open iLO</text>
+<rect x="38" y="309" width="278" height="143" rx="8" fill="#ffffff" stroke="#2a6bb8" stroke-width="1.2"/>
+<text x="52" y="338" font-size="15" font-weight="bold" fill="#2a6bb8" text-anchor="start">Cluster page › HPE COM tab</text>
+<text x="52" y="360" font-size="12" font-weight="bold" fill="#2a6bb8" text-anchor="start">New in 0.4.0</text>
+<text x="52" y="381" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="381" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">One row per host: COM match,</text>
+<text x="66" y="398" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">health, power, active alerts,</text>
+<text x="66" y="415" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">support, COM maintenance</text>
+<text x="52" y="436" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="436" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Totals across the cluster</text>
+<rect x="38" y="464" width="278" height="216" rx="8" fill="#ffffff" stroke="#2a6bb8" stroke-width="1.2"/>
+<text x="52" y="493" font-size="15" font-weight="bold" fill="#2a6bb8" text-anchor="start">Action buttons (optional)</text>
+<text x="52" y="516" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="516" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">UID light on / off</text>
+<text x="52" y="537" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="537" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Collect inventory</text>
+<text x="52" y="558" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="558" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">iLO reset (asks to confirm)</text>
+<text x="52" y="579" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="66" y="579" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Enter / Exit COM maintenance (asks</text>
+<text x="66" y="596" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">to confirm)</text>
+<text x="52" y="616" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Each click is a POST that carries</text>
+<text x="52" y="632" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Morpheus&#x27;s CSRF token, X-Requested-With</text>
+<text x="52" y="648" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">and the tab&#x27;s signed action token. Job</text>
+<text x="52" y="664" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">progress shows live.</text>
+<rect x="414" y="174" width="279" height="140" rx="8" fill="#ffffff" stroke="#1c7a5c" stroke-width="1.2"/>
+<text x="428" y="203" font-size="15" font-weight="bold" fill="#1c7a5c" text-anchor="start">Tab providers</text>
+<text x="428" y="226" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="442" y="226" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Decide where a tab appears: HPE</text>
+<text x="442" y="243" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">hardware, physical hypervisor</text>
+<text x="442" y="260" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">host, role permission</text>
+<text x="428" y="281" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="442" y="281" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Render the tab&#x27;s HTML on the</text>
+<text x="442" y="298" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">appliance (Handlebars templates)</text>
+<rect x="414" y="326" width="279" height="140" rx="8" fill="#ffffff" stroke="#1c7a5c" stroke-width="1.2"/>
+<text x="428" y="355" font-size="15" font-weight="bold" fill="#1c7a5c" text-anchor="start">Script loader</text>
+<text x="428" y="378" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="442" y="378" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Loads com-morpheus.js with</text>
+<text x="442" y="395" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Morpheus&#x27;s CSP nonce</text>
+<text x="428" y="416" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="442" y="416" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">The script acts only inside the</text>
+<text x="442" y="433" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">COM tab, with a fixed list of</text>
+<text x="442" y="450" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">actions</text>
+<rect x="414" y="478" width="279" height="105" rx="8" fill="#ffffff" stroke="#1c7a5c" stroke-width="1.2"/>
+<text x="428" y="507" font-size="15" font-weight="bold" fill="#1c7a5c" text-anchor="start">Routes  /plugin/comMorpheus/…</text>
+<text x="428" y="529" font-size="12" font-weight="bold" fill="#1c7a5c" text-anchor="start">caps · action · job</text>
+<text x="428" y="550" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="442" y="550" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">POST only; every request passes</text>
+<text x="442" y="567" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">the security gates in D below</text>
+<rect x="707" y="174" width="279" height="161" rx="8" fill="#ffffff" stroke="#1c7a5c" stroke-width="1.2"/>
+<text x="721" y="203" font-size="15" font-weight="bold" fill="#1c7a5c" text-anchor="start">ComService</text>
+<text x="721" y="226" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="226" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Matches hosts to COM servers</text>
+<text x="721" y="247" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="247" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Builds tab and cluster data, with</text>
+<text x="735" y="264" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">caching</text>
+<text x="721" y="285" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="285" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Action rules: signed token,</text>
+<text x="735" y="302" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">confirmed match only, 30 s</text>
+<text x="735" y="319" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">cooldown per server</text>
+<rect x="707" y="347" width="279" height="123" rx="8" fill="#ffffff" stroke="#1c7a5c" stroke-width="1.2"/>
+<text x="721" y="376" font-size="15" font-weight="bold" fill="#1c7a5c" text-anchor="start">MAC index + matcher</text>
+<text x="721" y="399" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="399" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">COM server list + every server&#x27;s</text>
+<text x="735" y="416" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">adapter MACs</text>
+<text x="721" y="437" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="437" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Built in the background; refreshed</text>
+<text x="735" y="454" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">every 6 hours</text>
+<rect x="707" y="482" width="279" height="144" rx="8" fill="#ffffff" stroke="#1c7a5c" stroke-width="1.2"/>
+<text x="721" y="511" font-size="15" font-weight="bold" fill="#1c7a5c" text-anchor="start">ComClient</text>
+<text x="721" y="534" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="534" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">OAuth2 client-credentials token</text>
+<text x="721" y="555" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="555" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">HTTPS to the COM API, optional</text>
+<text x="735" y="572" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">proxy</text>
+<text x="721" y="593" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="735" y="593" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Reads cached from 1 minute to 24</text>
+<text x="735" y="610" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">hours</text>
+<rect x="1084" y="174" width="278" height="123" rx="8" fill="#ffffff" stroke="#3f7a1d" stroke-width="1.2"/>
+<text x="1098" y="203" font-size="15" font-weight="bold" fill="#3f7a1d" text-anchor="start">GreenLake sign-in (SSO)</text>
+<text x="1098" y="226" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="1112" y="226" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Issues a token for the API client</text>
+<text x="1112" y="243" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">(client ID + secret)</text>
+<text x="1098" y="264" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="1112" y="264" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">One shared identity for the whole</text>
+<text x="1112" y="281" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">appliance</text>
+<rect x="1084" y="309" width="278" height="143" rx="8" fill="#ffffff" stroke="#3f7a1d" stroke-width="1.2"/>
+<text x="1098" y="338" font-size="15" font-weight="bold" fill="#3f7a1d" text-anchor="start">COM API: reads</text>
+<text x="1098" y="360" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="start">/servers · /servers/{id}</text>
+<text x="1098" y="380" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="start">/servers/{id}/inventory</text>
+<text x="1098" y="400" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="start">/servers/{id}/security-parameters</text>
+<text x="1098" y="420" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="start">/alerts · warranty · firmware bundles ·</text>
+<text x="1098" y="436" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="start">groups</text>
+<rect x="1084" y="464" width="278" height="139" rx="8" fill="#ffffff" stroke="#3f7a1d" stroke-width="1.2"/>
+<text x="1098" y="493" font-size="15" font-weight="bold" fill="#3f7a1d" text-anchor="start">COM API: jobs</text>
+<text x="1098" y="515" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="start">POST /jobs · GET /jobs/{id}</text>
+<text x="1098" y="536" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">•</text>
+<text x="1112" y="536" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Six fixed job templates: UID on,</text>
+<text x="1112" y="553" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">UID off, Collect inventory, iLO</text>
+<text x="1112" y="570" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">reset, COM maintenance on, COM</text>
+<text x="1112" y="587" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">maintenance off</text>
+<rect x="414" y="642" width="572" height="112" rx="8" fill="#ffffff" stroke="#57606a" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="428" y="666" font-size="15" font-weight="bold" fill="#57606a" text-anchor="start">Morpheus data the plugin reads (it never writes)</text>
+<text x="428" y="689" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Hosts and their hardware vendor · network-interface MAC addresses · tags</text>
+<text x="428" y="706" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">com-serial / com-id · cluster membership · the user&#x27;s tenant, roles and</text>
+<text x="428" y="723" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">permissions · plugin settings (the API client secret stays here and never</text>
+<text x="428" y="740" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">reaches a browser)</text>
+<text x="38" y="734" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">The browser never calls GreenLake. Open iLO</text>
+<text x="38" y="750" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">is a plain link to the iLO&#x27;s address.</text>
+<text x="1084" y="734" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Outbound HTTPS (443) from the appliance</text>
+<text x="1084" y="750" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">only. Nothing in GreenLake calls Morpheus.</text>
+<line x1="334" y1="248" x2="396" y2="248" stroke="#2a6bb8" stroke-width="2" marker-end="url(#a2a6bb8)" marker-start="url(#a2a6bb8)"/>
+<text x="365.0" y="222" font-size="12" font-weight="bold" fill="#2a6bb8" text-anchor="middle">tab</text>
+<text x="365.0" y="237" font-size="12" font-weight="bold" fill="#2a6bb8" text-anchor="middle">HTML</text>
+<line x1="334" y1="538" x2="396" y2="538" stroke="#a35f00" stroke-width="2" marker-end="url(#aa35f00)"/>
+<text x="365.0" y="512" font-size="12" font-weight="bold" fill="#a35f00" text-anchor="middle">action</text>
+<text x="365.0" y="527" font-size="12" font-weight="bold" fill="#a35f00" text-anchor="middle">POST</text>
+<line x1="1004" y1="348" x2="1066" y2="348" stroke="#3f7a1d" stroke-width="2" marker-end="url(#a3f7a1d)" marker-start="url(#a3f7a1d)"/>
+<text x="1035.0" y="322" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="middle">HTTPS</text>
+<text x="1035.0" y="337" font-size="12" font-weight="bold" fill="#3f7a1d" text-anchor="middle">443</text>
+<text x="700.0" y="812" font-size="22" font-weight="bold" fill="#1b1f24" text-anchor="middle">What happens, step by step</text>
+<rect x="24.0" y="834" width="326.0" height="342" rx="12" fill="#ecf6f2" stroke="#1c7a5c" stroke-width="2"/>
+<text x="38.0" y="863" font-size="15" font-weight="bold" fill="#1c7a5c" text-anchor="start">A.  Matching a host to a COM server</text>
+<text x="38.0" y="886" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">1.</text>
+<text x="52.0" y="886" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Morpheus already stores each host&#x27;s</text>
+<text x="52.0" y="903" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">network-interface MAC addresses.</text>
+<text x="38.0" y="924" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">2.</text>
+<text x="52.0" y="924" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">COM&#x27;s inventory lists every server&#x27;s</text>
+<text x="52.0" y="941" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">network-adapter MACs.</text>
+<text x="38.0" y="962" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">3.</text>
+<text x="52.0" y="962" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">The plugin compares globally unique MACs</text>
+<text x="52.0" y="979" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">only. It skips locally administered</text>
+<text x="52.0" y="996" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">(virtual) ones.</text>
+<text x="38.0" y="1017" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">4.</text>
+<text x="52.0" y="1017" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Result: Confirmed (all MACs on one COM</text>
+<text x="52.0" y="1034" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">server), Probable, Conflict or No match.</text>
+<text x="38.0" y="1055" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">5.</text>
+<text x="52.0" y="1055" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">A com-serial= or com-id= tag can choose</text>
+<text x="52.0" y="1072" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">the server shown. For actions, the tag</text>
+<text x="52.0" y="1089" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">must agree with the host&#x27;s own MACs.</text>
+<text x="38.0" y="1109" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">No agent, no SSH, no iLO login: only data</text>
+<text x="38.0" y="1125" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Morpheus and COM already have.</text>
+<rect x="366.0" y="834" width="326.0" height="342" rx="12" fill="#eaf2fc" stroke="#2a6bb8" stroke-width="2"/>
+<text x="380.0" y="863" font-size="15" font-weight="bold" fill="#2a6bb8" text-anchor="start">B.  Opening a host&#x27;s tab</text>
+<text x="380.0" y="886" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">1.</text>
+<text x="394.0" y="886" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Morpheus asks the tab provider whether to</text>
+<text x="394.0" y="903" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">show the tab: HPE hardware, physical</text>
+<text x="394.0" y="920" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">hypervisor host, role permission.</text>
+<text x="380.0" y="941" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">2.</text>
+<text x="394.0" y="941" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">ComService looks up the host&#x27;s match. On</text>
+<text x="394.0" y="958" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">first use the index builds in the</text>
+<text x="394.0" y="975" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">background and the tab says so.</text>
+<text x="380.0" y="996" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">3.</text>
+<text x="394.0" y="996" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">ComClient reads the server, alerts, iLO</text>
+<text x="394.0" y="1013" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">security, warranty, firmware baseline,</text>
+<text x="394.0" y="1030" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">group and inventory.</text>
+<text x="380.0" y="1051" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">4.</text>
+<text x="394.0" y="1051" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Reads are cached: server and alerts 1</text>
+<text x="394.0" y="1068" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">min, security 5 min, groups 1 h, warranty</text>
+<text x="394.0" y="1085" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">6 h, bundles 24 h.</text>
+<text x="380.0" y="1106" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">5.</text>
+<text x="394.0" y="1106" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">The appliance renders the HTML and adds a</text>
+<text x="394.0" y="1123" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">signed action token for that host.</text>
+<rect x="708.0" y="834" width="326.0" height="342" rx="12" fill="#eaf2fc" stroke="#2a6bb8" stroke-width="2"/>
+<text x="722.0" y="863" font-size="15" font-weight="bold" fill="#2a6bb8" text-anchor="start">C.  Cluster summary  (0.4.0)</text>
+<text x="722.0" y="886" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">1.</text>
+<text x="736.0" y="886" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Morpheus lists the cluster&#x27;s hypervisor</text>
+<text x="736.0" y="903" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">hosts.</text>
+<text x="722.0" y="924" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">2.</text>
+<text x="736.0" y="924" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Three bulk COM reads cover the whole</text>
+<text x="736.0" y="941" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">cluster: server list, active alerts,</text>
+<text x="736.0" y="958" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">warranties. There&#x27;s no call per host.</text>
+<text x="722.0" y="979" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">3.</text>
+<text x="736.0" y="979" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">One row per host: match, model, serial,</text>
+<text x="736.0" y="996" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">health, power, alerts, support, COM</text>
+<text x="736.0" y="1013" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">maintenance, links to the host and to</text>
+<text x="736.0" y="1030" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">COM.</text>
+<text x="722.0" y="1051" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">4.</text>
+<text x="736.0" y="1051" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Totals: hosts in COM, health, hosts with</text>
+<text x="736.0" y="1068" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">alerts, support issues.</text>
+<text x="722.0" y="1088" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Read-only. No buttons on this tab.</text>
+<rect x="1050.0" y="834" width="326.0" height="342" rx="12" fill="#fff5e1" stroke="#a35f00" stroke-width="2"/>
+<text x="1064.0" y="863" font-size="15" font-weight="bold" fill="#a35f00" text-anchor="start">D.  Running an action</text>
+<text x="1064.0" y="886" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Every gate must pass, in this order:</text>
+<text x="1064.0" y="907" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">✓</text>
+<text x="1078.0" y="907" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Enable actions is on (administrator</text>
+<text x="1078.0" y="924" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">setting)</text>
+<text x="1064.0" y="945" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">✓</text>
+<text x="1078.0" y="945" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">POST with X-Requested-With, same-origin,</text>
+<text x="1078.0" y="962" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Morpheus CSRF</text>
+<text x="1064.0" y="983" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">✓</text>
+<text x="1078.0" y="983" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Role has Run HPE COM actions (full)</text>
+<text x="1064.0" y="1004" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">✓</text>
+<text x="1078.0" y="1004" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Signed action token for this host</text>
+<text x="1064.0" y="1025" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">✓</text>
+<text x="1078.0" y="1025" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Host is in the user&#x27;s tenant and is a</text>
+<text x="1078.0" y="1042" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">hypervisor host</text>
+<text x="1064.0" y="1063" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">✓</text>
+<text x="1078.0" y="1063" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Confirmed MAC match (a tag must agree)</text>
+<text x="1064.0" y="1084" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">✓</text>
+<text x="1078.0" y="1084" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">No action on this server in the last 30 s</text>
+<text x="1064.0" y="1105" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">→</text>
+<text x="1078.0" y="1105" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">ComService creates the COM job and logs</text>
+<text x="1078.0" y="1122" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">the Morpheus user who asked.</text>
+<text x="1064.0" y="1143" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">→</text>
+<text x="1078.0" y="1143" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">The browser polls the job&#x27;s progress</text>
+<text x="1078.0" y="1160" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">(this server&#x27;s jobs only).</text>
+<rect x="24" y="1200" width="1352" height="87" rx="12" fill="#fff5e1" stroke="#a35f00" stroke-width="2"/>
+<text x="38" y="1229" font-size="15" font-weight="bold" fill="#a35f00" text-anchor="start">Who acts in COM?</text>
+<text x="38" y="1253" font-size="14" font-weight="normal" fill="#1b1f24" text-anchor="start">Every read and every job uses one GreenLake API client that the administrator configures in the plugin settings. COM sees that client, not the Morpheus user. Morpheus roles</text>
+<text x="38" y="1271" font-size="14" font-weight="normal" fill="#1b1f24" text-anchor="start">decide who can see the tabs (View HPE COM data) and who can press the buttons (Run HPE COM actions). Each job is logged in Morpheus with the user who started it.</text>
+<text x="24" y="1317" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Unofficial community project: not an HPE or Morpheus Data product, and not endorsed or supported by HPE. HPE, GreenLake, Compute Ops Management, Morpheus and iLO are trademarks of Hewlett Packard Enterprise. See NOTICE.md.</text>
+</svg>

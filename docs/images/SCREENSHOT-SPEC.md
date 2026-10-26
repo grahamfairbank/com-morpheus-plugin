@@ -1,6 +1,6 @@
 # Screenshot specification
 
-The tab screenshots in this folder (`tab-*.png`) are **rendered from anonymised test data**. They contain no customer or corporate information, and they're regenerated with `PREVIEW_OUT`. Only the shots below need a real Morpheus instance. They come from a corporate system, so they must be redacted strictly before they're added.
+The tab screenshots in this folder (`tab-*.png`) are **rendered from anonymized test data**. They contain no customer or corporate information, and they're regenerated with `PREVIEW_OUT`. Only the shots below need a real Morpheus instance. They come from a corporate system, so they must be redacted strictly before they're added.
 
 ## Shots wanted
 
@@ -21,15 +21,15 @@ The tab screenshots in this folder (`tab-*.png`) are **rendered from anonymised 
 
 ## Redact all of these (solid boxes only)
 
-Cover with an **opaque solid rectangle** (black or grey). **Do not** blur, pixelate or use semi-transparent highlights: those can be reversed or read.
+Cover with an **opaque solid rectangle** (black or gray). **Do not** blur, pixelate or use semi-transparent highlights: those can be reversed or read.
 
 | Category | Examples on these screens |
 |---|---|
-| People | Your name, user names, e-mail addresses, the avatar or initials in the top bar, "owner" fields |
-| Organisation | Tenant, cloud, group, cluster and site names; GreenLake workspace name or ID; company or domain names |
+| People | Your name, user names, email addresses, the avatar or initials in the top bar, "owner" fields |
+| Organization | Tenant, cloud, group, cluster and site names; GreenLake workspace name or ID; company or domain names |
 | Hosts | Host names and FQDNs, IP addresses, the appliance URL, iLO names and addresses, the iSCSI IQN |
 | Hardware identity | Serial numbers, UUIDs, COM ids (they contain the serial), MAC addresses, asset tags, product IDs, if you prefer |
-| Accounts and keys | API client ID, workspace ID, tokens, subscription keys, licence keys |
+| Accounts and keys | API client ID, workspace ID, tokens, subscription keys, license keys |
 | Content | Alert texts or messages that name hosts or people |
 | Version banner | Optional: the appliance version and build in the footer, if your policy treats them as sensitive |
 

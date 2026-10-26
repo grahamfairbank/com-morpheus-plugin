@@ -95,12 +95,21 @@
 		<span class="vc-chip vc-{{matchLevel}}" title="{{matchWhy}}"><span class="vc-dot"></span>Match: {{#if matchConfirmed}}confirmed by MAC{{/if}}{{#if matchProbable}}probable{{/if}}{{#if matchOverride}}set by tag{{/if}}</span>
 	</div>
 
+	{{#if maintenanceOn}}
+	<div class="vc-note vc-warn"><strong>COM maintenance mode is on.</strong> While it's on, faults on this server don't open HPE support cases or send COM notifications. Exit COM maintenance when the work is done.</div>
+	{{/if}}
+
 	{{#if actionsEnabled}}
 	<div class="vc-actions" data-server-id="{{hostId}}" data-token="{{actionToken}}" hidden>
 		<button type="button" class="btn btn-default btn-sm vc-act" data-action="uidOn">UID light on</button>
 		<button type="button" class="btn btn-default btn-sm vc-act" data-action="uidOff">UID light off</button>
 		<button type="button" class="btn btn-default btn-sm vc-act" data-action="collectInventory">Collect inventory</button>
 		<button type="button" class="btn btn-default btn-sm vc-act" data-action="iloReset">iLO reset</button>
+		{{#if maintenanceOn}}
+		<button type="button" class="btn btn-default btn-sm vc-act" data-action="comMaintenanceOff">Exit COM maintenance</button>
+		{{else}}
+		<button type="button" class="btn btn-default btn-sm vc-act" data-action="comMaintenanceOn">Enter COM maintenance</button>
+		{{/if}}
 		<span class="vc-act-status" aria-live="polite"></span>
 	</div>
 	{{/if}}
