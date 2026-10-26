@@ -28,7 +28,11 @@
 		<span class="vc-chip vc-ok"><span class="vc-dot"></span>Healthy: {{totals.ok}}</span>
 		{{#if totals.warn}}<span class="vc-chip vc-warn"><span class="vc-dot"></span>Warning: {{totals.warn}}</span>{{/if}}
 		{{#if totals.bad}}<span class="vc-chip vc-bad"><span class="vc-dot"></span>Critical: {{totals.bad}}</span>{{/if}}
+		{{#if totals.alertsKnown}}
 		<span class="vc-chip"><span class="vc-dot{{#if totals.alerts}} vc-warn{{else}} vc-ok{{/if}}"></span>Active alerts: {{totals.alerts}} on {{totals.withAlerts}} host(s)</span>
+		{{else}}
+		<span class="vc-chip">Active alerts: unknown</span>
+		{{/if}}
 		{{#if totals.supportIssues}}<span class="vc-chip vc-bad"><span class="vc-dot"></span>Support issues: {{totals.supportIssues}}</span>{{/if}}
 		{{#if totals.maintenance}}<span class="vc-chip vc-warn"><span class="vc-dot"></span>In COM maintenance: {{totals.maintenance}}</span>{{/if}}
 		{{#if totals.unmatched}}<span class="vc-chip vc-warn"><span class="vc-dot"></span>Not matched: {{totals.unmatched}}</span>{{/if}}
@@ -44,7 +48,7 @@
 			<td>{{#if serial}}{{serial}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
 			<td class="{{#if healthLevel}}vc-{{healthLevel}}{{/if}}">{{#if health}}<span class="vc-dot"></span>{{health}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
 			<td class="{{#if powerLevel}}vc-{{powerLevel}}{{/if}}">{{#if power}}{{#if powerLevel}}<span class="vc-dot"></span>{{/if}}{{power}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
-			<td class="{{#if serial}}vc-{{alertsLevel}}{{/if}}">{{#if serial}}<span class="vc-dot"></span>{{alerts}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
+			<td class="{{#if serial}}vc-{{alertsLevel}}{{/if}}">{{#if serial}}{{#if alertsLevel}}<span class="vc-dot"></span>{{/if}}{{alerts}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
 			<td class="{{#if supportLevel}}vc-{{supportLevel}}{{/if}}">{{#if support}}{{#if supportLevel}}<span class="vc-dot"></span>{{/if}}{{support}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
 			<td class="{{#if maintenanceLevel}}vc-{{maintenanceLevel}}{{/if}}">{{#if maintenance}}{{#if maintenanceLevel}}<span class="vc-dot"></span>{{/if}}{{maintenance}}{{else}}<span class="vc-muted">--</span>{{/if}}</td>
 			<td>{{#if comUrl}}<a href="{{comUrl}}" target="_blank" rel="noopener noreferrer">Open in COM &#8599;</a>{{/if}}</td>

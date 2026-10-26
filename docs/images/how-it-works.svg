@@ -194,18 +194,19 @@
 <text x="736.0" y="886" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Morpheus lists the cluster&#x27;s hypervisor</text>
 <text x="736.0" y="903" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">hosts.</text>
 <text x="722.0" y="924" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">2.</text>
-<text x="736.0" y="924" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Three bulk COM reads cover the whole</text>
-<text x="736.0" y="941" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">cluster: server list, active alerts,</text>
-<text x="736.0" y="958" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">warranties. There&#x27;s no call per host.</text>
-<text x="722.0" y="979" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">3.</text>
-<text x="736.0" y="979" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">One row per host: match, model, serial,</text>
-<text x="736.0" y="996" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">health, power, alerts, support, COM</text>
-<text x="736.0" y="1013" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">maintenance, links to the host and to</text>
-<text x="736.0" y="1030" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">COM.</text>
-<text x="722.0" y="1051" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">4.</text>
-<text x="736.0" y="1051" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Totals: hosts in COM, health, hosts with</text>
-<text x="736.0" y="1068" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">alerts, support issues.</text>
-<text x="722.0" y="1088" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Read-only. No buttons on this tab.</text>
+<text x="736.0" y="924" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Server list and warranties: one read each</text>
+<text x="736.0" y="941" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">for the whole cluster. Active alerts: one</text>
+<text x="736.0" y="958" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">workspace query where COM allows it,</text>
+<text x="736.0" y="975" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">otherwise per host.</text>
+<text x="722.0" y="996" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">3.</text>
+<text x="736.0" y="996" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">One row per host: match, model, serial,</text>
+<text x="736.0" y="1013" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">health, power, alerts, support, COM</text>
+<text x="736.0" y="1030" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">maintenance, links to the host and to</text>
+<text x="736.0" y="1047" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">COM.</text>
+<text x="722.0" y="1068" font-size="13" font-weight="bold" fill="#1b1f24" text-anchor="start">4.</text>
+<text x="736.0" y="1068" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Totals: hosts in COM, health, hosts with</text>
+<text x="736.0" y="1085" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">alerts, support issues.</text>
+<text x="722.0" y="1105" font-size="12" font-weight="normal" fill="#57606a" text-anchor="start">Read-only. No buttons on this tab.</text>
 <rect x="1050.0" y="834" width="326.0" height="342" rx="12" fill="#fff5e1" stroke="#a35f00" stroke-width="2"/>
 <text x="1064.0" y="863" font-size="15" font-weight="bold" fill="#a35f00" text-anchor="start">D.  Running an action</text>
 <text x="1064.0" y="886" font-size="13" font-weight="normal" fill="#1b1f24" text-anchor="start">Every gate must pass, in this order:</text>

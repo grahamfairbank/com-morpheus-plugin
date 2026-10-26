@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1 (2026-10-26)
+
+- **Fix: cluster summary showed "Couldn't load alerts: … HTTP 400" and 0 alerts.** Some COM workspaces refuse the workspace-wide alerts query (`/v1/alerts`), even though COM's API reference documents it. The cluster tab now falls back to each matched server's own alerts, the same endpoint the host tab uses (and shares its one-minute cache), and doesn't retry the workspace query for six hours. It never reads the full alert history.
+- When alerts can't be read at all, the tab now says **Active alerts: unknown** and shows `--` per host, instead of a misleading 0.
+- The "How it works" infographic and README describe the fallback.
+- **Known issue documented:** the workspace alerts HTTP 400 and its impact (none from 0.4.1 on). See [Known issues](README.md#known-issues).
+- **README rewritten** to explain what the plugin is for, with a short getting-started path and a screenshot tour, including the new **cluster summary** and **COM maintenance** screenshots. All screenshots were regenerated from anonymized test data; the host tab ones now show the maintenance button.
+
 ## 0.4.0 (2026-10-26)
 
 - **New: cluster summary tab.** Each cluster's page gets an **HPE COM** tab with one row per hypervisor host: COM match, model, serial, health, power, active alerts, support state and COM maintenance mode, plus totals and links to each host and to its COM page. It's read-only and needs the view permission. It lists only hosts that belong to the cluster's own tenant, and users of other tenants can't open it (master-tenant users can). It appears only on clusters with at least one physical HPE host, unless "show on any host" is on. It makes three bulk COM reads for the whole cluster (server list, active alerts only, warranties), cached for a minute; viewers who arrive together share one read.

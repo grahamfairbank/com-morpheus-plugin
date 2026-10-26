@@ -75,17 +75,11 @@ class ComClient {
 
 	/**
 	 * Active (uncleared) alerts across the workspace, with only the fields needed to count them per server
-	 * (0.4.0). COM documents `clearedAt eq null` and `select` for this collection. If COM refuses the
-	 * query (400), falls back to every alert, which the caller filters itself.
+	 * (0.4.0). COM documents `clearedAt eq null` and `select` for this collection, but some workspaces answer
+	 * HTTP 400 to it (seen 2026-10-26, with and without the filter); callers then read alerts per server.
 	 */
 	List<Map> activeAlerts(long ttlMs) {
-		try {
-			return listAll("${BASE}/v1/alerts?filter=${enc('clearedAt eq null')}&select=${enc('id,serverId,device/id,clearedAt')}", ttlMs, 1000)
-		} catch (ComException e) {
-			if (e.status != 400) throw e
-			log.warn("com-morpheus: COM refused the filtered alerts query (${e.message}); reading all alerts instead")
-			return listAll("${BASE}/v1/alerts", ttlMs, 1000)
-		}
+		return listAll("${BASE}/v1/alerts?filter=${enc('clearedAt eq null')}&select=${enc('id,serverId,device/id,clearedAt')}", ttlMs, 1000)
 	}
 
 	List<Map> alerts(String id, long ttlMs) { listAll("${BASE}/v1/servers/${enc(id)}/alerts", ttlMs, 1000) }

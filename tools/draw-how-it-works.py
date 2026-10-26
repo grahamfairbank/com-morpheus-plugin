@@ -247,7 +247,7 @@ flows = [
     ]),
     ("C.  Cluster summary  (0.4.0)", BLUE, [
         ("Morpheus lists the cluster's hypervisor hosts.", "1"),
-        ("Three bulk COM reads cover the whole cluster: server list, active alerts, warranties. There's no call per host.", "2"),
+        ("Server list and warranties: one read each for the whole cluster. Active alerts: one workspace query where COM allows it, otherwise per host.", "2"),
         ("One row per host: match, model, serial, health, power, alerts, support, COM maintenance, links to the host and to COM.", "3"),
         ("Totals: hosts in COM, health, hosts with alerts, support issues.", "4"),
         ("Read-only. No buttons on this tab.", "note"),

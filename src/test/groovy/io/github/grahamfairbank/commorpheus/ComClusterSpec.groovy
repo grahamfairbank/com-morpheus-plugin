@@ -25,10 +25,10 @@ class ComClusterSpec extends Specification {
 
 	def "one row per hypervisor host, from bulk COM reads"() {
 		given:
-		service.cluster('houston-cluster1', hosts(), ON)   // first call builds the index
+		service.cluster('cluster-a', hosts(), ON)   // first call builds the index
 
 		when:
-		Map m = service.cluster('houston-cluster1', hosts(), ON)
+		Map m = service.cluster('cluster-a', hosts(), ON)
 		Map row = m.rows.find { it.hostId == 109L }
 
 		then:
@@ -45,7 +45,7 @@ class ComClusterSpec extends Specification {
 		row.comUrl.endsWith('/serverDetail/869121-B21+TST0000ABM')
 		m.rows.find { it.hostId == 110L }.statusText == 'No COM match'
 		m.rows.find { it.hostId == 111L }.statusText == 'Not an HPE server'
-		m.totals == [hosts: 3, matched: 1, ok: 1, warn: 0, bad: 0, withAlerts: 1, alerts: 8, maintenance: 0, supportIssues: 1, unmatched: 2]
+		m.totals == [hosts: 3, matched: 1, ok: 1, warn: 0, bad: 0, alertsKnown: true, withAlerts: 1, alerts: 8, maintenance: 0, supportIssues: 1, unmatched: 2]
 		m.notes == []
 	}
 
@@ -73,7 +73,7 @@ class ComClusterSpec extends Specification {
 		q.contains('limit=1000')
 	}
 
-	def "alerts: falls back to the full list if COM refuses the filter"() {
+	def "alerts: if COM refuses the workspace query (400), reads matched servers' own alerts and doesn't retry for a while"() {
 		given:
 		fake.filteredAlertsStatus = 400
 		service.cluster('c', hosts(), ON)
@@ -84,8 +84,27 @@ class ComClusterSpec extends Specification {
 		then:
 		m.state == 'summary'
 		m.notes == []
+		m.totals.alertsKnown
 		m.rows.find { it.hostId == 109L }.alerts == 8
-		fake.calls.any { it.endsWith('/v1/alerts?offset=0&limit=1000') }
+		fake.calls.count { it.contains('/v1/alerts?') } == 1                      // refused once, not retried
+		fake.calls.any { it.contains('/v1/servers/869121-B21%2BTST0000ABM/alerts') }
+		!fake.calls.any { it.endsWith('/v1/alerts?offset=0&limit=1000') }           // never the full history
+	}
+
+	def "alerts: other failures show 'unknown', never a misleading 0"() {
+		given:
+		fake.filteredAlertsStatus = 500
+		service.cluster('c', hosts(), ON)
+		Map m = service.cluster('c', hosts(), ON)
+		HandlebarsRenderer r = new HandlebarsRenderer('renderer', getClass().classLoader)
+		ViewModel<Map> vm = new ViewModel<>()
+		vm.object = ComView.withFlags(m)
+
+		expect:
+		m.notes.any { it.startsWith("Couldn't load alerts") }
+		!m.totals.alertsKnown
+		m.rows.find { it.hostId == 109L }.alerts == '--'
+		r.renderTemplate('hbs/com-cluster', vm).html.contains('Active alerts: unknown')
 	}
 
 	def "tenant: only the cluster owner's servers are listed; other tenants can't open the tab"() {

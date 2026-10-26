@@ -236,11 +236,8 @@ class ComService {
 			List<String> notes = []
 			Map<String, Map> servers = ((List<Map>) (optional(notes, 'server list') { c.serverSummaries(SUMMARY_TTL_MS) } ?: []))
 				.collectEntries { [(it.id as String): it] }
-			Map<String, Integer> alertCounts = [:]
-			((List<Map>) (optional(notes, 'alerts') { c.activeAlerts(SUMMARY_TTL_MS) } ?: [])).each { Map a ->
-				String sid = (a.serverId ?: ((Map) (a.device ?: [:])).id) as String
-				if (sid && !a.clearedAt && a.cleared != true) alertCounts[sid] = (alertCounts[sid] ?: 0) + 1
-			}
+			List<String> comIds = rows.findAll { it.comId && servers[it.comId as String] }.collect { it.comId as String }.unique()
+			Map<String, Integer> alertCounts = activeAlertCounts(c, comIds, notes)   // null = unknown
 			Map<String, Map> warranty = ((List<Map>) (optional(notes, 'warranty') { c.warranties(WARRANTY_TTL_MS) } ?: []))
 				.collectEntries { [(it.deviceId as String): it] }
 			rows.each { Map r ->
@@ -250,11 +247,11 @@ class ComService {
 				Map hw = (Map) (sv.hardware ?: [:])
 				Map health = (Map) (hw.health ?: [:])
 				Map w = warranty[r.comId as String]
-				int alerts = alertCounts[r.comId as String] ?: 0
+				Integer alerts = alertCounts == null ? null : (alertCounts[r.comId as String] ?: 0)
 				r.putAll([serial: hw.serialNumber ?: '--', model: hw.model ?: '--',
 				          health: ComView.words(health.summary), healthLevel: ComView.level(health.summary),
 				          power: ComView.words(hw.powerState), powerLevel: hw.powerState == 'ON' ? 'ok' : null,
-				          alerts: alerts, alertsLevel: alerts ? 'warn' : 'ok',
+				          alerts: alerts == null ? '--' : alerts, alertsLevel: alerts == null ? null : (alerts ? 'warn' : 'ok'),
 				          support: w ? ComView.words(w.supportState) : '--', supportLevel: w ? ComView.level(w.supportState) : null,
 				          maintenance: sv.maintenanceMode == true ? 'Yes' : 'No', maintenanceLevel: sv.maintenanceMode == true ? 'warn' : null,
 				          connected: ((Map) (sv.state ?: [:])).connected != false,
@@ -263,8 +260,10 @@ class ComService {
 			List<Map> matched = rows.findAll { it.serial }
 			Map totals = [hosts: rows.size(), matched: matched.size(),
 			              ok: matched.count { it.healthLevel == 'ok' }, warn: matched.count { it.healthLevel == 'warn' },
-			              bad: matched.count { it.healthLevel == 'bad' }, withAlerts: matched.count { it.alerts > 0 },
-			              alerts: matched.sum(0) { it.alerts }, maintenance: matched.count { it.maintenance == 'Yes' },
+			              bad: matched.count { it.healthLevel == 'bad' },
+			              alertsKnown: alertCounts != null,
+			              withAlerts: matched.count { it.alerts instanceof Integer && it.alerts > 0 },
+			              alerts: matched.sum(0) { it.alerts instanceof Integer ? it.alerts : 0 }, maintenance: matched.count { it.maintenance == 'Yes' },
 			              supportIssues: matched.count { it.supportLevel == 'bad' || it.supportLevel == 'warn' },
 			              unmatched: rows.size() - matched.size()]
 			return base + [state: 'summary', rows: rows, totals: totals, notes: notes]
@@ -370,6 +369,43 @@ class ComService {
 		if (action == 'comMaintenanceOff' && !on) return "This server isn't in COM maintenance mode. Reload the page."
 		return null
 	}
+
+	/** When COM last refused the workspace alerts query (HTTP 400); -1 = never. Per-server reads are used for a while after. */
+	private volatile long bulkAlertsRefusedAt = -1L
+	static final long BULK_ALERTS_RETRY_MS = 6L * 3600_000L
+
+	/**
+	 * Active alerts per COM server id, for the cluster summary. Tries one workspace-wide query; if COM refuses it
+	 * (400), reads each matched server's own alerts (the host tab's endpoint, sharing its cache) and doesn't try the
+	 * workspace query again for six hours. Returns null, with a note, when alerts can't be read at all.
+	 */
+	private Map<String, Integer> activeAlertCounts(ComClient c, List<String> comIds, List<String> notes) {
+		long now = clock.call()
+		if (bulkAlertsRefusedAt < 0 || now - bulkAlertsRefusedAt >= BULK_ALERTS_RETRY_MS) {
+			try {
+				Map<String, Integer> counts = [:]
+				c.activeAlerts(SUMMARY_TTL_MS).each { Map a ->
+					String sid = (a.serverId ?: ((Map) (a.device ?: [:])).id) as String
+					if (sid && activeAlert(a)) counts[sid] = (counts[sid] ?: 0) + 1
+				}
+				return counts
+			} catch (ComException e) {
+				if (e.status != 400) { notes << "Couldn't load alerts: ${e.message}".toString(); return null }
+				bulkAlertsRefusedAt = now
+				log.info("com-morpheus: COM refused the workspace alerts query (${e.message}); reading alerts per server for the next 6 hours")
+			}
+		}
+		try {
+			Map<String, Integer> counts = [:]
+			comIds.each { String id -> counts[id] = c.alerts(id, ALERTS_TTL_MS).count { Map a -> activeAlert(a) } as Integer }
+			return counts
+		} catch (ComException e) {
+			notes << "Couldn't load alerts: ${e.message}".toString()
+			return null
+		}
+	}
+
+	private static boolean activeAlert(Map a) { !a.clearedAt && a.cleared != true }
 
 	/** Logs an unexpected error in full and returns a short message with a reference to find it in the log. */
 	static String unexpected(String what, Throwable e) {

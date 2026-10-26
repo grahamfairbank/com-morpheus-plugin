@@ -1,14 +1,55 @@
 # com-morpheus-plugin
 
+**See every HPE server the way HPE Compute Ops Management sees it, right inside Morpheus.** Health, firmware, hardware, warranty and alerts for each physical host, a status rollup for each cluster, and a few safe one-click fixes. No console switching, no agents, no iLO passwords.
+
+[![Latest release](https://img.shields.io/github/v/release/grahamfairbank/com-morpheus-plugin?label=release)](../../releases/latest)
+[![Morpheus 9.0 | 9.1](https://img.shields.io/badge/Morpheus-9.0%20%7C%209.1-0d7b6a)](#requirements)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
+
 > **Unofficial community project.** Not an HPE or Morpheus Data product. Not developed, endorsed or supported by Hewlett Packard Enterprise. Provided as is, without warranty. HPE, HPE GreenLake, Compute Ops Management, Morpheus, VM Essentials, ProLiant and iLO are trademarks of Hewlett Packard Enterprise; see [NOTICE.md](NOTICE.md) for trademarks and for every source this project was built from.
 
-A plugin for **HPE Morpheus** (including **HPE VM Essentials**) 9.0 and 9.1. It adds an **HPE COM** tab to the page of each physical HPE server host. The tab shows that server as **HPE Compute Ops Management (COM)** sees it, so you don't have to switch consoles: health, firmware, hardware, storage, support and alerts. Optional buttons run a few safe COM jobs.
+![Cluster summary: every host in a cluster with its COM health, alerts, support and maintenance state](docs/images/cluster-summary.png)
 
-![HPE COM tab, Summary](docs/images/tab-summary.png)
+*All screenshots are rendered from anonymized test data.*
 
-*Screenshots are rendered from anonymized test data.*
+## Why you'll want it
 
-## What it does (0.4.0)
+- **One pane of glass.** The people who run your VMs see what COM knows about the hardware underneath, on the same page: health, iLO security, firmware, processors, memory, drives, warranty and active alerts.
+- **The whole cluster at a glance.** One table answers "is any host in this cluster unhealthy, alerting, out of support or in maintenance?", with a link to each host and to its COM page.
+- **Nothing to install on your hosts.** The plugin matches each Morpheus host to its COM server using the network-adapter MAC addresses both systems already know. No agents, no SSH, no IPMI, no iLO credentials in Morpheus.
+- **Safe, one-click fixes.** Light the UID LED to find the box, refresh COM's inventory, reset a stuck iLO, or put a server into COM maintenance before hardware work. Every button restores, observes or refreshes; none reconfigures. [Why these actions?](#why-these-actions)
+- **Secure by design.** The API secret never leaves the Morpheus appliance. Buttons are off by default and gated by a Morpheus role permission. Every action request passes a chain of server-side checks. Two independent security reviews have been done, and every finding is fixed. [Security details](#security)
+- **Drop-in.** One jar for Morpheus 9.0 and 9.1, with a settings form, two role permissions, and a test suite that runs against both plugin APIs.
+
+## Get started
+
+1. Download `com-morpheus-plugin-<version>.jar` from the [latest release](../../releases/latest).
+2. In HPE GreenLake, create an API client for Compute Ops Management.
+3. In Morpheus, upload the jar (Administration → Integrations → Plugins), enter the client ID and secret, and grant the **com-morpheus** permissions to the right roles.
+4. Open a physical HPE host or a cluster: the **HPE COM** tab is there.
+
+Step-by-step instructions: **[docs/INSTALL.md](docs/INSTALL.md)**. How the pieces fit together: **[How it works](#how-it-works)**.
+
+## Tour
+
+**Host tab.** The COM server page, mirrored in seven sub-tabs, with links to COM and the iLO and optional action buttons:
+
+![HPE COM host tab, Summary](docs/images/tab-summary.png)
+
+**COM maintenance mode.** Mute COM's support cases and notifications for a server during planned work. The tab makes it obvious while it's on:
+
+![COM maintenance mode on, with the Exit COM maintenance button](docs/images/tab-maintenance.png)
+
+| Health | Hardware | Storage |
+|---|---|---|
+| ![Health](docs/images/tab-health.png) | ![Hardware](docs/images/tab-hardware.png) | ![Storage](docs/images/tab-storage.png) |
+
+| Firmware | Support | Alerts |
+|---|---|---|
+| ![Firmware](docs/images/tab-firmware.png) | ![Support](docs/images/tab-support.png) | ![Alerts](docs/images/tab-alerts.png) |
+
+## What it does (0.4.1)
 
 - **Appears only where it makes sense:** on hypervisor hosts whose hardware vendor is HPE and that aren't virtual machines.
 - **Finds the matching COM server automatically.** Morpheus already stores each host's factory network-adapter MAC addresses, and COM's inventory lists the same adapters. The plugin matches them, so it never needs access to the host itself. For special cases, a `com-serial=<serial>` or `com-id=<COM id>` tag on the host overrides the match.
@@ -23,12 +64,8 @@ A plugin for **HPE Morpheus** (including **HPE VM Essentials**) 9.0 and 9.1. It 
 - **Links:**
   - **Open in COM** goes to the server's page in COM.
   - **Open iLO** goes to the iLO's address, as COM's own Remote console link does.
-- **Cluster summary (new in 0.4.0):** an **HPE COM** tab on each cluster's page lists every host with its COM match, model, serial, health, power, active alerts, support state and COM maintenance mode, with totals and links to each host and its COM page. It's read-only and uses three bulk COM reads for the whole cluster, not one per host.
+- **Cluster summary (new in 0.4.0):** an **HPE COM** tab on each cluster's page lists every host with its COM match, model, serial, health, power, active alerts, support state and COM maintenance mode, with totals and links to each host and its COM page. It's read-only. It reads the server list and warranties once for the whole cluster, and active alerts in one workspace-wide query where COM allows it, otherwise per host.
 - **Optional action buttons:** UID light on/off, Collect inventory, iLO reset, and Enter/Exit COM maintenance (new in 0.4.0), run as COM jobs with live progress. See [Why these actions](#why-these-actions) and [Security](#security).
-
-| Health | Hardware | Storage |
-|---|---|---|
-| ![Health](docs/images/tab-health.png) | ![Hardware](docs/images/tab-hardware.png) | ![Storage](docs/images/tab-storage.png) |
 
 ## Why these actions
 
@@ -164,6 +201,12 @@ Optional checks (opt-in, off by default):
 - `COM_MOCK=1` runs the real HTTP client against HPE's public COM mock server (`LiveChecksSpec`).
 - `PREVIEW_OUT=<dir>` renders the tab to HTML for review (`LiveChecksSpec`).
 - `LOAD_JARS=<jar>[,<jar>…]` loads built jars through the plugin API's own `PluginManager.registerPlugin` (`PluginLoadSpec`). Use a renamed build, because the loader is parent-first.
+
+## Known issues
+
+- **Workspace alerts query answers HTTP 400 on some COM workspaces.** COM's API reference documents a workspace-wide alerts list (`GET /compute-ops-mgmt/v1/alerts`), but at least one production workspace refuses it with HTTP 400, both with and without a filter. The cause is still under investigation.
+  - **Impact in 0.4.1 and later: none.** Only the cluster summary uses that query. When COM refuses it, the plugin reads each matched server's own alerts instead (the endpoint the host tab has always used), and doesn't retry the workspace query for six hours. Alert counts stay correct. The only trace is one INFO line in the Morpheus log, starting `com-morpheus: COM refused the workspace alerts query`.
+  - **Impact in 0.4.0:** the cluster summary showed "Couldn't load alerts: COM /v1/alerts: HTTP 400" and a count of 0 for every host. Host tabs, matching and actions weren't affected. Upgrade to 0.4.1.
 
 ## Limits
 

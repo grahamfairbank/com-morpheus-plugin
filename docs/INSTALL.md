@@ -84,6 +84,7 @@ How the pieces fit together is shown in the [How it works](../README.md#how-it-w
 | "Request refused: missing X-Requested-With header" | The request didn't come from the plugin's own script (for example, a hand-made API call or a proxy stripping headers). Use the buttons in the tab. |
 | "Request refused: reopen the HPE COM tab and try again" | The tab's action token is from before the plugin was reloaded or upgraded. Reopen the tab. |
 | "An action was started on this server less than 30 seconds ago" | One action per server every 30 seconds. Wait for the running job to finish. |
+| Cluster tab says "Couldn't load alerts: COM /v1/alerts: HTTP 400" | Seen with 0.4.0 on some COM workspaces. Upgrade to 0.4.1 or later, which reads alerts per server instead; see [Known issues](../README.md#known-issues). |
 | No action buttons | Check that **Enable actions** is on, that your role has **Run HPE COM actions** at **Full**, and that you have reloaded the page. |
 | "the API client needs a COM role that can run server jobs (HTTP 403)" | The COM API client is read-only. Give it an operator role in GreenLake. |
 | "Upload: nothing happens" / "Failed to parse plugin file" | A corrupt or incomplete download: check it with `SHA256SUMS`. The upload's exact reason is in the browser's developer tools (Network → the upload request's response) and in the Morpheus log. |
