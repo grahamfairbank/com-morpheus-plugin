@@ -204,9 +204,13 @@ Optional checks (opt-in, off by default):
 
 ## Known issues
 
-- **Workspace alerts query answers HTTP 400 on some COM workspaces.** COM's API reference documents a workspace-wide alerts list (`GET /compute-ops-mgmt/v1/alerts`), but at least one production workspace refuses it with HTTP 400, both with and without a filter. The cause is still under investigation.
-  - **Impact in 0.4.1 and later: none.** Only the cluster summary uses that query. When COM refuses it, the plugin reads each matched server's own alerts instead (the endpoint the host tab has always used), and doesn't retry the workspace query for six hours. Alert counts stay correct. The only trace is one INFO line in the Morpheus log, starting `com-morpheus: COM refused the workspace alerts query`.
-  - **Impact in 0.4.0:** the cluster summary showed "Couldn't load alerts: COM /v1/alerts: HTTP 400" and a count of 0 for every host. Host tabs, matching and actions weren't affected. Upgrade to 0.4.1.
+The live COM API has drifted from its published reference since October 2026. Each of these is handled from 0.4.2 on.
+
+- **COM caps every page at 500 items** (HTTP 400, `limit` "less than or equal to 500"), although its API reference allows 1000 for alerts. This was the cause of the 0.4.0 cluster-summary alerts error ("COM /v1/alerts: HTTP 400", with a count of 0 for every host) and, from October 29, 2026, of failed alert reads on host tabs in 0.4.1. **0.4.2 never asks for more than 500.**
+- **COM refuses `select=serverId,device/id` on alerts** ("Cannot select unknown properties"), although its reference lists both fields. **0.4.2 doesn't use `select` for alerts** and reads the server id from the full alert.
+- **`GET /v1/servers/{id}` can answer HTTP 500** for servers that COM's own console shows as healthy (seen October 29, 2026). The host tab then showed "Couldn't load HPE Compute Ops Management data". **0.4.2 tries COM's other published path (`/v1beta2`), then shows what the server list has**, with a note, so the tab, its sub-tabs and the action buttons still work.
+- **Legacy-SSO tokens:** some HPE GreenLake services started refusing tokens from the legacy sign-in on October 29, 2026. **0.4.2 signs in through the workspace issuer first** when the workspace ID is set, and moves on to the next sign-in URL if COM refuses a token. Set the workspace ID in the plugin settings.
+- **If COM refuses the workspace-wide alerts query for any other reason**, the cluster summary reads each matched server's alerts instead (since 0.4.1), and alert counts stay correct.
 
 ## Limits
 

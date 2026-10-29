@@ -84,14 +84,18 @@ class ComSettings {
 	/** True when there is enough to call COM. */
 	boolean isConfigured() { clientId && clientSecret }
 
-	/** Token endpoints to try, in order: the override if set, else legacy SSO, then the workspace issuers. */
+	/**
+	 * Token endpoints to try, in order: the override if set; else, with a workspace ID, the workspace issuers first
+	 * and legacy SSO last (0.4.2). Since 2026-10-29 some HPE services reject legacy-SSO tokens on reads.
+	 */
 	List<String> tokenUrls() {
 		if (tokenUrl) return [tokenUrl]
-		List<String> urls = [LEGACY_TOKEN_URL]
+		List<String> urls = []
 		if (workspaceId) {
 			urls << "https://global.api.greenlake.hpe.com/authorization/v2/oauth2/${workspaceId}/token".toString()
 			urls << "https://aquila-org-api.common.cloud.hpe.com/authorization/v2/oauth2/${workspaceId}/token".toString()
 		}
+		urls << LEGACY_TOKEN_URL
 		return urls
 	}
 

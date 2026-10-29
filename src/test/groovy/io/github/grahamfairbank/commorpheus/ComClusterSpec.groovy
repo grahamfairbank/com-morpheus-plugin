@@ -69,8 +69,8 @@ class ComClusterSpec extends Specification {
 		then:
 		fake.calls.find { it.contains('/v1/alerts') }.contains('filter=clearedAt%20eq%20null')
 		q.contains('filter=clearedAt eq null')
-		q.contains('select=id,serverId,device/id,clearedAt')
-		q.contains('limit=1000')
+		!q.contains('select=')   // 0.4.2: COM refuses select=serverId,device/id
+		q.contains('limit=500')
 	}
 
 	def "alerts: if COM refuses the workspace query (400), reads matched servers' own alerts and doesn't retry for a while"() {

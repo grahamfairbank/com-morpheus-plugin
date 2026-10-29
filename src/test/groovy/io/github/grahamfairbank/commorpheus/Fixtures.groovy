@@ -52,6 +52,11 @@ class FakeCom implements ComTransport {
 	List<Map> jobBodies = []                 // bodies POSTed to /v1/jobs
 	Boolean maintenanceMode = null           // overrides the server fixture's maintenanceMode when set
 	int filteredAlertsStatus = 200           // status for /v1/alerts?filter=... (400 = COM refuses the filter)
+	// COM since 2026-10-29: pages over 500 and select=serverId/device/id on alerts are refused with HTTP 400
+	int maxLimit = 500
+	boolean rejectAlertSelect = true
+	Map<String, Integer> serverReadStatus = [:]   // 'v1' / 'v1beta2' / 'raw' -> status for single-server reads
+	String refusedTokenUrl = null            // a token from this URL is issued, then refused on reads (401)
 
 	HttpResult send(String method, String url, Map<String, String> headers, String body) {
 		calls << "${method} ${url}".toString()
@@ -66,11 +71,15 @@ class FakeCom implements ComTransport {
 			jobs[id] = job
 			return new HttpResult(jobPostStatus, JsonOutput.toJson(job))
 		}
+		if (method == 'POST' && url == refusedTokenUrl) {
+			return new HttpResult(200, '{"access_token":"refused","token_type":"Bearer","expires_in":7199}')
+		}
 		if (method == 'POST') {
 			int st = tokenStatus[url] ?: 200
 			return st == 200 ? new HttpResult(200, '{"access_token":"tok","token_type":"Bearer","expires_in":7199}') :
 				new HttpResult(st, '{"error":"unauthorized_request"}')
 		}
+		if (headers.Authorization == 'Bearer refused') return new HttpResult(401, '{"message":"Unauthorized"}')
 		assert headers.Authorization == 'Bearer tok'
 		if (nextGetStatus) {
 			int st = nextGetStatus; nextGetStatus = 0
@@ -79,10 +88,16 @@ class FakeCom implements ComTransport {
 		URI u = new URI(url)
 		String p = u.rawPath.replaceFirst('^/compute-ops-mgmt', '')
 		Map q = (u.rawQuery ?: '').split('&').findAll().collectEntries { String kv -> def a = kv.split('=', 2); [(a[0]): a.size() > 1 ? a[1] : ''] }
-		String id = URLDecoder.decode(p.tokenize('/')[2] ?: '', 'UTF-8')
+		String rawId = p.tokenize('/')[2] ?: ''
+		String id = URLDecoder.decode(rawId.replace('+', '%2B'), 'UTF-8')
+		if ((q.limit ?: '0') as int > maxLimit) return new HttpResult(400, '{"errorCode":"HPE-GL-COMPUTE_OPS-0000022","errorDetails":[{"issues":[{"subject":"limit","description":"Input should be less than or equal to 500"}]}]}')
+		if (rejectAlertSelect && p.endsWith('/alerts') && URLDecoder.decode(q.select ?: '', 'UTF-8') =~ /serverId|device\/id/)
+			return new HttpResult(400, '{"errorCode":"HPE-GL-COMPUTE_OPS-0000072","errorDetails":[{"issues":[{"subject":"select","description":"Cannot select unknown properties"}]}]}')
+		String variant = p.startsWith('/v1beta2/') ? 'v1beta2' : (rawId.contains('+') ? 'raw' : 'v1')
+		if (p ==~ '/v1(beta2)?/servers/[^/]+' && serverReadStatus[variant]) return new HttpResult(serverReadStatus[variant], '{"message":"Internal Server Error"}')
 		switch (p) {
 			case '/v1/servers': return page('com-servers.json', q)
-			case ~'/v1/servers/[^/]+':
+			case ~'/v1(beta2)?/servers/[^/]+':
 				if (id != Fixtures.MATCHED_ID) return new HttpResult(404, '{}')
 				Map sv = (Map) Fixtures.json('com-server.json')
 				if (maintenanceMode != null) sv.maintenanceMode = maintenanceMode

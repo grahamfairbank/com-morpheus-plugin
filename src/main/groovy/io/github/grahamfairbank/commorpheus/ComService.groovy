@@ -363,7 +363,15 @@ class ComService {
 	 */
 	private String maintenanceAlready(String action, String comId, ComSettings s) {
 		if (!(action in ['comMaintenanceOn', 'comMaintenanceOff'])) return null
-		Map sv = clientFor(s).server(comId, 0L)
+		ComClient c = clientFor(s)
+		Map sv
+		try {
+			sv = c.server(comId, 0L)
+		} catch (ComException e) {
+			if (e.notFound) throw e
+			sv = listEntry(c, comId, 0L)   // the list has maintenanceMode too
+			if (sv == null) throw e
+		}
 		boolean on = sv?.maintenanceMode == true
 		if (action == 'comMaintenanceOn' && on) return 'This server is already in COM maintenance mode. Reload the page.'
 		if (action == 'comMaintenanceOff' && !on) return "This server isn't in COM maintenance mode. Reload the page."
@@ -385,7 +393,7 @@ class ComService {
 			try {
 				Map<String, Integer> counts = [:]
 				c.activeAlerts(SUMMARY_TTL_MS).each { Map a ->
-					String sid = (a.serverId ?: ((Map) (a.device ?: [:])).id) as String
+					String sid = ComClient.alertServerId(a)
 					if (sid && activeAlert(a)) counts[sid] = (counts[sid] ?: 0) + 1
 				}
 				return counts
@@ -446,13 +454,17 @@ class ComService {
 
 	private Map matched(Map base, ComClient c, ComSettings s, String comId, String how, String why) {
 		Map server
+		List<String> notes = []
 		try {
 			server = c.server(comId, SERVER_TTL_MS)
 		} catch (ComException e) {
 			if (e.notFound) return base + [state: 'nomatch', reason: "COM has no server with id ${comId}.".toString()]
-			throw e
+			server = listEntry(c, comId, SERVER_TTL_MS)
+			if (server == null) throw e
+			// Show what the server list has rather than nothing (0.4.2: COM answered 500 for single servers).
+			notes << "COM couldn't return this server's full record (${e.message}), so some fields come from COM's server list and others show --.".toString()
+			log.warn("com-morpheus: single-server read failed for ${comId}; showing the server-list entry instead: ${e.message}")
 		}
-		List<String> notes = []
 		Map extra = [:]
 		extra.alerts = optional(notes, 'alerts') { c.alerts(comId, ALERTS_TTL_MS) }
 		extra.security = optional(notes, 'iLO security') { c.security(comId, SECURITY_TTL_MS) }
@@ -465,6 +477,15 @@ class ComService {
 		}
 		return base + ComView.model(server, extra, s) + [inv: ComInventoryView.model(inventory), actionsEnabled: false] + [state: 'matched', match: how, matchWhy: why,
 			matchLevel: how == 'probable' ? 'warn' : 'ok', notes: notes]
+	}
+
+	/** A server's entry from COM's server list (id, name, hardware, state, maintenanceMode, ...), or null. */
+	private static Map listEntry(ComClient c, String comId, long ttlMs) {
+		try {
+			return (Map) c.servers(ttlMs).find { it.id == comId }
+		} catch (ComException ignored) {
+			return null
+		}
 	}
 
 	private static Object optional(List<String> notes, String what, Closure<Object> fetch) {

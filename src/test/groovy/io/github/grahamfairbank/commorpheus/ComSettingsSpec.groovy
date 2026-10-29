@@ -24,11 +24,12 @@ class ComSettingsSpec extends Specification {
 		'http://insecure.example.com'                | null                   | 'https://us-west2.compute.cloud.hpe.com'
 	}
 
-	def "token URLs: override, else legacy SSO then workspace issuers"() {
+	def "token URLs: override, else workspace issuers then legacy SSO (0.4.2)"() {
 		expect:
 		ComSettings.fromMap([:]).tokenUrls() == [ComSettings.LEGACY_TOKEN_URL]
 		ComSettings.fromMap([comWorkspaceId: 'abc']).tokenUrls().size() == 3
-		ComSettings.fromMap([comWorkspaceId: 'abc']).tokenUrls()[1] == 'https://global.api.greenlake.hpe.com/authorization/v2/oauth2/abc/token'
+		ComSettings.fromMap([comWorkspaceId: 'abc']).tokenUrls()[0] == 'https://global.api.greenlake.hpe.com/authorization/v2/oauth2/abc/token'
+		ComSettings.fromMap([comWorkspaceId: 'abc']).tokenUrls()[2] == ComSettings.LEGACY_TOKEN_URL
 		ComSettings.fromMap([comTokenUrl: 'https://t.example/token', comWorkspaceId: 'abc']).tokenUrls() == ['https://t.example/token']
 	}
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.2 (2026-10-29)
+
+HPE tightened the Compute Ops Management API on October 29, 2026, and 0.4.1 broke on host tabs and in the cluster summary. The COM console itself kept working. This release adapts to the live API. The published API reference hasn't changed, so each change is noted under [Known issues](README.md#known-issues).
+
+- **Page size capped at 500** for every COM list. Alerts asked for 1000, which COM now refuses with HTTP 400.
+- **Alerts without `select`.** COM refuses `select=serverId,device/id`. The plugin reads the server id from the full alert (`serverId`, `device.id`, `server.id` or the alert's `resourceUri`).
+- **Single-server read fallback.** When `GET /v1/servers/{id}` answers 5xx, the plugin tries `/v1beta2/servers/{id}`, then the id with a raw `+`. If all fail, the host tab shows the server's entry from COM's server list, with a note, instead of an error. The COM maintenance check falls back the same way.
+- **Sign-in order.** With a workspace ID set, the plugin signs in through the workspace token issuer first and legacy SSO last, matching what other HPE services now expect. If COM refuses a token on a read (HTTP 401), the plugin moves on to the next sign-in URL. The workspace ID setting is now recommended.
+- **Morpheus 9.0.1:** the host tab now loads the full server record by id before deciding whether to show itself, because 9.0.1 can pass a shallow server. It never relied on the account argument, which 9.0.1 leaves empty.
+- **New `tools/create-com-user.py`:** creates a Morpheus role for the HPE COM tabs in one run, instead of setting hundreds of role permissions by hand. It gives read-only access to the pages the tabs live on, plus *View HPE COM tab*, and optionally *Run HPE COM actions*; then it reads the role back to check it, and can create a user with it. Python standard library only; writes no files. See [Roles](docs/INSTALL.md#4-roles-permissions) in the install guide.
+- Tests for each change. Tested against Plugin API 1.4.1 (Morpheus 9.0) and 1.5.0 (Morpheus 9.1). Not yet tested against the live COM API.
+
 ## 0.4.1 (2026-10-26)
 
 - **Fix: cluster summary showed "Couldn't load alerts: … HTTP 400" and 0 alerts.** Some COM workspaces refuse the workspace-wide alerts query (`/v1/alerts`), even though COM's API reference documents it. The cluster tab now falls back to each matched server's own alerts, the same endpoint the host tab uses (and shares its one-minute cache), and doesn't retry the workspace query for six hours. It never reads the full alert history.

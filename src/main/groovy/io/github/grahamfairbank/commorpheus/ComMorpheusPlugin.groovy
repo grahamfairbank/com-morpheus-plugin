@@ -86,7 +86,7 @@ class ComMorpheusPlugin extends Plugin {
 				helpText: 'From the same GreenLake Personal API client as the client ID. GreenLake shows it only once, when the client is created.'),
 			new OptionType(name: 'Workspace ID', code: 'com-morpheus-workspace-id', fieldName: ComSettings.WORKSPACE_ID,
 				fieldLabel: 'GreenLake workspace ID', inputType: OptionType.InputType.TEXT, required: false, displayOrder: order++,
-				helpText: 'Optional. The 32-character ID from Manage Workspace. Needed only if sign-in through legacy SSO fails (new-style workspaces).'),
+				helpText: 'Recommended. The 32-character ID from Manage Workspace. With it, the plugin signs in through the workspace token issuer first and legacy SSO last.'),
 			new OptionType(name: 'Token URL', code: 'com-morpheus-token-url', fieldName: ComSettings.TOKEN_URL,
 				fieldLabel: 'Token URL override', inputType: OptionType.InputType.TEXT, required: false, displayOrder: order++,
 				helpText: 'Optional. Leave blank to detect it automatically.'),

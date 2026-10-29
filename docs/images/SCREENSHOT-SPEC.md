@@ -1,6 +1,6 @@
 # Screenshot specification
 
-The tab screenshots in this folder (`tab-*.png` and `cluster-summary.png`) are **rendered from anonymized test data**. They contain no customer or corporate information, and they're regenerated with `PREVIEW_OUT`. Only the shots below need a real Morpheus instance. They come from a corporate system, so they must be redacted strictly before they're added.
+The tab screenshots in this folder (`tab-*.png` and `cluster-summary.png`) are **rendered from anonymized test data**. The `install-*.png` screenshots come from a real Morpheus 9.0.1 appliance and GreenLake workspace, supplied by the owner and redacted with solid blocks before they were committed. They contain no customer or corporate information, and they're regenerated with `PREVIEW_OUT`. Only the shots below need a real Morpheus instance. They come from a corporate system, so they must be redacted strictly before they're added.
 
 ## Shots wanted
 

@@ -36,8 +36,13 @@ class ComServerTabProvider extends AbstractServerTabProvider {
 		ComSettings s = plugin.loadSettings()
 		if (!s.configured || !ComMorpheusPlugin.canView(s, user)) return false
 		HostFacts h = facts(server, false)
-		if (!ComService.isHost(h)) return false
-		return s.showOnAnyHost || ComService.isPhysicalHpe(h)
+		if (!ComService.isHost(h)) {
+			log.debug("com-morpheus: HPE COM tab hidden for server ${server.id}: not a hypervisor host (type ${h.typeCode})")
+			return false
+		}
+		boolean ok = s.showOnAnyHost || ComService.isPhysicalHpe(h)
+		if (!ok) log.debug("com-morpheus: HPE COM tab hidden for server ${server.id}: not a physical HPE server (${h.vendor} / ${h.product})")
+		return ok
 	}
 
 	@Override
@@ -58,5 +63,13 @@ class ComServerTabProvider extends AbstractServerTabProvider {
 		return getRenderer().renderTemplate('hbs/com-tab', vm)
 	}
 
-	HostFacts facts(ComputeServer server, boolean withInterfaces) { HostFactsReader.facts(server, morpheus, withInterfaces) }
+	/**
+	 * Morpheus 9.0.1 can pass show() and renderTemplate() a shallow server (no type or hardware details), so
+	 * always read the full record by id first. The tab never relies on the account argument, which 9.0.1 leaves null.
+	 */
+	HostFacts facts(ComputeServer server, boolean withInterfaces) {
+		ComputeServer full = null
+		try { full = morpheus.services.computeServer.get(server.id) } catch (Throwable e) { log.debug("com-morpheus: couldn't load server ${server?.id}: ${e}") }
+		return HostFactsReader.facts(full ?: server, morpheus, withInterfaces)
+	}
 }

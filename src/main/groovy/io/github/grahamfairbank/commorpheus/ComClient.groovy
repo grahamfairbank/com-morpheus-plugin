@@ -35,6 +35,8 @@ class ComClient {
 
 	static final String BASE = '/compute-ops-mgmt'
 	static final int PAGE = 100
+	/** Largest page COM accepts on any collection since 2026-10-29 (alerts were 1000; servers are 100). */
+	static final int MAX_LIMIT = 500
 	static final int MAX_PAGES = 50
 
 	final ComSettings settings
@@ -44,6 +46,8 @@ class ComClient {
 	private String token
 	private long tokenExpiresAt
 	private String workingTokenUrl
+	/** Token URLs whose tokens COM refused on a read (HTTP 401); skipped until every URL has been refused. */
+	private final Set<String> refusedTokenUrls = new LinkedHashSet<>()
 	private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>()
 
 	private static class CacheEntry {
@@ -68,7 +72,27 @@ class ComClient {
 		return listAll("${BASE}/v1/servers?select=${enc('id,name,hardware,host,state,maintenanceMode,connectionType,lastFullInventoryCollectionAt')}", ttlMs)
 	}
 
-	Map server(String id, long ttlMs) { (Map) getJson("${BASE}/v1/servers/${enc(id)}", ttlMs) }
+	/**
+	 * One server's full record. Since 2026-10-29, GET /v1/servers/{id} can answer HTTP 500 for servers that COM's
+	 * own console shows as healthy; on a 5xx this tries the published /v1beta2 path, then the id with a raw '+'.
+	 * Throws the first error if all fail (callers can fall back to the server-list entry).
+	 */
+	Map server(String id, long ttlMs) {
+		List<String> paths = ["${BASE}/v1/servers/${enc(id)}", "${BASE}/v1beta2/servers/${enc(id)}",
+		                      "${BASE}/v1/servers/${enc(id).replace('%2B', '+')}"].collect { it.toString() }.unique()
+		ComException first = null
+		for (String p : paths) {
+			try {
+				Map m = (Map) getJson(p, ttlMs)
+				if (first) log.info("com-morpheus: server ${id} read via ${shortPath(p)} after ${first.message}")
+				return m
+			} catch (ComException e) {
+				if (first == null) first = e
+				if (e.status < 500) throw first   // only a server-side failure is worth another path
+			}
+		}
+		throw first
+	}
 
 	/** The cluster summary's server list (0.4.0): the same query as {@link #servers}. */
 	List<Map> serverSummaries(long ttlMs) { servers(ttlMs) }
@@ -79,10 +103,20 @@ class ComClient {
 	 * HTTP 400 to it (seen 2026-10-26, with and without the filter); callers then read alerts per server.
 	 */
 	List<Map> activeAlerts(long ttlMs) {
-		return listAll("${BASE}/v1/alerts?filter=${enc('clearedAt eq null')}&select=${enc('id,serverId,device/id,clearedAt')}", ttlMs, 1000)
+		// No select: since 2026-10-29 COM refuses select=serverId,device/id ("Cannot select unknown properties"),
+		// although its API reference still lists both. Callers read the server id from the full item (alertServerId).
+		return listAll("${BASE}/v1/alerts?filter=${enc('clearedAt eq null')}", ttlMs, MAX_LIMIT)
 	}
 
-	List<Map> alerts(String id, long ttlMs) { listAll("${BASE}/v1/servers/${enc(id)}/alerts", ttlMs, 1000) }
+	List<Map> alerts(String id, long ttlMs) { listAll("${BASE}/v1/servers/${enc(id)}/alerts", ttlMs, MAX_LIMIT) }
+
+	/** The COM server id an alert belongs to: serverId, device.id, server.id or the id in its resourceUri. */
+	static String alertServerId(Map a) {
+		String id = (a?.serverId ?: ((Map) (a?.device instanceof Map ? a.device : [:])).id ?: ((Map) (a?.server instanceof Map ? a.server : [:])).id) as String
+		if (id) return id
+		def m = ((a?.resourceUri ?: '') as String) =~ '/servers/([^/]+)/alerts'
+		return m.find() ? URLDecoder.decode(m.group(1), 'UTF-8') : null
+	}
 
 	Map security(String id, long ttlMs) { (Map) getJson("${BASE}/v1/servers/${enc(id)}/security-parameters", ttlMs) }
 
@@ -120,7 +154,7 @@ class ComClient {
 		String body = groovy.json.JsonOutput.toJson([jobTemplate: template, resourceType: 'compute-ops-mgmt/server', resourceId: comId])
 		HttpResult r = send('POST', "${BASE}/v1/jobs", body)
 		if (r.status == 401) {
-			synchronized (this) { token = null }
+			nextIssuer()
 			r = send('POST', "${BASE}/v1/jobs", body)
 		}
 		if (r.status != 200 && r.status != 201) {
@@ -148,6 +182,7 @@ class ComClient {
 	private final java.util.concurrent.ConcurrentHashMap<String, Object> listLocks = new java.util.concurrent.ConcurrentHashMap<>()
 
 	List<Map> listAll(String path, long ttlMs, int pageSize = PAGE) {
+		pageSize = Math.min(pageSize, MAX_LIMIT)
 		if (ttlMs <= 0) return listPages(path, ttlMs, pageSize)
 		Object lock = listLocks.computeIfAbsent(path) { new Object() }
 		synchronized (lock) { return listPages(path, ttlMs, pageSize) }   // a waiter then finds the pages cached
@@ -175,7 +210,7 @@ class ComClient {
 
 		HttpResult r = get(pathAndQuery)
 		if (r.status == 401) {
-			synchronized (this) { token = null }
+			nextIssuer()
 			r = get(pathAndQuery)
 		}
 		if (r.status != 200) throw failure(r, "COM ${shortPath(pathAndQuery)}")
@@ -205,6 +240,18 @@ class ComClient {
 	}
 
 	/** A valid access token, signing in if needed. */
+	/**
+	 * COM refused the current token (HTTP 401): drop it, and skip the token URL that issued it, so the next
+	 * request signs in through the next issuer. A legacy-SSO token can be issued and still be refused on reads.
+	 */
+	synchronized void nextIssuer() {
+		if (workingTokenUrl) {
+			if (refusedTokenUrls.add(workingTokenUrl)) log.info("com-morpheus: COM refused the token from ${hostOf(workingTokenUrl)}; trying the next sign-in URL")
+		}
+		token = null
+		workingTokenUrl = null
+	}
+
 	synchronized String accessToken() {
 		long now = clock.call()
 		if (token && now < tokenExpiresAt - 60_000L) return token
@@ -212,6 +259,8 @@ class ComClient {
 
 		List<String> urls = settings.tokenUrls()
 		if (workingTokenUrl && urls.contains(workingTokenUrl)) urls = [workingTokenUrl] + (urls - workingTokenUrl)
+		List<String> usable = urls - refusedTokenUrls
+		if (usable) urls = usable else refusedTokenUrls.clear()   // all refused: start over
 		List<String> tried = []
 		for (String url : urls) {
 			HttpResult r

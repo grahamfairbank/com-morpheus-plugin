@@ -2,70 +2,178 @@
 
 > Unofficial community plugin, not an HPE product and not supported by HPE. See [NOTICE.md](../NOTICE.md).
 
+This guide assumes you've never installed a Morpheus plugin or created a GreenLake API client before. Every step says where to click and what you should see. Allow about 20 minutes.
+
+*The screenshots are from a real Morpheus 9.0.1 appliance and GreenLake workspace, with names, addresses and ids blocked out.*
+
+## Before you start
+
 You need:
-- HPE Morpheus or HPE VM Essentials **9.0.x or 9.1.x**, with admin rights.
-- An HPE GreenLake workspace with Compute Ops Management, where your HVM hosts are onboarded.
-- Outbound HTTPS from the VME manager to `sso.common.cloud.hpe.com` and `<region>.api.greenlake.hpe.com`, directly or through a proxy.
 
-## 1. Create a COM API client (GreenLake)
+- **Morpheus admin access.** HPE Morpheus or HPE VM Essentials **9.0.x or 9.1.x**, and a login that can open **Administration → Integrations → Plugins**.
+- **Access to your HPE GreenLake workspace**, the one where your HPE servers are onboarded in **Compute Ops Management** (COM), with permission to create API clients.
+- **Network access from the Morpheus appliance** (the manager, not your laptop) to these addresses on port 443:
+  - `<region>.api.greenlake.hpe.com` (for example `us-west.api.greenlake.hpe.com`)
+  - `global.api.greenlake.hpe.com`
+  - `sso.common.cloud.hpe.com`
 
-> **The plugin acts in COM as the GreenLake user who owns this API client,** for all Morpheus users and tenants. A personal API client inherits its creator's roles. COM's log will show that user for every read and every action. See [Security](../README.md#security) in the README.
+  If the appliance reaches the internet through a proxy, have its address ready (for example `http://proxy.example.com:3128`).
 
-1. Sign in to HPE GreenLake as a **dedicated account** for this integration (a service or shared admin account under your organization's rules), not your personal account. Give that account the **smallest COM role** that works:
-   - **view-only** while actions are off;
-   - an **operator** role (one that can run server jobs) only if you will turn on **Enable actions**.
+Not sure which region your servers are in? On the GreenLake home page, **My services** lists **Compute Ops Management** under its region: **US West**, **EU Central** or **AP Northeast**. That gives the address: `us-west`, `eu-central` or `ap-northeast`.
 
-   Limit it to the relevant servers if your workspace supports scoped access.
-2. Go to **Manage Workspace → Personal API clients** (older workspaces: **Manage → API**), choose **Create**, and select the **Compute Ops Management** service and the region your servers are in.
-3. The API client inherits that account's roles; there is no separate role to set on the client.
-4. Copy the **client ID** and **client secret**. The secret is shown only once.
-5. Optional: copy the **workspace ID** (32 characters, on the Manage Workspace page). The plugin first tries the legacy GreenLake sign-in, which worked for the reference workspace. The workspace ID is needed only if that fails.
+## 1. Find your GreenLake workspace ID
 
-## 2. Upload the plugin (Morpheus)
+The workspace ID tells GreenLake which workspace the plugin's sign-in is for. With it, the plugin signs in through your workspace's own sign-in address first, which some HPE GreenLake services require since October 2026.
 
-Download `com-morpheus-plugin-<version>.jar` from the [Releases](https://github.com/grahamfairbank/com-morpheus-plugin/releases) page and check it with `sha256sum -c SHA256SUMS`. **The same jar works on Morpheus / VM Essentials 9.0.x and 9.1.x.** Then go to **Administration → Integrations → Plugins → Add** and upload it.
+1. Sign in to [HPE GreenLake](https://common.cloud.hpe.com) and switch to the workspace that holds your servers (the workspace name is at the top left, next to the GreenLake logo).
+2. Open the menu (the ☰ icon at the top left), then **IAM and administration → Workspace details**.
 
-**Upgrading:** upload the new jar over the old one; settings are kept. Upgrading from 0.2.0 (which had `-vme9.0` / `-vme9.1` jars) works the same way. **Removing:** delete the plugin in the same list. The plugin leaves nothing behind on hosts or in COM.
+   ![GreenLake menu: IAM and administration, Workspace details](images/install-01-greenlake-menu.png)
 
-## 3. Settings
+3. Copy the **Workspace ID**. It's 32 letters and digits. Paste it into a note for step 4.
 
-Open the plugin in **Administration → Integrations → Plugins** and edit its settings:
+   ![Workspace details, with the Workspace ID (values blocked out)](images/install-02-workspace-id.png)
 
-| Setting | Value |
+## 2. Create an API client (GreenLake)
+
+> **The plugin acts in COM as the GreenLake user who creates this API client,** for everyone on the Morpheus appliance. A personal API client has exactly its creator's permissions, at the time it's used, and COM's log shows that user for every read and every action. Use a **dedicated account** (a service or shared admin account under your organization's rules) with the **smallest COM role that works**: a view-only role if you'll leave the action buttons off, or a role that can run server jobs (for example Operator) if you'll turn them on. See [Security](../README.md#security).
+
+1. Sign in to GreenLake as that dedicated account, in the same workspace.
+2. Open the menu, then **IAM and administration → API access**, and click **Create personal API client**.
+
+   ![API access, with the Create personal API client button](images/install-03-api-access.png)
+
+3. **Name:** something you'll recognize later, for example `Morpheus-API-Client`.
+4. **Service:** choose **GreenLake platform and most services**. Compute Ops Management uses the same sign-in as the platform.
+
+   ![Create personal API client: name and service](images/install-04-create-client.png)
+
+5. Click **Create personal API client**. GreenLake now shows the **Issuer URL**, the **Client ID** and the **Secret**. Copy the client ID and the secret into your note.
+
+   ![Personal API client created: issuer URL, client ID and secret (values blocked out)](images/install-05-client-created.png)
+
+   - **The secret is shown only once.** If you lose it, create a new client.
+   - The **Issuer URL** ends in `/oauth2/<workspace ID>/token`: that's the same workspace ID as in step 1, a handy way to double-check it.
+   - You don't need **Generate access token**: the plugin makes its own tokens.
+
+## 3. Upload the plugin (Morpheus)
+
+1. Download `com-morpheus-plugin-<version>.jar` and `SHA256SUMS` from the [Releases](https://github.com/grahamfairbank/com-morpheus-plugin/releases) page. The same jar works on Morpheus 9.0.x and 9.1.x.
+2. Optional but recommended: check the download. In a terminal in the download folder, run `sha256sum -c SHA256SUMS` (Linux and macOS) or `certutil -hashfile com-morpheus-plugin-<version>.jar SHA256` (Windows) and compare it with the value in `SHA256SUMS`.
+3. In Morpheus, go to **Administration → Integrations → Plugins** and click **+ Add Plugin**.
+4. Choose the jar and click **Upload**.
+
+   ![The Add Plugin window with the jar chosen](images/install-07-upload.png)
+
+5. After a few seconds, **com-morpheus** appears in the plugin list, with the version you uploaded and a check mark under **Enabled**.
+
+   ![Administration, Integrations, Plugins: com-morpheus 0.4.2 in the list](images/install-06-plugins.png)
+
+**Upgrading:** upload the new jar the same way. Your settings are kept. **Removing:** delete the plugin from the same list. It leaves nothing behind in Morpheus, on hosts or in COM.
+
+## 4. Enter the settings
+
+1. In **Administration → Integrations → Plugins**, click the pencil icon on the **com-morpheus** row. The **Edit Plugin** window opens.
+2. Fill in:
+
+<!-- SCREENSHOT install-settings.png: the com-morpheus Edit Plugin window, filled in (client ID and workspace ID blocked out) -->
+
+| Setting | What to enter |
 |---|---|
-| COM API region URL | `https://us-west.api.greenlake.hpe.com` (or `eu-central` / `ap-northeast`) |
-| API client ID / secret | from step 1 |
-| GreenLake workspace ID | optional; see step 1.5 |
+| COM API region URL | `https://us-west.api.greenlake.hpe.com`, `https://eu-central.api.greenlake.hpe.com` or `https://ap-northeast.api.greenlake.hpe.com` (from "Before you start") |
+| API client ID | from step 2 |
+| API client secret | from step 2 |
+| GreenLake workspace ID | from step 1 |
 | Token URL override | leave blank |
-| MSP tenant ID | only for MSP workspaces |
-| COM web UI URL | leave blank; set only if "Open in COM" opens the wrong region |
-| HTTP proxy | `http://proxy:port` if the manager needs one to reach GreenLake (no proxy authentication) |
-| Only show to roles with the com-morpheus permission | off = everyone who can see the host; on = only roles granted **com-morpheus: View HPE COM tab** |
-| Enable actions | off by default. On: shows UID light on/off, Collect inventory, iLO reset and Enter/Exit COM maintenance buttons to roles with **com-morpheus: Run HPE COM actions** at full access (Administration → Roles) |
-| Show the tab on non-HPE hosts | diagnostics only; shows what the plugin sees on every hypervisor host |
-| Show plugin route diagnostics on the tab | diagnostics only (0.1.1+); tests whether the browser can reach the plugin's web routes |
+| MSP tenant ID (Tenant-Acid) | leave blank, unless you use an MSP workspace |
+| COM web UI URL | leave blank (set it only if **Open in COM** opens the wrong region) |
+| HTTP proxy for GreenLake | blank, or `http://proxy:port` if the appliance needs a proxy (no proxy authentication) |
+| Only show to roles with the com-morpheus permission | off: everyone who can see a host or cluster sees its tab. On: only roles granted the permission in step 5. |
+| Enable actions | off: the tab is read-only. On: roles with **Run HPE COM actions** see the buttons (UID light, Collect inventory, iLO reset, COM maintenance). See [Why these actions](../README.md#why-these-actions). |
+| Show the tab on non-HPE hosts | off. Turn it on only for troubleshooting. |
+| Show plugin route diagnostics | off. Turn it on only for troubleshooting. |
 
-## 4. Roles (permissions)
+3. Click **Save Changes**.
 
-The plugin adds two permissions, under **Administration → Roles → (role) → Permissions**:
+## 5. Permissions
+
+The plugin adds two permissions to every Morpheus role:
 
 | Permission | Levels | Grants |
 |---|---|---|
-| **com-morpheus: View HPE COM tab** | None / Read | Seeing the tab, when "Only show to roles with the com-morpheus permission" is on. Check your admin roles: plugin permissions may need to be granted explicitly. |
-| **com-morpheus: Run HPE COM actions** | None / Full | The action buttons, when **Enable actions** is on. Anyone with it acts in COM **as the API client's GreenLake account**, so grant it only to roles you'd trust with that account. Since 0.3.1, editing a host's tags can't widen what it reaches: tagged matches must agree with the host's hardware before any action runs. |
+| **com-morpheus: View HPE COM tab** | None / Read | Seeing the tabs, when "Only show to roles with the com-morpheus permission" is on. |
+| **com-morpheus: Run HPE COM actions** | None / Full | The action buttons, when **Enable actions** is on. Anyone with it acts in COM **as the API client's GreenLake account**, so grant it only to people you'd trust with that account. |
 
-Why only these actions, and why iLO reset is a safe one, is explained under [Why these actions](../README.md#why-these-actions) in the README.
+You can set them by hand: **Administration → Roles → (role)**, search the permissions for `com`, and choose the level. Or let the script in step 6 make a ready-made role.
 
-## 5. Check it
+## 6. Optional: a ready-made role (and user) for the HPE COM tabs
 
-![The HPE COM tab, Summary sub-tab (rendered from anonymized test data)](images/tab-summary.png)
+People who look after hardware often need the HPE COM tabs, and maybe the buttons, without being able to change anything else in Morpheus. Making that role by hand means opening the role editor and setting each feature permission, one dropdown at a time, so they can open the host and cluster pages but nothing more. That's well over a hundred clicks, it's easy to miss one (or give one too many), and you'd repeat it on every appliance.
 
+[`tools/create-com-user.py`](../tools/create-com-user.py) does it for you in about a minute.
 
-1. Open a physical HPE host in **Infrastructure → Hosts**. The **HPE COM** tab may be under the ▼ overflow menu.
-2. The first time, the tab says it is matching hosts to COM. It reads the COM server list and each server's inventory, which takes up to a minute. Reopen the tab.
-3. You should see the server's summary, with **Match: confirmed by MAC**.
-4. If actions are on and your role has the actions permission, the **UID light on / off, Collect inventory, iLO reset** and **Enter COM maintenance** (or **Exit COM maintenance**) buttons appear above the sub-tabs, after a page reload. Try **UID light on** first. It only lights the blue locator LED, and the status beside the buttons follows the COM job until it's done.
-5. Open a cluster in **Infrastructure → Clusters** and choose its **HPE COM** tab (new in 0.4.0). It lists every host in the cluster with its COM match, health, alerts, support state and COM maintenance mode. Hosts that aren't HPE servers are listed as such.
+**What you need:** Python 3.8 or later on any computer that can reach the Morpheus appliance (your laptop is fine; on Windows, install Python from python.org and use `py` instead of `python3`). Nothing else: it uses only Python's standard library.
+
+**Run it:**
+
+1. Download [`tools/create-com-user.py`](../tools/create-com-user.py) from the repository (on GitHub, open the file and choose **Download raw file**).
+2. In a terminal, in the folder where you saved it, run:
+
+   ```bash
+   python3 create-com-user.py <morpheus-ip-or-hostname>
+   ```
+
+3. Answer the prompts:
+   - **Certificate:** if the appliance uses a self-signed certificate, the script shows its fingerprint and asks whether to trust it for this run. Compare it with the appliance's certificate if you can, then answer `y`.
+   - **Admin username and password:** an administrator login, used only for this run. The password isn't shown as you type.
+   - **1 or 2:** `1` for a role that can only view the HPE COM tabs; `2` for a role that can also run the actions. People with option 2 act in COM as the plugin's GreenLake API client.
+   - **Name for the new role:** press Enter for `hpe-com-viewer` (option 1) or `hpe-com-operator` (option 2), or type your own.
+   - **Create a new user with this role now?** `y` to make one (username, email, first and last name, password; Morpheus requires an email, and any address you control will do), or `n` to give the role to existing users yourself.
+4. The script then:
+   - creates the role and sets **Read** on every feature permission that has a read level, so its users can open the host and cluster pages;
+   - sets **com-morpheus: View HPE COM tab** to **Read**, and **Run HPE COM actions** to **Full** (option 2) or **None** (option 1);
+   - leaves sensitive areas at **None**: credentials, key pairs, certificates, users, roles, identity sources, tenants, secrets, remote consoles and similar;
+   - gives the role read access to all groups and clouds;
+   - **reads the role back and checks it.** If anything is above read level except what you chose, it stops before creating a user and tells you what to review;
+   - creates the user, if you asked for one;
+   - deletes the admin token it used, where your Morpheus version allows.
+
+Here's a real run on Morpheus 9.0.1, choosing option 2 (admin name blocked out):
+
+![A run of create-com-user.py: role hpe-com-operator and user hpe-com-operator-user created](images/install-08-com-user-script.png)
+
+**About the messages:**
+- *Default access … no read level* (shown as seven "Note: could not set default access" lines in the run above; newer copies of the script print one line): on Morpheus 9.0.1, instance types, blueprints, catalog items, reports, tasks, workflows and VDI pools don't offer a "read" level for default access, so the script leaves them alone. Groups and clouds do, and get read. That's the "2 default-access types".
+- *could not remove this run's admin token:* the admin login token the script used couldn't be deleted on this version. It expires on its own; nothing else is left behind.
+
+The role it creates, in **Administration → Roles**, searched for `com`: **Compute** is **Read**, **View HPE COM tab** is **Read** and **Run HPE COM actions** is **Full**:
+
+![The hpe-com-operator role: Compute Read, Run HPE COM actions Full, View HPE COM tab Read](images/install-09-com-role.png)
+
+Give the username and password to the person who needs it. They sign in to Morpheus as usual and see the HPE COM tabs (and, with option 2 and **Enable actions** on, the buttons). To give the role to existing users instead: **Administration → Users → (user) → Edit → Roles**.
+
+**What it leaves behind:** the new role and, if you asked for one, the new user. Nothing else: it writes no files, keeps no logs and never echoes passwords. To undo it, delete the user and the role in **Administration → Users** and **Administration → Roles**. If the script says the appliance has no com-morpheus permissions, the plugin isn't installed or is disabled: finish step 3 first.
+
+**Options:** `--port <n>` if the appliance doesn't use 443.
+
+## 7. Check it
+
+1. Open a physical HPE host: **Infrastructure → Compute → (host)**. Morpheus puts extra tabs under the **▼** menu at the right end of the tab row, so look there for **HPE COM**.
+
+   ![A host page with the ▼ menu open: HPE COM is in it (names blocked out)](images/install-11-host-menu.png)
+
+2. The very first time (and after Morpheus or the plugin restarts) the tab says it's **matching hosts to HPE Compute Ops Management**. It reads the COM server list and each server's inventory, which takes up to a minute. Open the tab again.
+
+   ![The HPE COM tab the first time: Matching hosts to HPE Compute Ops Management (names blocked out)](images/install-10-first-match.png)
+
+3. You should see the server as COM sees it, with **Match: confirmed by MAC**, and the seven sub-tabs: Summary, Health, Firmware, Hardware, Storage, Support and Alerts.
+
+   ![A host's HPE COM tab on Morpheus 9.0.1, with the action buttons (names, serials, addresses and ids blocked out)](images/install-12-host-tab.png)
+
+4. If **Enable actions** is on and your role has **Run HPE COM actions**, the buttons appear above the sub-tabs (reload the page after changing the setting). Try **UID light on** first: it only lights the blue locator LED on the server, and the status beside the buttons follows the COM job until it's done. The Summary sub-tab's **UID indicator** then reads **On**. **UID light off** turns it off again.
+5. Open a cluster: **Infrastructure → Clusters → (cluster)**, then its **HPE COM** tab. It lists every host in the cluster with its COM match, health, power, active alerts, support state and COM maintenance mode, with totals at the top.
+
+   ![A cluster's HPE COM tab on Morpheus 9.0.1 (names and serials blocked out)](images/install-13-cluster-tab.png)
 
 How the pieces fit together is shown in the [How it works](../README.md#how-it-works) infographic.
 
@@ -73,8 +181,10 @@ How the pieces fit together is shown in the [How it works](../README.md#how-it-w
 
 | The tab says | Meaning / fix |
 |---|---|
-| Couldn't sign in to GreenLake (HTTP 401) | Wrong client ID or secret, or a new-style workspace: set the workspace ID. |
-| Couldn't reach COM | The manager can't reach GreenLake: check DNS, firewall, or set the HTTP proxy. |
+| Couldn't sign in to GreenLake (HTTP 401) | Wrong client ID or secret, or the client was deleted: create a new one (step 2). Check the workspace ID too (step 1). |
+| Host tab: "Couldn't load HPE Compute Ops Management data. COM /v1/servers/…: HTTP 500" | COM's single-server read failing (seen October 29, 2026). Upgrade to 0.4.2, which tries COM's other published path and otherwise shows the server-list data with a note. |
+| Couldn't reach COM | The appliance can't reach GreenLake: check DNS and the firewall (see "Before you start"), or set the HTTP proxy. |
+| No HPE COM tab on a host | Look under the **▼** menu at the right end of the tab row. The tab appears only on hypervisor hosts whose hardware vendor is HPE. Turn on "Show the tab on non-HPE hosts" to see what the plugin sees. |
 | rate limited by COM | GreenLake throttled the client. Wait the time shown; the plugin caches to keep calls low. |
 | No matching server | None of the host's MACs are in COM's inventory: the server isn't onboarded in this workspace, or its inventory is old. Add `com-serial=<serial>` as a tag on the host. |
 | more than one COM server | Shared or moved NICs. Add `com-serial=<serial>` to the host. |
