@@ -4,7 +4,17 @@
 
 This guide assumes you've never installed a Morpheus plugin or created a GreenLake API client before. Every step says where to click and what you should see. Allow about 20 minutes.
 
-*The screenshots are from a real Morpheus 9.0.1 appliance and GreenLake workspace, with names, addresses and ids blocked out.*
+*The screenshots are from a real Morpheus 9.0.1 appliance and GreenLake workspace. Names, addresses and ids are replaced with example values, and each example value means the same thing everywhere in this guide and the README:*
+
+| In the examples | Example value |
+|---|---|
+| GreenLake workspace | `my-workspace`, workspace ID `4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64` |
+| API client ID | `7c3e8a12-5b4f-4d9e-a6c1-2f8b0d4e9a37` |
+| Morpheus appliance | `morpheus.example.com`, signed in as `admin` (shown as **Admin User**) |
+| Cloud, cluster and site tag | `cloud-a`, `cluster-a`, `site-a` |
+| Hosts and their serial numbers | `host-a`, `host-b`, `host-c`; `XYZ0000001`, `XYZ0000002`, `XYZ0000003` |
+| host-a's iLO | `192.0.2.21`, `ilo-host-a.example.com` |
+| COM region | US West (`us-west`) |
 
 ## Before you start
 
@@ -30,9 +40,9 @@ The workspace ID tells GreenLake which workspace the plugin's sign-in is for. Wi
 
    ![GreenLake menu: IAM and administration, Workspace details](images/install-01-greenlake-menu.png)
 
-3. Copy the **Workspace ID**. It's 32 letters and digits. Paste it into a note for step 4.
+3. Copy the **Workspace ID**. It's 32 letters and digits, like `4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64` in the example below. Paste it into a note for step 4.
 
-   ![Workspace details, with the Workspace ID (values blocked out)](images/install-02-workspace-id.png)
+   ![Workspace details, with the Workspace ID (example values)](images/install-02-workspace-id.png)
 
 ## 2. Create an API client (GreenLake)
 
@@ -48,12 +58,12 @@ The workspace ID tells GreenLake which workspace the plugin's sign-in is for. Wi
 
    ![Create personal API client: name and service](images/install-04-create-client.png)
 
-5. Click **Create personal API client**. GreenLake now shows the **Issuer URL**, the **Client ID** and the **Secret**. Copy the client ID and the secret into your note.
+5. Click **Create personal API client**. GreenLake now shows the **Issuer URL**, the **Client ID** and the **Secret**. Copy the client ID and the secret into your note. In the example below, the client ID is `7c3e8a12-5b4f-4d9e-a6c1-2f8b0d4e9a37`.
 
-   ![Personal API client created: issuer URL, client ID and secret (values blocked out)](images/install-05-client-created.png)
+   ![Personal API client created: issuer URL, client ID and secret (example values)](images/install-05-client-created.png)
 
    - **The secret is shown only once.** If you lose it, create a new client.
-   - The **Issuer URL** ends in `/oauth2/<workspace ID>/token`: that's the same workspace ID as in step 1, a handy way to double-check it.
+   - The **Issuer URL** ends in `/oauth2/<workspace ID>/token`: that's the same workspace ID as in step 1 (`4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64` in the examples), a handy way to double-check it.
    - You don't need **Generate access token**: the plugin makes its own tokens.
 
 ## 3. Upload the plugin (Morpheus)
@@ -76,24 +86,24 @@ The workspace ID tells GreenLake which workspace the plugin's sign-in is for. Wi
 1. In **Administration → Integrations → Plugins**, click the pencil icon on the **com-morpheus** row. The **Edit Plugin** window opens.
 2. Fill in:
 
-<!-- SCREENSHOT install-settings.png: the com-morpheus Edit Plugin window, filled in (client ID and workspace ID blocked out) -->
-
 | Setting | What to enter |
 |---|---|
 | COM API region URL | `https://us-west.api.greenlake.hpe.com`, `https://eu-central.api.greenlake.hpe.com` or `https://ap-northeast.api.greenlake.hpe.com` (from "Before you start") |
-| API client ID | from step 2 |
+| API client ID | from step 2 (`7c3e8a12-5b4f-4d9e-a6c1-2f8b0d4e9a37` in the examples) |
 | API client secret | from step 2 |
-| GreenLake workspace ID | from step 1 |
+| GreenLake workspace ID | from step 1 (`4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64` in the examples) |
 | Token URL override | leave blank |
 | MSP tenant ID (Tenant-Acid) | leave blank, unless you use an MSP workspace |
 | COM web UI URL | leave blank (set it only if **Open in COM** opens the wrong region) |
-| HTTP proxy for GreenLake | blank, or `http://proxy:port` if the appliance needs a proxy (no proxy authentication) |
+| HTTP proxy for GreenLake | blank, or `http://proxy.example.com:3128` if the appliance needs a proxy (no proxy authentication) |
 | Only show to roles with the com-morpheus permission | off: everyone who can see a host or cluster sees its tab. On: only roles granted the permission in step 5. |
 | Enable actions | off: the tab is read-only. On: roles with **Run HPE COM actions** see the buttons (UID light, Collect inventory, iLO reset, COM maintenance). See [Why these actions](../README.md#why-these-actions). |
 | Show the tab on non-HPE hosts | off. Turn it on only for troubleshooting. |
 | Show plugin route diagnostics | off. Turn it on only for troubleshooting. |
 
 3. Click **Save Changes**.
+
+   ![The com-morpheus Edit Plugin window, filled in with the example values from steps 1 and 2 and a proxy](images/install-14-settings.png)
 
 ## 5. Permissions
 
@@ -120,8 +130,10 @@ People who look after hardware often need the HPE COM tabs, and maybe the button
 2. In a terminal, in the folder where you saved it, run:
 
    ```bash
-   python3 create-com-user.py <morpheus-ip-or-hostname>
+   python3 create-com-user.py morpheus.example.com
    ```
+
+   Use your appliance's host name or IP address in place of `morpheus.example.com`.
 
 3. Answer the prompts:
    - **Certificate:** if the appliance uses a self-signed certificate, the script shows its fingerprint and asks whether to trust it for this run. Compare it with the appliance's certificate if you can, then answer `y`.
@@ -138,7 +150,7 @@ People who look after hardware often need the HPE COM tabs, and maybe the button
    - creates the user, if you asked for one;
    - deletes the admin token it used, where your Morpheus version allows.
 
-Here's a real run on Morpheus 9.0.1, choosing option 2 (admin name blocked out):
+Here's a real run on Morpheus 9.0.1, choosing option 2, signed in as `admin`:
 
 ![A run of create-com-user.py: role hpe-com-operator and user hpe-com-operator-user created](images/install-08-com-user-script.png)
 
@@ -160,20 +172,20 @@ Give the username and password to the person who needs it. They sign in to Morph
 
 1. Open a physical HPE host: **Infrastructure → Compute → (host)**. Morpheus puts extra tabs under the **▼** menu at the right end of the tab row, so look there for **HPE COM**.
 
-   ![A host page with the ▼ menu open: HPE COM is in it (names blocked out)](images/install-11-host-menu.png)
+   ![The host-a page with the ▼ menu open: HPE COM is in it (example values)](images/install-11-host-menu.png)
 
 2. The very first time (and after Morpheus or the plugin restarts) the tab says it's **matching hosts to HPE Compute Ops Management**. It reads the COM server list and each server's inventory, which takes up to a minute. Open the tab again.
 
-   ![The HPE COM tab the first time: Matching hosts to HPE Compute Ops Management (names blocked out)](images/install-10-first-match.png)
+   ![host-a's HPE COM tab the first time: Matching hosts to HPE Compute Ops Management (example values)](images/install-10-first-match.png)
 
 3. You should see the server as COM sees it, with **Match: confirmed by MAC**, and the seven sub-tabs: Summary, Health, Firmware, Hardware, Storage, Support and Alerts.
 
-   ![A host's HPE COM tab on Morpheus 9.0.1, with the action buttons (names, serials, addresses and ids blocked out)](images/install-12-host-tab.png)
+   ![host-a's HPE COM tab on Morpheus 9.0.1, with the action buttons: serial XYZ0000001, iLO 192.0.2.21 (example values)](images/install-12-host-tab.png)
 
 4. If **Enable actions** is on and your role has **Run HPE COM actions**, the buttons appear above the sub-tabs (reload the page after changing the setting). Try **UID light on** first: it only lights the blue locator LED on the server, and the status beside the buttons follows the COM job until it's done. The Summary sub-tab's **UID indicator** then reads **On**. **UID light off** turns it off again.
 5. Open a cluster: **Infrastructure → Clusters → (cluster)**, then its **HPE COM** tab. It lists every host in the cluster with its COM match, health, power, active alerts, support state and COM maintenance mode, with totals at the top.
 
-   ![A cluster's HPE COM tab on Morpheus 9.0.1 (names and serials blocked out)](images/install-13-cluster-tab.png)
+   ![cluster-a's HPE COM tab on Morpheus 9.0.1: host-a, host-b and host-c (example values)](images/install-13-cluster-tab.png)
 
 How the pieces fit together is shown in the [How it works](../README.md#how-it-works) infographic.
 
@@ -186,7 +198,7 @@ How the pieces fit together is shown in the [How it works](../README.md#how-it-w
 | Couldn't reach COM | The appliance can't reach GreenLake: check DNS and the firewall (see "Before you start"), or set the HTTP proxy. |
 | No HPE COM tab on a host | Look under the **▼** menu at the right end of the tab row. The tab appears only on hypervisor hosts whose hardware vendor is HPE. Turn on "Show the tab on non-HPE hosts" to see what the plugin sees. |
 | rate limited by COM | GreenLake throttled the client. Wait the time shown; the plugin caches to keep calls low. |
-| No matching server | None of the host's MACs are in COM's inventory: the server isn't onboarded in this workspace, or its inventory is old. Add `com-serial=<serial>` as a tag on the host. |
+| No matching server | None of the host's MACs are in COM's inventory: the server isn't onboarded in this workspace, or its inventory is old. Add `com-serial=<serial>` as a tag on the host (for example `com-serial=XYZ0000001` on host-a). |
 | more than one COM server | Shared or moved NICs. Add `com-serial=<serial>` to the host. |
 | Match: probable | Only some MACs match (a replaced NIC, or a stale COM inventory). Confirm with `com-serial=<serial>` (actions then work if at least one MAC matches that server and none match another), or run an inventory collection in COM. |
 | "Actions on a tag-matched host need the tag to agree with the host's hardware" | The `com-serial` / `com-id` tag names a server whose inventory has none of this host's MACs, or another server has some of them. Collect inventory in COM, or correct or remove the tag. |

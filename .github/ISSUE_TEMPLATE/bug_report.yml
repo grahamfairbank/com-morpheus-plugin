@@ -5,13 +5,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting! **Please redact real data** before posting: serial numbers, UUIDs, IP and MAC addresses, host/tenant/cluster names, GreenLake workspace or API client IDs, tokens. Use solid boxes on screenshots, not blur.
+        Thanks for reporting! **Please redact real data** before posting: serial numbers, UUIDs, IP and MAC addresses, host/tenant/cluster names, GreenLake workspace or API client IDs, tokens. In text, swap them for example values such as `host-a`, `XYZ0000001` or `192.0.2.10`. On screenshots, paint example values over them (or cover them completely); never blur.
         This is an unofficial community project. Please don't contact HPE support about it.
   - type: input
     id: plugin
     attributes:
       label: Plugin version and jar
-      placeholder: "0.3.0, com-morpheus-plugin-0.3.0.jar"
+      placeholder: "0.4.2, com-morpheus-plugin-0.4.2.jar"
     validations:
       required: true
   - type: input

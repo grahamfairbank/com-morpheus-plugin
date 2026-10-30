@@ -1,42 +1,50 @@
 # Screenshot specification
 
-The tab screenshots in this folder (`tab-*.png` and `cluster-summary.png`) are **rendered from anonymized test data**. The `install-*.png` screenshots come from a real Morpheus 9.0.1 appliance and GreenLake workspace, supplied by the owner and redacted with solid blocks before they were committed. They contain no customer or corporate information, and they're regenerated with `PREVIEW_OUT`. Only the shots below need a real Morpheus instance. They come from a corporate system, so they must be redacted strictly before they're added.
+There are two kinds of screenshot in this folder:
 
-## Shots wanted
+- **Rendered:** `tab-*.png` and `cluster-summary.png`. They are rendered from the plugin's test data (`PREVIEW_OUT` in `LiveChecksSpec`). When they're captured, the test data's names, serial numbers and addresses are swapped for the example values below.
+- **Real:** `install-*.png`, `morpheus-host-page.png` and `morpheus-cluster-page.png`. They come from a real Morpheus 9.0.1 appliance and GreenLake workspace, supplied by the maintainer. Every sensitive value is **painted over with an example value** before the image is committed. The browser's address bar and tabs are cropped off.
 
-| File | Where | Show | Purpose |
-|---|---|---|---|
-| `morpheus-plugin-list.png` | Administration → Integrations → Plugins | The com-morpheus row only (name, description, version, enabled) | Install guide, step 2 |
-| `morpheus-plugin-settings.png` | The plugin's **Edit** dialog | The whole settings form, with test values (see below) | Install guide, step 3 |
-| `morpheus-role-permissions.png` | Administration → Roles → a test role → Permissions, filtered to "com-morpheus" | The two com-morpheus permissions and their levels | Install guide, step 4 |
-| `morpheus-host-tab.png` | Infrastructure → Hosts → a physical HPE host → **HPE COM** tab | The host header and the tab strip with HPE COM selected, plus the top of the tab | README: shows the tab inside Morpheus |
-| `morpheus-action-running.png` (optional) | Same tab, just after **UID light on** | The action bar with its status text ("UID light on: RUNNING…" or "…done") | Install guide, step 5 |
+## Example values
 
-## Before you capture
+Use these and nothing else, so a reader sees the same name for the same thing in every image and every section of the docs:
 
-- Use **placeholder values** in the settings dialog wherever possible, rather than redacting real ones. For example: client ID `00000000-0000-0000-0000-000000000000`, workspace ID blank, proxy blank. The secret field shows dots, but blank it or use a dummy anyway.
-- Use the **light theme**, browser zoom **100%**, and a window about **1280 px** wide.
-- **Crop to the content area.** Leave out the browser tabs, address bar, bookmarks, the OS taskbar and Morpheus's top bar: it shows your **name, tenant and search history**.
-- Save as **PNG**. PNG has no camera metadata, but don't add any.
+| Thing | Example value |
+|---|---|
+| GreenLake workspace name / ID | `my-workspace` / `4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64` |
+| Issuer URL | `https://global.api.greenlake.hpe.com/authorization/v2/oauth2/4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64/token` |
+| API client ID / secret | `7c3e8a12-5b4f-4d9e-a6c1-2f8b0d4e9a37` / `a1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6` |
+| Workspace address, phone, email | `1 Example Way, Example City 00000`, `555-555-0100`, `storage-admin@example.com` |
+| Morpheus appliance and login | `morpheus.example.com`; username `admin`, display name **Admin User** (initials AU) |
+| Cloud, cluster, site tag | `cloud-a`, `cluster-a`, `site-a` |
+| Hosts | `host-a`, `host-b`, `host-c` (then `host-d`... for larger examples) |
+| Serial numbers | `XYZ0000001` for host-a, `XYZ0000002` for host-b, and so on |
+| host-a's iLO | `192.0.2.21`, `ilo-host-a.example.com` |
+| host-a's UUID | `3a7f1c2e-9b4d-4e6a-8c1f-5d2b7e9a0c41` |
+| Other IP addresses | `192.0.2.x` (the documentation range) |
 
-## Redact all of these (solid boxes only)
+The workspace, client and email values are shared with [dscc-morpheus-plugin](https://github.com/grahamfairbank/dscc-morpheus-plugin), whose install guide shows the same GreenLake screens.
 
-Cover with an **opaque solid rectangle** (black or gray). **Do not** blur, pixelate or use semi-transparent highlights: those can be reversed or read.
+## What to replace
 
 | Category | Examples on these screens |
 |---|---|
-| People | Your name, user names, email addresses, the avatar or initials in the top bar, "owner" fields |
-| Organization | Tenant, cloud, group, cluster and site names; GreenLake workspace name or ID; company or domain names |
-| Hosts | Host names and FQDNs, IP addresses, the appliance URL, iLO names and addresses, the iSCSI IQN |
-| Hardware identity | Serial numbers, UUIDs, COM ids (they contain the serial), MAC addresses, asset tags, product IDs, if you prefer |
-| Accounts and keys | API client ID, workspace ID, tokens, subscription keys, license keys |
+| People | Names, user names, email addresses; the initials beside the name in the top bar |
+| Organization | Tenant, cloud, group, cluster and site names; GreenLake workspace name or ID; company or domain names, addresses and phone numbers |
+| Hosts | Host names and FQDNs, IP addresses, the appliance URL, iLO names and addresses |
+| Hardware identity | Serial numbers, UUIDs, COM ids (they contain the serial), MAC addresses |
+| Accounts and keys | API client ID and secret, tokens, subscription and license keys |
 | Content | Alert texts or messages that name hosts or people |
-| Version banner | Optional: the appliance version and build in the footer, if your policy treats them as sensitive |
 
-When unsure, redact it. A screenshot with more boxes is better than one that leaks.
+**Paint the example value in place of the real one**: clear the text with the background color of that spot and write the example in a similar size and color. Block out only things that aren't text: photos, avatars, other companies' logos. Never blur: it can sometimes be reversed.
 
-## Check before sending
+## Shots wanted
 
-1. Zoom to 200% and look at every box: no characters should show around the edges.
-2. Search the image for anything readable outside the content you meant to show.
-3. Send the files themselves (not a document with the images pasted in), so they can be checked once more before they're committed.
+None at the moment. New shots go in `docs/images` as `install-NN-<what>.png` (install guide) or a descriptive name (README).
+
+## Before you capture
+
+- Type the **example values** into forms wherever you can (client ID, workspace ID), so there's less to paint over. The secret field shows dots; use a dummy anyway.
+- Use the **light theme**, browser zoom **100%**, and a window about **1920 px** wide.
+- Save as **PNG**.
+- Send the files themselves (not a document with the images pasted in), so they can be checked and painted before they're committed.

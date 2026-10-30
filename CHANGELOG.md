@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Docs:** the screenshots use example values (`host-a`, `cluster-a`, `XYZ0000001`, `192.0.2.21`, workspace `my-workspace`) instead of blocked-out text, and the same value means the same thing in every image and section. The README shows the plugin in the Morpheus UI: annotated host and cluster pages from a real 9.0.1 appliance. The install guide lists the example values up front.
+
 ## 0.4.2 (2026-10-29)
 
 HPE tightened the Compute Ops Management API on October 29, 2026, and 0.4.1 broke on host tabs and in the cluster summary. The COM console itself kept working. This release adapts to the live API. The published API reference hasn't changed, so each change is noted under [Known issues](README.md#known-issues).

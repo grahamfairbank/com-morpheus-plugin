@@ -33,7 +33,7 @@ Useful opt-in checks:
   - Actions that reconfigure servers or change power need a design discussion in an issue first. See [Why these actions](README.md#why-these-actions).
 - **The plugin never runs commands on hosts.**
 - **Tests:** add or update Spock specs for behavior changes. The fixtures in `src/test/resources/fixtures` are anonymized, so keep them that way.
-- **No real data in issues, PRs, fixtures or screenshots.** Redact serial numbers, UUIDs, IPs, MACs, host and tenant names, API client IDs and tokens. Use solid boxes, not blur (see [docs/images/SCREENSHOT-SPEC.md](docs/images/SCREENSHOT-SPEC.md)).
+- **No real data in issues, PRs, fixtures or screenshots.** Replace serial numbers, UUIDs, IPs, MACs, host and tenant names, API client IDs and tokens with the example values the docs use (`host-a`, `XYZ0000001`, `192.0.2.x`, `example.com`; full list in [docs/images/SCREENSHOT-SPEC.md](docs/images/SCREENSHOT-SPEC.md)). In screenshots, paint the example value over the real one. Never blur.
 - **Licenses:**
   - Don't copy code or text from sources whose license doesn't allow it.
   - The Morpheus plugin API is compile-only and must never be bundled into the jar.

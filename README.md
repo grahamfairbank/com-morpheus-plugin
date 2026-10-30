@@ -9,9 +9,9 @@
 
 > **Unofficial community project.** Not an HPE or Morpheus Data product. Not developed, endorsed or supported by Hewlett Packard Enterprise. Provided as is, without warranty. HPE, HPE GreenLake, Compute Ops Management, Morpheus, VM Essentials, ProLiant and iLO are trademarks of Hewlett Packard Enterprise; see [NOTICE.md](NOTICE.md) for trademarks and for every source this project was built from.
 
-![Cluster summary: every host in a cluster with its COM health, alerts, support and maintenance state](docs/images/cluster-summary.png)
+![cluster-a in Morpheus 9.0.1 with the plugin's HPE COM tab: totals at the top, then every host with its COM match, model, serial, health, power, active alerts, support and maintenance state](docs/images/morpheus-cluster-page.png)
 
-*All screenshots are rendered from anonymized test data.*
+<sub>A real Morpheus 9.0.1 appliance with three ProLiant servers in COM. **①** The plugin's HPE COM tab on the cluster page. **②** Totals for the whole cluster. **③** Every host, its COM health, power, alerts, support contract and COM maintenance state, with a link to the server in COM. **④** Straight from HPE Compute Ops Management, at most a minute old. Names and serial numbers are example values.</sub>
 
 ## Why you'll want it
 
@@ -20,7 +20,8 @@
 - **Nothing to install on your hosts.** The plugin matches each Morpheus host to its COM server using the network-adapter MAC addresses both systems already know. No agents, no SSH, no IPMI, no iLO credentials in Morpheus.
 - **Safe, one-click fixes.** Light the UID LED to find the box, refresh COM's inventory, reset a stuck iLO, or put a server into COM maintenance before hardware work. Every button restores, observes or refreshes; none reconfigures. [Why these actions?](#why-these-actions)
 - **Secure by design.** The API secret never leaves the Morpheus appliance. Buttons are off by default and gated by a Morpheus role permission. Every action request passes a chain of server-side checks. Two independent security reviews have been done, and every finding is fixed. [Security details](#security)
-- **Drop-in.** One jar for Morpheus 9.0 and 9.1, with a settings form, two role permissions, and a test suite that runs against both plugin APIs.
+- **Drop-in.** One jar for Morpheus 9.0 and 9.1, with a settings form, two role permissions, and a test suite that runs against both plugin APIs. 0.4.2 is tested on a real Morpheus 9.0.1 appliance against the live COM API.
+- **Keeps working when COM changes.** When the live COM API drifted from its published reference in October 2026, 0.4.2 adapted the same day: smaller pages, fallback reads and the newer GreenLake sign-in. See [Known issues](#known-issues).
 
 ## Get started
 
@@ -31,7 +32,36 @@
 
 Step-by-step instructions: **[docs/INSTALL.md](docs/INSTALL.md)**. How the pieces fit together: **[How it works](#how-it-works)**.
 
-## Tour
+## See it in Morpheus
+
+These screens are from a real Morpheus 9.0.1 appliance. Names, serial numbers and addresses are replaced with example values (`host-a`, `XYZ0000001`, `192.0.2.21`), the same ones the [install guide](docs/INSTALL.md) uses, so you can follow one server from screen to screen.
+
+### Every HPE host gets an HPE COM tab
+
+![host-a in Morpheus with the HPE COM tab open: status chips, action buttons, seven sub-tabs and the server's COM summary](docs/images/morpheus-host-page.png)
+
+1. **The HPE COM tab** sits beside Morpheus's own tabs on every physical HPE hypervisor host.
+2. **Status at a glance:** COM health, iLO security, active alerts, power, and how the host was matched to its COM server (here, every MAC address agrees).
+3. **One-click actions** (optional, off by default): UID light, Collect inventory, iLO reset and COM maintenance, run as COM jobs with live progress.
+4. **Seven sub-tabs** mirror the server's page in COM: Summary, Health, Firmware, Hardware, Storage, Support and Alerts.
+5. **Open in COM** and **Open iLO** take you straight to the server in COM or to its iLO.
+6. **The server as COM sees it:** serial, iLO, firmware baseline, OS, subscription and more, without leaving Morpheus.
+
+### Every cluster gets a rollup
+
+The cluster tab at the top of this page answers "is anything wrong in this cluster?" in one look. When something needs attention, it says so. Here's a larger example, rendered from the plugin's test data: a warning, active alerts, an expired support contract, a server in COM maintenance and a host COM doesn't know.
+
+![A seven-host cluster summary: one warning, alerts on two hosts, one expired support contract, one host in COM maintenance and one host not in COM](docs/images/cluster-summary.png)
+
+### Where to find it
+
+Morpheus puts extra tabs under the **▼** at the right end of the tab row. The plugin's tab is called **HPE COM**:
+
+![The host-a page in Morpheus with the ▼ menu open, showing HPE COM](docs/images/install-11-host-menu.png)
+
+## Tour of the host tab
+
+<sub>Rendered from the plugin's test data, with the same example values as above.</sub>
 
 **Host tab.** The COM server page, mirrored in seven sub-tabs, with links to COM and the iLO and optional action buttons:
 
@@ -49,7 +79,7 @@ Step-by-step instructions: **[docs/INSTALL.md](docs/INSTALL.md)**. How the piece
 |---|---|---|
 | ![Firmware](docs/images/tab-firmware.png) | ![Support](docs/images/tab-support.png) | ![Alerts](docs/images/tab-alerts.png) |
 
-## What it does (0.4.1)
+## What it does (0.4.2)
 
 - **Appears only where it makes sense:** on hypervisor hosts whose hardware vendor is HPE and that aren't virtual machines.
 - **Finds the matching COM server automatically.** Morpheus already stores each host's factory network-adapter MAC addresses, and COM's inventory lists the same adapters. The plugin matches them, so it never needs access to the host itself. For special cases, a `com-serial=<serial>` or `com-id=<COM id>` tag on the host overrides the match.
@@ -109,7 +139,7 @@ Power on, power off, restart, firmware updates and configuration changes are **n
 - A GreenLake **API client** for Compute Ops Management. Ideally it belongs to a dedicated GreenLake account, because the plugin acts as that account (see [Security](#security)).
   - A view-only COM role is enough for the tab.
   - The action buttons need a COM role that can run server jobs.
-- Outbound HTTPS from the Morpheus appliance to `sso.common.cloud.hpe.com` and `<region>.api.greenlake.hpe.com`. A proxy is supported.
+- Outbound HTTPS from the Morpheus appliance to `<region>.api.greenlake.hpe.com`, `global.api.greenlake.hpe.com` and `sso.common.cloud.hpe.com`. A proxy is supported.
 
 ## Download
 
