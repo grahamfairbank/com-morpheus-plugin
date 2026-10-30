@@ -19,9 +19,6 @@ docs/bug-reports/
 spike/
 CLAUDE.md
 
-# Local drafts (blog, not for the repo)
-docs/blog/
-
 # Owner-supplied enclave screenshots (unredacted; never commit)
 screenshots/
 __pycache__/
