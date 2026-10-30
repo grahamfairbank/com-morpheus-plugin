@@ -27,7 +27,7 @@ class ComClientSpec extends Specification {
 	def "falls back to the workspace token URL and remembers it"() {
 		given:
 		fake.tokenStatus[ComSettings.LEGACY_TOKEN_URL] = 401
-		def c = client(comWorkspaceId: 'ws1')
+		def c = client(comWorkspaceId: '4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64')
 
 		when:
 		c.accessToken()
@@ -36,7 +36,7 @@ class ComClientSpec extends Specification {
 		c.accessToken()
 
 		then: 'second sign-in goes straight to the URL that worked'
-		fake.calls == ['POST https://global.api.greenlake.hpe.com/authorization/v2/oauth2/ws1/token']
+		fake.calls == ['POST https://global.api.greenlake.hpe.com/authorization/v2/oauth2/4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64/token']
 	}
 
 	def "explains a failed sign-in without leaking the secret"() {

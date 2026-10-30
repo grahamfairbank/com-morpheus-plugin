@@ -50,10 +50,17 @@ class ComClient {
 	private final Set<String> refusedTokenUrls = new LinkedHashSet<>()
 	private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>()
 
+	/**
+	 * Most responses kept at once (0.4.3). Expired ones are dropped first, then the oldest, so memory follows what
+	 * people look at rather than the size of the COM workspace.
+	 */
+	static final int MAX_CACHE_ENTRIES = 1000
+
 	private static class CacheEntry {
 		final long at
+		final long ttlMs
 		final Object data
-		CacheEntry(long at, Object data) { this.at = at; this.data = data }
+		CacheEntry(long at, long ttlMs, Object data) { this.at = at; this.ttlMs = ttlMs; this.data = data }
 	}
 
 	ComClient(ComSettings settings, ComTransport transport, Closure<Long> clock = { System.currentTimeMillis() }) {
@@ -164,8 +171,8 @@ class ComClient {
 		return (Map) new JsonSlurper().parseText(r.body)
 	}
 
-	/** Current state of a job. Never cached. */
-	Map job(String jobId) { (Map) getJson("${BASE}/v1/jobs/${enc(jobId)}", 0L) }
+	/** Current state of a job, reused for at most ttlMs (0 = always fresh). */
+	Map job(String jobId, long ttlMs = 0L) { (Map) getJson("${BASE}/v1/jobs/${enc(jobId)}", ttlMs) }
 
 	/** Drops cached responses whose path contains this text (e.g. a server id after an inventory refresh). */
 	void invalidate(String contains) {
@@ -220,8 +227,24 @@ class ComClient {
 		} catch (Exception e) {
 			throw new ComException("COM ${shortPath(pathAndQuery)} returned something that isn't JSON", r.status)
 		}
-		if (ttlMs > 0) cache[pathAndQuery] = new CacheEntry(now, data) // ttl 0 = never reused, so never stored
+		if (ttlMs > 0) store(pathAndQuery, new CacheEntry(now, ttlMs, data)) // ttl 0 = never reused, so never stored
 		return data
+	}
+
+	int cacheSize() { cache.size() }
+
+	private void store(String key, CacheEntry e) {
+		cache[key] = e
+		if (cache.size() <= MAX_CACHE_ENTRIES) return
+		synchronized (cache) {
+			if (cache.size() <= MAX_CACHE_ENTRIES) return
+			long now = clock.call()
+			cache.entrySet().removeIf { Map.Entry<String, CacheEntry> x -> now - x.value.at >= x.value.ttlMs }
+			int over = cache.size() - (int) (MAX_CACHE_ENTRIES * 0.9)
+			if (over > 0) {
+				cache.entrySet().sort { Map.Entry<String, CacheEntry> x -> x.value.at }.take(over).each { cache.remove(it.key) }
+			}
+		}
 	}
 
 	private HttpResult get(String pathAndQuery) { send('GET', pathAndQuery, null) }
@@ -232,6 +255,9 @@ class ComClient {
 		if (settings.tenantAcid) h['Tenant-Acid'] = settings.tenantAcid
 		try {
 			return transport.send(method, settings.apiUrl + pathAndQuery, h, jsonBody)
+		} catch (ResponseTooLargeException e) {
+			log.warn("com-morpheus: ${shortPath(pathAndQuery)}: ${e.message}")
+			throw new ComException("COM ${shortPath(pathAndQuery)} returned more data than the plugin accepts (${e.message}).")
 		} catch (Exception e) {
 			// Full detail (proxy, DNS, TLS) goes to the log only.
 			log.warn("com-morpheus: request to ${settings.apiUrl} failed: ${e}")
@@ -256,6 +282,8 @@ class ComClient {
 		long now = clock.call()
 		if (token && now < tokenExpiresAt - 60_000L) return token
 		if (!settings.configured) throw new ComException('The plugin has no COM client ID and secret yet')
+		String problem = settings.problem()
+		if (problem) throw new ComException(problem)   // never send the secret outside HPE (0.4.3)
 
 		List<String> urls = settings.tokenUrls()
 		if (workingTokenUrl && urls.contains(workingTokenUrl)) urls = [workingTokenUrl] + (urls - workingTokenUrl)

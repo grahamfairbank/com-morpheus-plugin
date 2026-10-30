@@ -48,17 +48,51 @@ class ComService {
 	 */
 	private final byte[] tokenKey = { byte[] k = new byte[32]; new java.security.SecureRandom().nextBytes(k); k }()
 
-	String actionToken(Long hostId) {
+	/** Tokens are for one day (0.4.3): a token works on the day it was issued and the day after, then never again. */
+	static final long TOKEN_DAY_MS = 24L * 3600_000L
+
+	String actionToken(Long hostId) { tokenFor(hostId, Math.floorDiv(clock.call(), TOKEN_DAY_MS)) }
+
+	private String tokenFor(Long hostId, long day) {
 		if (hostId == null) return null
 		javax.crypto.Mac mac = javax.crypto.Mac.getInstance('HmacSHA256')
 		mac.init(new javax.crypto.spec.SecretKeySpec(tokenKey, 'HmacSHA256'))
-		return mac.doFinal("com-morpheus-action:${hostId}".toString().getBytes('UTF-8')).encodeHex().toString()
+		return mac.doFinal("com-morpheus-action:${hostId}:${day}".toString().getBytes('UTF-8')).encodeHex().toString()
 	}
 
 	boolean validToken(Long hostId, String token) {
-		String want = actionToken(hostId)
-		return want != null && token != null && java.security.MessageDigest.isEqual(want.getBytes('UTF-8'), token.getBytes('UTF-8'))
+		if (hostId == null || token == null) return false
+		long today = Math.floorDiv(clock.call(), TOKEN_DAY_MS)
+		return [today, today - 1].any { long d ->
+			java.security.MessageDigest.isEqual(tokenFor(hostId, d).getBytes('UTF-8'), token.getBytes('UTF-8'))
+		}
 	}
+
+	// ---- per-user limits on the action routes (0.4.3) --------------------------------------------
+
+	/** Route calls (caps, action, job) per user per minute. A job poll is one call every 4 s, so this allows several at once. */
+	static final int ROUTE_CALLS_PER_MINUTE = 60
+	/** Actions started per user per hour, across all hosts. */
+	static final int ACTIONS_PER_HOUR = 20
+	private final Map<String, long[]> routeWindows = new java.util.concurrent.ConcurrentHashMap<>()
+	private final Map<String, long[]> actionWindows = new java.util.concurrent.ConcurrentHashMap<>()
+
+	/** True while this user is under ROUTE_CALLS_PER_MINUTE. Counts the call. */
+	boolean allowRoute(String user) { take(routeWindows, user ?: 'unknown', 60_000L, ROUTE_CALLS_PER_MINUTE) }
+
+	/** Fixed-window counter: [window start, count] per user. */
+	private boolean take(Map<String, long[]> windows, String user, long windowMs, int max) {
+		long now = clock.call()
+		synchronized (windows) {
+			if (windows.size() > 5000) windows.entrySet().removeIf { Map.Entry<String, long[]> e -> now - e.value[0] >= windowMs }
+			long[] w = windows[user]
+			if (w == null || now - w[0] >= windowMs) { windows[user] = [now, 1L] as long[]; return true }
+			if (w[1] >= max) return false
+			w[1]++
+			return true
+		}
+	}
+
 	static final List<String> NOT_PHYSICAL = ['vmware', 'qemu', 'kvm', 'virtual', 'mvm', 'xen', 'hyper-v', 'bochs']
 
 	private final Closure<ComTransport> transportFactory
@@ -106,6 +140,8 @@ class ComService {
 			index = null
 			indexError = null
 			indexRequestedAt = 0L
+			groupIndex = null
+			groupIndexAt = 0L
 		}
 		return client
 	}
@@ -126,8 +162,8 @@ class ComService {
 				ComIndex built = ComIndex.build(c, clock.call())
 				if (c.is(client)) { index = built; indexError = null }
 			} catch (Throwable e) {
-				indexError = e instanceof ComException ? e.message : "${e.class.simpleName}: ${e.message}"
-				log.warn("com-morpheus: index build failed: ${indexError}")
+				indexError = e instanceof ComException ? e.message : unexpected('index build', e)
+				if (e instanceof ComException) log.warn("com-morpheus: index build failed: ${indexError}")
 			} finally {
 				building.set(false)
 			}
@@ -141,6 +177,7 @@ class ComService {
 	 */
 	Map resolve(HostFacts host, ComSettings s) {
 		if (!s.configured) return [state: 'unconfigured']
+		if (s.problem()) return [state: 'error', error: s.problem()]
 		if (!isPhysicalHpe(host)) {
 			return [state: 'notHpe', vendor: host?.vendor?.trim() ?: '--', product: host?.product?.trim() ?: '--',
 				hostMacs: MacMatcher.hostMacs(host?.interfaces).join(', ') ?: 'none']
@@ -227,6 +264,7 @@ class ComService {
 	Map cluster(String clusterName, List<HostFacts> hosts, ComSettings s) {
 		Map base = [clusterName: clusterName, comUiUrl: s.uiUrl]
 		if (!s.configured) return base + [state: 'unconfigured']
+		if (s.problem()) return base + [state: 'error', error: s.problem()]
 		List<HostFacts> hvs = (hosts ?: []).findAll { isHost(it) }.sort { (it.name ?: '').toLowerCase() }
 		if (!hvs) return base + [state: 'empty']
 		try {
@@ -314,6 +352,9 @@ class ComService {
 
 	/** Minimum time between two actions on the same COM server (0.3.1: no tight loops of iLO resets). */
 	static final long ACTION_COOLDOWN_MS = 30_000L
+	/** Minimum time between two iLO resets of the same server (0.4.3). */
+	static final long ILO_RESET_COOLDOWN_MS = 10L * 60_000L
+	private final Map<String, Long> lastIloResetAt = new java.util.concurrent.ConcurrentHashMap<>()
 	private final Map<String, Long> lastActionAt = new java.util.concurrent.ConcurrentHashMap<>()
 
 	/** Starts a COM job for a host. Only on an actionable match (confirmed, or a hardware-backed tag). Never throws. */
@@ -333,12 +374,21 @@ class ComService {
 				if (last != null && now - last < ACTION_COOLDOWN_MS) {
 					return [ok: false, error: "An action was started on this server less than ${(int) (ACTION_COOLDOWN_MS / 1000)} seconds ago. Wait for it to finish, then try again.".toString()]
 				}
+				Long lastReset = lastIloResetAt[comId]
+				if (action == 'iloReset' && lastReset != null && now - lastReset < ILO_RESET_COOLDOWN_MS) {
+					return [ok: false, error: "This server's iLO was reset less than ${(int) (ILO_RESET_COOLDOWN_MS / 60_000L)} minutes ago. Wait, then try again.".toString()]
+				}
+				if (!take(actionWindows, user ?: 'unknown', 3600_000L, ACTIONS_PER_HOUR)) {
+					log.warn("com-morpheus: ${user} reached ${ACTIONS_PER_HOUR} actions in an hour; refused ${action} on host ${host?.id}")
+					return [ok: false, error: "You've started ${ACTIONS_PER_HOUR} actions in the last hour, the most the plugin allows. Try again later.".toString()]
+				}
 				lastActionAt[comId] = now
+				if (action == 'iloReset') lastIloResetAt[comId] = now
 				cooling = comId
 			}
 			String already = maintenanceAlready(action, comId, s)   // after the cooldown, so repeated clicks don't each read COM
 			if (already) {
-				lastActionAt.remove(comId)   // a refused no-op doesn't use up the cooldown
+				lastActionAt.remove(comId)   // a refused no-op doesn't use up the cooldown (it has used one of the hour's actions)
 				return [ok: false, error: already]
 			}
 			if (m.how == 'override') log.warn("com-morpheus: ${user} is acting on host ${host?.id} ${host?.name} through a tag override (${m.why}), confirmed by ${m.corroboratedBy} MAC address(es)")
@@ -348,11 +398,11 @@ class ComService {
 			else log.info(started)
 			return [ok: true, action: action, label: ACTION_LABELS[action], jobId: job?.id, state: job?.state ?: 'PENDING', comId: m.comId]
 		} catch (ComException e) {
-			if (cooling) lastActionAt.remove(cooling) // COM refused it: allow a retry straight away
+			if (cooling) { lastActionAt.remove(cooling); if (action == 'iloReset') lastIloResetAt.remove(cooling) } // COM refused it: allow a retry straight away
 			log.warn("com-morpheus: ${user} ${action} on host ${host?.id} failed: ${e.message}")
 			return [ok: false, error: e.message]
 		} catch (Throwable e) {
-			if (cooling) lastActionAt.remove(cooling)
+			if (cooling) { lastActionAt.remove(cooling); if (action == 'iloReset') lastIloResetAt.remove(cooling) }
 			return [ok: false, error: unexpected("${user} ${action} on host ${host?.id}", e)]
 		}
 	}
@@ -423,6 +473,8 @@ class ComService {
 	}
 
 	static final String NO_SUCH_JOB = 'No such job for this host.'
+	/** Job status is reused for a few seconds (0.4.3), so a tight poll loop costs COM one call per interval. */
+	static final long JOB_TTL_MS = 3_000L
 
 	/** A job's progress, only if it belongs to this host's COM server. Never throws. */
 	Map jobStatus(HostFacts host, ComSettings s, String jobId) {
@@ -433,7 +485,7 @@ class ComService {
 			ComClient c = clientFor(s)
 			Map job
 			try {
-				job = c.job(jobId)
+				job = c.job(jobId, JOB_TTL_MS)
 			} catch (ComException e) {
 				if (e.notFound) return [ok: false, error: NO_SUCH_JOB]
 				throw e
@@ -472,11 +524,39 @@ class ComService {
 		String bundleId = ComView.bundleId(server)
 		if (bundleId) extra.bundle = optional(notes, 'firmware baseline') { c.firmwareBundle(bundleId, BUNDLE_TTL_MS) }
 		Map inventory = (Map) optional(notes, 'inventory') { c.inventory(comId, ComIndex.INVENTORY_TTL_MS) }
-		extra.group = optional(notes, 'group') {
-			ComView.groupName(comId, c.groups(GROUPS_TTL_MS)) { String gid -> c.groupDevices(gid, GROUPS_TTL_MS) }
-		}
+		extra.group = groupOf(c, comId)
 		return base + ComView.model(server, extra, s) + [inv: ComInventoryView.model(inventory), actionsEnabled: false] + [state: 'matched', match: how, matchWhy: why,
 			matchLevel: how == 'probable' ? 'warn' : 'ok', notes: notes]
+	}
+
+	private volatile Map<String, String> groupIndex
+	private volatile long groupIndexAt
+	private final AtomicBoolean groupsBuilding = new AtomicBoolean(false)
+
+	/**
+	 * The server's COM group name from a device -> group map rebuilt hourly in the background (0.4.3). Reading
+	 * every group's members during a page render cost one COM call per group. Null until the first build is done.
+	 */
+	String groupOf(ComClient c, String comId) {
+		long now = clock.call()
+		if ((groupIndex == null || now - groupIndexAt >= GROUPS_TTL_MS) && groupsBuilding.compareAndSet(false, true)) {
+			try {
+				executor.submit {
+					try {
+						Map<String, String> built = ComView.groupMap(c.groups(GROUPS_TTL_MS)) { String gid -> c.groupDevices(gid, 0L) }
+						if (c.is(client)) { groupIndex = built; groupIndexAt = clock.call() }
+					} catch (Throwable e) {
+						log.warn("com-morpheus: couldn't read COM groups: ${e instanceof ComException ? e.message : e.class.simpleName}")
+						if (c.is(client)) { groupIndex = groupIndex ?: [:]; groupIndexAt = clock.call() - GROUPS_TTL_MS + 60_000L }   // retry in a minute
+					} finally {
+						groupsBuilding.set(false)
+					}
+				}
+			} catch (Throwable e) {
+				groupsBuilding.set(false)
+			}
+		}
+		return groupIndex?.get(comId)
 	}
 
 	/** A server's entry from COM's server list (id, name, hardware, state, maintenanceMode, ...), or null. */

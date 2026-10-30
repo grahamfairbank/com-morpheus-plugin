@@ -290,7 +290,7 @@
     ],
     "Description": "Device capabilities and characteristics with active configuration status",
     "Manufacturer": "Hewlett Packard Enterprise",
-    "SerialNumber": "MYI0300LT1",
+    "SerialNumber": "NICSN00001",
     "@odata.context": "/redfish/v1/$metadata#NetworkAdapter.NetworkAdapter",
     "@Redfish.Settings": {
      "SettingsObject": {
@@ -627,7 +627,7 @@
     ],
     "Description": "Device capabilities and characteristics with active configuration status",
     "Manufacturer": "Hewlett Packard Enterprise",
-    "SerialNumber": "MYI03804WT",
+    "SerialNumber": "NICSN00002",
     "@odata.context": "/redfish/v1/$metadata#NetworkAdapter.NetworkAdapter",
     "@Redfish.Settings": {
      "SettingsObject": {

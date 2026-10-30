@@ -9,18 +9,16 @@ library, writes no files, keeps no logs, and never echoes passwords. When it
 finishes it deletes the admin token it created for its own login, so the only
 things left behind are the new role and, if you asked for one, the new user.
 
-What the role gets:
-- "read" (or "view") on every feature permission that offers it, so its users
-  can open the host and cluster pages the HPE COM tabs live on. Sensitive
-  areas (credentials, key pairs, certificates, users, identity sources, ...)
-  stay at "none".
-- read access to all groups, clouds and the other resource types Morpheus
-  scopes by default access.
+What the role gets, and nothing else:
+- "read" on the pages the HPE COM tabs live on:
+    Operations: Dashboard, Infrastructure: Compute, Clusters, Groups, Clouds
+- read access to all groups and clouds (default access), so those pages list
+  the hosts and clusters.
 - the plugin's own permissions:
     com-morpheus: View HPE COM tab     = Read
     com-morpheus: Run HPE COM actions  = Full   (only if you choose "view and act")
-Nothing else is granted above read level. The script reads the role back
-and stops before creating a user if anything else is above read.
+Every other permission stays at "none". The script reads the role back and
+stops before creating a user if anything else is above none.
 
 Adapted from create-readonly-user.py in dscc-morpheus-plugin (same author, MIT).
 """
@@ -40,19 +38,21 @@ CLIENT_ID = "morph-api"
 VIEW_PERMISSION = "com-morpheus-view"
 ACTIONS_PERMISSION = "com-morpheus-actions"
 
-# Feature permissions left at "none". Matched as substrings of the permission code.
-SENSITIVE = (
-    "credential", "key-pair", "keypair", "certificate", "admin-users", "user-sources",
-    "identity", "admin-roles", "admin-accounts", "tenant", "clients", "admin-appliance",
-    "admin-backup-settings", "remote-console", "cypher", "secret", "trust",
-)
+# The only feature permissions granted (read). Codes checked on Morpheus 9.0.1 and 9.1.0.
+ALLOW_READ = {
+    "dashboard": "Operations: Dashboard",
+    "admin-servers": "Infrastructure: Compute",
+    "infrastructure-cluster": "Infrastructure: Clusters",
+    "admin-groups": "Infrastructure: Groups",
+    "admin-zones": "Infrastructure: Clouds",
+}
 
-# Default (global) access codes for resource types, all set to "read".
-GLOBAL_ACCESS = ("ComputeSite", "ComputeZone", "InstanceType", "AppTemplate",
-                 "CatalogItemType", "ReportTypes", "Task", "TaskSet", "VdiPools")
+# Default (global) access, set to "read": groups (ComputeSite) and clouds (ComputeZone).
+GLOBAL_ACCESS = ("ComputeSite", "ComputeZone")
 
 READ_LEVELS = ("read", "view")
-SAFE_LEVELS = {"none", "read", "view", "no", "custom", None}
+NONE_LEVELS = {"none", "no", None}
+GRANTED_LEVELS = {"read", "view"}
 
 
 class ApiError(RuntimeError):
@@ -192,8 +192,8 @@ def create_role(srv: Server, admin: str, actions: bool) -> tuple[int, str]:
         try:
             res = srv.request("POST", "/api/roles", token=admin, body={"role": {
                 "authority": name, "roleType": "user",
-                "description": ("Read-only plus HPE COM tab and actions" if actions else
-                                "Read-only plus HPE COM tab") + " (created by create-com-user.py)"}})
+                "description": ("Host and cluster pages plus HPE COM tab and actions" if actions else
+                                "Host and cluster pages plus HPE COM tab") + " (created by create-com-user.py)"}})
             return res["role"]["id"], name
         except ApiError as e:
             print(f"  Could not create role '{name}': {message(e)}")
@@ -210,25 +210,22 @@ def plugin_permissions_present(srv: Server, admin: str, role_id: int) -> bool:
 def grant(srv: Server, admin: str, role_id: int, actions: bool) -> dict:
     role = srv.request("GET", f"/api/roles/{role_id}?includeDefaultAccess=true", token=admin)
     path = f"/api/roles/{role_id}/update-permission"
-    counts = {"read": 0, "skipped_sensitive": 0, "no_read_level": 0, "global": 0}
-    for perm in role.get("featurePermissions", []):
-        code = perm.get("code") or ""
-        if code in (VIEW_PERMISSION, ACTIONS_PERMISSION):
-            continue  # set explicitly below
-        if any(s in code.lower() for s in SENSITIVE):
-            counts["skipped_sensitive"] += 1
+    present = {p.get("code") for p in role.get("featurePermissions", [])}
+    counts = {"read": [], "missing": [], "global": 0}
+    for code, label in ALLOW_READ.items():
+        if code not in present:
+            counts["missing"].append(label)
             continue
         for level in READ_LEVELS:
             try:
                 srv.request("PUT", path, token=admin, body={"permissionCode": code, "access": level})
-                counts["read"] += 1
+                counts["read"].append(label)
                 break
             except ApiError as e:
                 if e.status not in (400, 422):
                     raise
         else:
-            counts["no_read_level"] += 1  # only none/full/yes/... levels: left at none
-    no_read = []
+            counts["missing"].append(label)
     for code in GLOBAL_ACCESS:
         try:
             srv.request("PUT", path, token=admin, body={"permissionCode": code, "access": "read"})
@@ -236,11 +233,6 @@ def grant(srv: Server, admin: str, role_id: int, actions: bool) -> dict:
         except ApiError as e:
             if e.status not in (400, 422):
                 raise
-            no_read.append(code)
-    if no_read:
-        # Normal on Morpheus 9.0.1: these resource types offer no "read" default access, so they're left as they are.
-        print(f"  Default access left unchanged for {len(no_read)} types that offer no read level "
-              f"({', '.join(no_read)}). This is normal.")
     srv.request("PUT", path, token=admin, body={"permissionCode": VIEW_PERMISSION, "access": "read"})
     srv.request("PUT", path, token=admin, body={
         "permissionCode": ACTIONS_PERMISSION, "access": "full" if actions else "none"})
@@ -249,8 +241,9 @@ def grant(srv: Server, admin: str, role_id: int, actions: bool) -> dict:
 
 
 def verify_role(srv: Server, admin: str, role_id: int, actions: bool) -> list[str]:
-    """Read the role back. Only the plugin's actions permission may be above read,
-    and only when asked for; the view permission must be read."""
+    """Read the role back. Only the allowlisted permissions may be read, the view
+    permission must be read, the actions permission full only when asked for, and
+    everything else none."""
     role = srv.request("GET", f"/api/roles/{role_id}?includeDefaultAccess=true", token=admin)
     bad = []
     levels = {p.get("code"): p.get("access") for p in role.get("featurePermissions", [])}
@@ -261,10 +254,13 @@ def verify_role(srv: Server, admin: str, role_id: int, actions: bool) -> list[st
         elif code == VIEW_PERMISSION:
             if access != "read":
                 bad.append(f"{code}={access} (expected read)")
-        elif access not in SAFE_LEVELS:
-            bad.append(f"{code}={access}")
+        elif code in ALLOW_READ:
+            if access not in GRANTED_LEVELS | NONE_LEVELS:
+                bad.append(f"{code}={access} (expected read)")
+        elif access not in NONE_LEVELS:
+            bad.append(f"{code}={access} (expected none)")
     for key, value in role.items():
-        if key.startswith("global") and key.endswith("Access") and value not in SAFE_LEVELS:
+        if key.startswith("global") and key.endswith("Access") and value not in GRANTED_LEVELS | NONE_LEVELS | {"custom"}:
             bad.append(f"{key}={value}")
     return bad
 
@@ -318,16 +314,17 @@ def main() -> None:
                      "Plugins. The empty role was removed.")
         print(f"Created role '{role_name}' (id {role_id}). Setting permissions ...")
         counts = grant(srv, admin, role_id, actions)
-        print(f"  read on {counts['read']} features, {counts['global']} default-access types; "
-              f"left at none: {counts['skipped_sensitive']} sensitive, "
-              f"{counts['no_read_level']} with no read level")
+        print("  Read: " + ", ".join(counts["read"]))
+        print(f"  Default access read on {counts['global']} types (groups, clouds)")
+        if counts["missing"]:
+            print("  Not offered on this appliance, left as they are: " + ", ".join(counts["missing"]))
         print("  HPE COM: View HPE COM tab = Read; Run HPE COM actions = " + ("Full" if actions else "None"))
         if counts["problems"]:
             print("\nThe role isn't as expected, so no user was created:")
             for item in counts["problems"]:
                 print(f"  - {item}")
             sys.exit(f"Review role '{role_name}' in Administration > Roles, then run again.")
-        print("  Checked: everything else on the role is none, read or view.")
+        print("  Checked: every other permission on the role is none.")
         if confirm("\nCreate a new user with this role now?", True):
             username = create_user(srv, admin, role_id, role_name)
             if username:

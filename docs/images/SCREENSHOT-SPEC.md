@@ -40,7 +40,9 @@ The workspace, client and email values are shared with [dscc-morpheus-plugin](ht
 
 ## Shots wanted
 
-None at the moment. New shots go in `docs/images` as `install-NN-<what>.png` (install guide) or a descriptive name (README).
+- `install-08-com-user-script.png`: a run of `tools/create-com-user.py` (0.4.3 or later) on Morpheus 9.0.x with option 2, from the admin login to the closing summary. The old shot showed the earlier script, which granted Read on many more pages, so it was removed.
+
+New shots go in `docs/images` as `install-NN-<what>.png` (install guide) or a descriptive name (README).
 
 ## Before you capture
 

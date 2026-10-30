@@ -21,7 +21,7 @@ class ComApi042Spec extends Specification {
 		ComSettings.fromMap([comClientId: 'i', comClientSecret: 's', comWorkspaceId: WS]).tokenUrls() ==
 			[GLOBAL, "https://aquila-org-api.common.cloud.hpe.com/authorization/v2/oauth2/${WS}/token".toString(), ComSettings.LEGACY_TOKEN_URL]
 		ComSettings.fromMap([comClientId: 'i', comClientSecret: 's']).tokenUrls() == [ComSettings.LEGACY_TOKEN_URL]
-		ComSettings.fromMap([comClientId: 'i', comClientSecret: 's', comWorkspaceId: WS, comTokenUrl: 'https://t.example.com/token']).tokenUrls() == ['https://t.example.com/token']
+		ComSettings.fromMap([comClientId: 'i', comClientSecret: 's', comWorkspaceId: WS, comTokenUrl: 'https://sso.example.greenlake.hpe.com/token']).tokenUrls() == ['https://sso.example.greenlake.hpe.com/token']
 	}
 
 	def "a token COM refuses on reads (401) moves sign-in on to the next issuer"() {

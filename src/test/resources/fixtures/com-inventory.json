@@ -45,7 +45,7 @@
       "@odata.type": "#Drive.v1_18_0.Drive",
       "Identifiers": [
        {
-        "DurableName": "31402EC0164A59B0",
+        "DurableName": "5000000000000001",
         "DurableNameFormat": "NAA"
        }
       ],
@@ -115,7 +115,7 @@
       "@odata.type": "#Drive.v1_18_0.Drive",
       "Identifiers": [
        {
-        "DurableName": "31402EC0164A59B1",
+        "DurableName": "5000000000000002",
         "DurableNameFormat": "NAA"
        }
       ],
@@ -204,7 +204,7 @@
       "DisplayName": "VOLUME-TEST-1",
       "Identifiers": [
        {
-        "DurableName": "600508B1001C99BDA41DE717842C7C44",
+        "DurableName": "50000000000000000000000000000003",
         "DurableNameFormat": "NAA"
        }
       ],
@@ -359,7 +359,7 @@
       "@odata.type": "#StorageController.v1_7_2.StorageController",
       "Identifiers": [
        {
-        "DurableName": "51402EC0164A59B0",
+        "DurableName": "5000000000000004",
         "DurableNameFormat": "NAA"
        }
       ],
@@ -471,7 +471,7 @@
       "@odata.type": "#StorageController.v1_7_2.StorageController",
       "Identifiers": [
        {
-        "DurableName": "51402EC0164A59B0",
+        "DurableName": "5000000000000004",
         "DurableNameFormat": "NAA"
        }
       ],
@@ -700,7 +700,7 @@
       "LegacyBootPriority": "None",
       "LogicalDriveNumber": 1,
       "LogicalDriveEncryption": false,
-      "VolumeUniqueIdentifier": "600508B1001C99BDA41DE717842C7C44",
+      "VolumeUniqueIdentifier": "50000000000000000000000000000003",
       "LogicalDriveStatusReasons": [
        "Ok"
       ]

@@ -31,12 +31,20 @@ class HttpResult {
 	}
 }
 
-/** Real transport on the JDK HTTP client, with optional proxy and fixed timeouts. */
+/** A response body over JdkComTransport.MAX_BODY_BYTES (0.4.3). */
+@CompileStatic
+class ResponseTooLargeException extends IOException {
+	ResponseTooLargeException(String message) { super(message) }
+}
+
+/** Real transport on the JDK HTTP client, with optional proxy, fixed timeouts and a response size cap. */
 @CompileStatic
 class JdkComTransport implements ComTransport {
 
 	static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10)
 	static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(30)
+	/** Largest response body read (0.4.3). A server inventory is about 100 KB; a page of any list far less. */
+	static final int MAX_BODY_BYTES = 16 * 1024 * 1024
 
 	private final HttpClient client
 
@@ -58,7 +66,23 @@ class JdkComTransport implements ComTransport {
 		headers?.each { k, v -> if (v != null) rb.header(k, v) }
 		HttpRequest.BodyPublisher pub = body != null ? HttpRequest.BodyPublishers.ofString(body) : HttpRequest.BodyPublishers.noBody()
 		rb.method(method, pub)
-		HttpResponse<String> r = client.send(rb.build(), HttpResponse.BodyHandlers.ofString())
-		return new HttpResult(r.statusCode(), r.body(), r.headers().map())
+		HttpResponse<InputStream> r = client.send(rb.build(), HttpResponse.BodyHandlers.ofInputStream())
+		return new HttpResult(r.statusCode(), readLimited(r.body(), MAX_BODY_BYTES), r.headers().map())
+	}
+
+	/** Reads at most limit bytes as UTF-8; throws ResponseTooLargeException (and closes the stream) beyond that. */
+	static String readLimited(InputStream stream, int limit) {
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream()
+			byte[] buf = new byte[65536]
+			int n
+			while ((n = stream.read(buf)) != -1) {
+				if (out.size() + n > limit) throw new ResponseTooLargeException("response over ${(int) (limit / (1024 * 1024))} MB".toString())
+				out.write(buf, 0, n)
+			}
+			return new String(out.toByteArray(), 'UTF-8')
+		} finally {
+			stream.close()
+		}
 	}
 }

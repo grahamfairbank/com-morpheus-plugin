@@ -8,7 +8,7 @@
 
 - **Bugs and ideas:** open an [issue](../../issues/new/choose) first if the change is large, so we can agree on the approach.
 - **Small fixes:** open a pull request directly.
-- **Security issues** (for example, a way around the permission or tenant checks): please don't open a public issue. Use GitHub's **private vulnerability reporting** (Security → Report a vulnerability) instead.
+- **Security issues** (for example, a way around the permission or tenant checks): please don't open a public issue. Use GitHub's **private vulnerability reporting** (Security → Report a vulnerability) instead. See [SECURITY.md](SECURITY.md).
 
 ## Build and test
 

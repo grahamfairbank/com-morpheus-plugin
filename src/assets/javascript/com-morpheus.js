@@ -17,7 +17,7 @@
     comMaintenanceOn: "Put this server in COM maintenance mode? COM suspends automatic support case creation, ServiceNow incidents and email notifications for it until you take it out. This doesn't change Morpheus maintenance mode, the host or its VMs.",
     comMaintenanceOff: "Take this server out of COM maintenance mode? COM resumes automatic support cases, ServiceNow incidents and email notifications for it."
   };
-  var PROBE_URLS = ['/plugin/comMorpheus/probe', '/comMorpheus/probe', '/plugin/comMorpheus/probeOpen', '/comMorpheus/probeOpen'];
+  var PROBE_URLS = ['/plugin/comMorpheus/probe', '/comMorpheus/probe'];
   var ROOT = '.com-morpheus'; // the plugin's own tab container
 
   function csrfFromMeta(doc) {

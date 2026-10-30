@@ -20,7 +20,6 @@ import groovy.util.logging.Slf4j
 class ComController implements PluginController {
 
 	static final String PROBE = '/comMorpheus/probe'
-	static final String PROBE_OPEN = '/comMorpheus/probeOpen'
 	static final String CAPS = '/comMorpheus/caps'
 	static final String ACTION = '/comMorpheus/action'
 	static final String JOB = '/comMorpheus/job'
@@ -44,10 +43,8 @@ class ComController implements PluginController {
 	@Override
 	List<Route> getRoutes() {
 		List<Permission.AccessType> read = Collections.singletonList(Permission.AccessType.read)
-		List<Permission> none = new ArrayList<Permission>()
 		List<Route> routes = new ArrayList<Route>()
 		routes.add(Route.build(PROBE, 'probe', Permission.build(ComMorpheusPlugin.PERMISSION_CODE, read)))
-		routes.add(Route.build(PROBE_OPEN, 'probeOpen', none))
 		// Phase 2. Every route needs a permission: Morpheus 9.0.1 never matches a route with none (404).
 		// The Dispatcher only checks that the permission key exists, so the methods check levels themselves.
 		List<Permission.AccessType> full = Collections.singletonList(Permission.AccessType.full)
@@ -60,14 +57,13 @@ class ComController implements PluginController {
 
 	JsonResponse probe(ViewModel<Map> model) { answer(model, 'probe') }
 
-	JsonResponse probeOpen(ViewModel<Map> model) { answer(model, 'probeOpen') }
-
 	// ---- phase 2 actions -------------------------------------------------------------------------
 
 	/** Whether this user may see the action buttons. */
 	JsonResponse caps(ViewModel<Map> model) {
 		Map bad = requestCheck(model)
 		if (bad) return json(403, bad)
+		if (!plugin.service.allowRoute(username(model))) return json(429, TOO_MANY)
 		ComSettings s = plugin.loadSettings()
 		boolean canAct = s.configured && s.enableActions && level(model, ComMorpheusPlugin.ACTIONS_PERMISSION) == 'full'
 		return json(200, [ok: true, canAct: canAct])
@@ -76,7 +72,7 @@ class ComController implements PluginController {
 	/** POST serverId, action (uidOn | uidOff | collectInventory | iloReset): starts a COM job. */
 	JsonResponse action(ViewModel<Map> model) {
 		Map denied = guard(model)
-		if (denied) return json(403, denied)
+		if (denied) return json(denied.is(TOO_MANY) ? 429 : 403, denied)
 		Map host = host(model)
 		if (host.error) return json((int) host.status, [ok: false, error: host.error])
 		if (!plugin.service.validToken(((HostFacts) host.facts).id, param(model, 'token'))) return json(403, [ok: false, error: 'Request refused: reopen the HPE COM tab and try again.'])
@@ -87,7 +83,7 @@ class ComController implements PluginController {
 	/** POST serverId, jobId: the job's progress, only if it belongs to that host's COM server. */
 	JsonResponse jobStatus(ViewModel<Map> model) {
 		Map denied = guard(model)
-		if (denied) return json(403, denied)
+		if (denied) return json(denied.is(TOO_MANY) ? 429 : 403, denied)
 		Map host = host(model)
 		if (host.error) return json((int) host.status, [ok: false, error: host.error])
 		if (!plugin.service.validToken(((HostFacts) host.facts).id, param(model, 'token'))) return json(403, [ok: false, error: 'Request refused: reopen the HPE COM tab and try again.'])
@@ -144,8 +140,12 @@ class ComController implements PluginController {
 		ComSettings s = plugin.loadSettings()
 		if (!s.enableActions) return [ok: false, error: 'Actions are turned off in the plugin settings.']
 		if (level(model, ComMorpheusPlugin.ACTIONS_PERMISSION) != 'full') return [ok: false, error: 'Your role needs "com-morpheus: Run HPE COM actions" at full access.']
+		if (!plugin.service.allowRoute(username(model))) return TOO_MANY
 		return null
 	}
+
+	/** Per-user route limit reached (0.4.3). */
+	static final Map TOO_MANY = Collections.unmodifiableMap([ok: false, error: 'Too many requests. Wait a minute, then try again.'])
 
 	/** The host named by serverId, if it exists and the user's tenant owns it (or the user is in the master tenant). */
 	Map host(ViewModel<Map> model) {
@@ -181,12 +181,8 @@ class ComController implements PluginController {
 	}
 
 	private JsonResponse answer(ViewModel<Map> model, String which) {
-		Map out = [ok: true, route: which, plugin: ComMorpheusPlugin.CODE,
-		           method: safe { model?.request?.method }, uri: safe { model?.request?.requestURI },
-		           user: safe { model?.user?.username },
-		           permission: safe { model?.user?.permissions?.get(ComMorpheusPlugin.PERMISSION_CODE) },
-		           at: java.time.Instant.now().toString()]
-		log.info("com-morpheus: route probe ${which} ${out.method} ${out.uri} by ${out.user}")
+		Map out = [ok: true, route: which, method: safe { model?.request?.method }]
+		log.debug("com-morpheus: route probe ${which} ${out.method} by ${safe { model?.user?.username }}")
 		return JsonResponse.of(out)
 	}
 

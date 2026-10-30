@@ -88,14 +88,49 @@ class ComView {
 		return (warranties ?: []).find { (it.deviceId as String) == comId }
 	}
 
-	/** Name of the COM group whose device list mentions this server, or null. */
-	static String groupName(String comId, List<Map> groups, Closure<Object> devicesOf) {
+	/**
+	 * https link to an iLO, only for a plain IPv4/IPv6 address or DNS host name as reported to COM (0.4.3).
+	 * Anything else (paths, user info, ports, odd characters) is shown as text without a link.
+	 */
+	static String iloLink(Object value) {
+		String v = value?.toString()?.trim()
+		if (!v) return null
+		if (v ==~ /(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}/) return "https://${v}/".toString()
+		if (v.contains(':') && v ==~ /[0-9A-Fa-f:]{2,39}/) return "https://[${v}]/".toString()
+		if (v.length() <= 253 && v ==~ /(?i)[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*/) return "https://${v}/".toString()
+		return null
+	}
+
+	/**
+	 * Device id -> group name for every COM group (0.4.3: built once in the background, not per page view).
+	 * Ids are the string values of "id"/"...Id" keys in each group's device list. A group whose devices can't be read is skipped.
+	 */
+	static Map<String, String> groupMap(List<Map> groups, Closure<Object> devicesOf) {
+		Map<String, String> out = [:]
 		for (Map g : (groups ?: [])) {
 			Object devices
 			try { devices = devicesOf(g.id as String) } catch (Exception ignored) { continue }
-			if (devices != null && groovy.json.JsonOutput.toJson(devices).contains("\"${comId}\"")) return g.name as String
+			Set<String> ids = new LinkedHashSet<>()
+			collectIds(devices, ids)
+			ids.each { String id -> if (!out.containsKey(id)) out[id] = g.name as String }
 		}
-		return null
+		return out
+	}
+
+	private static void collectIds(Object o, Set<String> ids) {
+		if (o instanceof Map) {
+			((Map) o).each { k, v ->
+				if (v instanceof String && (k == 'id' || (k as String).endsWith('Id'))) ids << (String) v
+				else collectIds(v, ids)
+			}
+		} else if (o instanceof List) {
+			((List) o).each { collectIds(it, ids) }
+		}
+	}
+
+	/** Name of the COM group whose device list names this server, or null. */
+	static String groupName(String comId, List<Map> groups, Closure<Object> devicesOf) {
+		return groupMap(groups, devicesOf)[comId]
 	}
 
 	/**
@@ -127,8 +162,8 @@ class ComView {
 			row('Model', hw.model),
 			row('Serial number', hw.serialNumber),
 			row('iLO security status', security ? words(security.overallSecurityStatus) : '--', security ? level(security.overallSecurityStatus) : null),
-			row('iLO IP address', bmc.ip, null, bmc.ip ? "https://${bmc.ip}/" : null),
-			row('iLO hostname', bmc.hostname, null, bmc.hostname ? "https://${bmc.hostname}/" : null),
+			row('iLO IP address', bmc.ip, null, iloLink(bmc.ip)),
+			row('iLO hostname', bmc.hostname, null, iloLink(bmc.hostname)),
 			row('iLO', bmc.version ?: bmc.model),
 			row('Baseline', bundle ? (bundle.releaseVersion ?: bundle.displayName ?: bundle.name) : (bundleId(server) ? '(unknown bundle)' : 'None')),
 			row('Power', words(hw.powerState), hw.powerState == 'ON' ? 'ok' : null),
@@ -167,7 +202,7 @@ class ComView {
 			comId          : comId,
 			maintenanceOn  : server?.maintenanceMode == true,
 			comUrl         : settings.serverPageUrl(comId),
-			iloUrl         : bmc.ip ? "https://${bmc.ip}/" : null,
+			iloUrl         : iloLink(bmc.ip),
 			name           : server?.name,
 			model          : hw.model,
 			serial         : hw.serialNumber,
@@ -191,7 +226,7 @@ class ComView {
 
 	/** URL forms the route probe tries: with and without the /plugin prefix, permissioned and open. */
 	static List<String> probeUrls() {
-		return ['/plugin' + ComController.PROBE, ComController.PROBE, '/plugin' + ComController.PROBE_OPEN, ComController.PROBE_OPEN]
+		return ['/plugin' + ComController.PROBE, ComController.PROBE]
 	}
 
 	/** Adds is<State> flags (Handlebars has no equality helper) and the match color. */

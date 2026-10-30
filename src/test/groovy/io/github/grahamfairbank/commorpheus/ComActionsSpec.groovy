@@ -15,7 +15,8 @@ import spock.lang.Specification
 class ComActionsSpec extends Specification {
 
 	FakeCom fake = new FakeCom()
-	ComService service = new ComService({ ComSettings s -> fake }, { 1_000L }, new DirectExecutor())
+	long clockNow = 1_000L
+	ComService service = new ComService({ ComSettings s -> fake }, { clockNow }, new DirectExecutor())
 	static final ComSettings ON = ComSettings.fromMap([comClientId: 'id', comClientSecret: 'secret', enableActions: 'on'])
 	static final ComSettings OFF = ComSettings.fromMap([comClientId: 'i', comClientSecret: 's'])
 
@@ -36,10 +37,13 @@ class ComActionsSpec extends Specification {
 		when:
 		Map running = service.jobStatus(Fixtures.host(), ON, r.jobId)
 		fake.jobs[r.jobId] += [state: 'COMPLETE', resultCode: 'SUCCESS', status: 'Done']
+		Map cached = service.jobStatus(Fixtures.host(), ON, r.jobId)   // within JOB_TTL_MS: no new COM call
+		clockNow += ComService.JOB_TTL_MS
 		Map done = service.jobStatus(Fixtures.host(), ON, r.jobId)
 
 		then:
 		running.ok && !running.done && running.state == 'PENDING'
+		cached.state == 'PENDING'
 		done.ok && done.done && done.resultCode == 'SUCCESS'
 	}
 

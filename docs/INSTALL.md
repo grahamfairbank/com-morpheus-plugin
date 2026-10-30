@@ -142,23 +142,20 @@ People who look after hardware often need the HPE COM tabs, and maybe the button
    - **Name for the new role:** press Enter for `hpe-com-viewer` (option 1) or `hpe-com-operator` (option 2), or type your own.
    - **Create a new user with this role now?** `y` to make one (username, email, first and last name, password; Morpheus requires an email, and any address you control will do), or `n` to give the role to existing users yourself.
 4. The script then:
-   - creates the role and sets **Read** on every feature permission that has a read level, so its users can open the host and cluster pages;
+   - creates the role and sets **Read** on the five pages the tabs need, and nothing else: **Operations: Dashboard** (the landing page) and **Infrastructure: Compute, Clusters, Groups** and **Clouds**;
    - sets **com-morpheus: View HPE COM tab** to **Read**, and **Run HPE COM actions** to **Full** (option 2) or **None** (option 1);
-   - leaves sensitive areas at **None**: credentials, key pairs, certificates, users, roles, identity sources, tenants, secrets, remote consoles and similar;
+   - leaves **every other permission at None**, including logs, health, tasks, templates, Terraform state, integrations and settings, as well as credentials, users and roles;
    - gives the role read access to all groups and clouds;
-   - **reads the role back and checks it.** If anything is above read level except what you chose, it stops before creating a user and tells you what to review;
+   - **reads the role back and checks it.** If any other permission is above None, it stops before creating a user and tells you what to review;
    - creates the user, if you asked for one;
    - deletes the admin token it used, where your Morpheus version allows.
 
-Here's a real run on Morpheus 9.0.1, choosing option 2, signed in as `admin`:
-
-![A run of create-com-user.py: role hpe-com-operator and user hpe-com-operator-user created](images/install-08-com-user-script.png)
+At the end it lists what it granted, for example `Read: Operations: Dashboard, Infrastructure: Compute, Infrastructure: Clusters, Infrastructure: Groups, Infrastructure: Clouds`. If your Morpheus version doesn't have one of those permissions, it says so and leaves it out.
 
 **About the messages:**
-- *Default access … no read level* (shown as seven "Note: could not set default access" lines in the run above; newer copies of the script print one line): on Morpheus 9.0.1, instance types, blueprints, catalog items, reports, tasks, workflows and VDI pools don't offer a "read" level for default access, so the script leaves them alone. Groups and clouds do, and get read. That's the "2 default-access types".
 - *could not remove this run's admin token:* the admin login token the script used couldn't be deleted on this version. It expires on its own; nothing else is left behind.
 
-The role it creates, in **Administration → Roles**, searched for `com`: **Compute** is **Read**, **View HPE COM tab** is **Read** and **Run HPE COM actions** is **Full**:
+The role it creates, in **Administration → Roles**, searched for `com`: **Compute** is **Read**, **View HPE COM tab** is **Read** and **Run HPE COM actions** is **Full**. Searched for `com`, the role looks the same with every version of the script:
 
 ![The hpe-com-operator role: Compute Read, Run HPE COM actions Full, View HPE COM tab Read](images/install-09-com-role.png)
 

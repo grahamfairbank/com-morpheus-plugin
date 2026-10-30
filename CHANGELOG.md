@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+Security hardening from an independent review on October 31, 2026 (no Critical findings; see [Independent security review](README.md#independent-security-review)).
+
+- **`tools/create-com-user.py` grants only what the tabs need.** Earlier copies set Read on every Morpheus permission that wasn't on a short block list: about 45 features on Morpheus 9.0.1, including logs, health, tasks, templates and Terraform state. The role now gets Read on **Operations: Dashboard** and **Infrastructure: Compute, Clusters, Groups, Clouds**, default access to groups and clouds, and the plugin's own permissions. Everything else stays at None, and the script stops before creating a user if anything else is above None. **If you made a role with the 0.4.2 script, delete it and run the new script, or set the other permissions to None by hand.**
+- **The client secret and token go only to HPE.** The COM API URL, Token URL override and COM UI URL settings must be `https://` addresses under `greenlake.hpe.com` or `cloud.hpe.com`, with no user name, query or fragment. The workspace ID must be 32 hexadecimal characters, and the proxy URL must be `http://` or `https://` with a host name. If a setting doesn't qualify, the tabs show which one to fix and the plugin doesn't sign in.
+- **Memory stays bounded on large workspaces.** Matching keeps only each server's MAC addresses, not its whole inventory. The response cache holds at most 1,000 entries, dropping expired ones first. Responses over 16 MB are refused.
+- **Per-user limits on the action routes.** Each Morpheus user can make 60 route calls a minute and start 20 actions an hour. An iLO can be reset once every 10 minutes. Job progress is reused for 3 seconds, so polling costs COM one call per interval.
+- **Action tokens expire.** A host tab's action token works on the day it was issued and the next day. (It isn't tied to the user, because Morpheus doesn't tell a tab who's viewing it. The routes still need the actions permission.)
+- **iLO links** are made only from a plain IP address or host name reported to COM; anything else is shown as text.
+- **Errors:** unexpected errors on the host tab and during matching show a reference number instead of the exception text.
+- **COM groups** are read once an hour in the background, instead of one COM call per group while a page loads.
+- **Diagnostics:** the unused `probeOpen` route is gone, and the probe route no longer echoes the caller's name and permission.
+- **Build:** `tools/check-plugin-core.sh` works in `build/compat` instead of a shared `/tmp` folder. Test data uses example values for NIC serial numbers and storage identifiers.
+- New [`SECURITY.md`](SECURITY.md): how to report a vulnerability, and which versions get fixes.
 - **Docs:** the screenshots use example values (`host-a`, `cluster-a`, `XYZ0000001`, `192.0.2.21`, workspace `my-workspace`) instead of blocked-out text, and the same value means the same thing in every image and section. The README shows the plugin in the Morpheus UI: annotated host and cluster pages from a real 9.0.1 appliance. The install guide lists the example values up front.
 
 ## 0.4.2 (2026-10-29)

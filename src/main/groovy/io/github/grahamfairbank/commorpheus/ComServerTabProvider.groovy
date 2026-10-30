@@ -52,8 +52,7 @@ class ComServerTabProvider extends AbstractServerTabProvider {
 		try {
 			model = plugin.service.tab(facts(server, true), s)
 		} catch (Throwable e) {
-			log.warn("com-morpheus: tab render failed for server ${server?.id}", e)
-			model = [state: 'error', error: "${e.class.simpleName}: ${e.message}".toString()]
+			model = [state: 'error', error: ComService.unexpected("tab render for server ${server?.id}", e)]
 		}
 		if (s.routeDiagnostics) {
 			model = model + [routeDiagnostics: true, probeUrls: ComView.probeUrls()]

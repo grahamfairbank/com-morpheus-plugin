@@ -9,18 +9,17 @@ class ComControllerSpec extends Specification {
 
 	ComController controller = new ComController(null, null)
 
-	def "probe routes: one behind the view permission, one open"() {
+	def "every route needs a permission; no open probe (0.4.3)"() {
 		when:
 		def routes = controller.routes
 
 		then:
-		routes*.url == ['/comMorpheus/probe', '/comMorpheus/probeOpen', '/comMorpheus/caps', '/comMorpheus/action', '/comMorpheus/job']
-		routes*.method == ['probe', 'probeOpen', 'caps', 'action', 'jobStatus']
+		routes*.url == ['/comMorpheus/probe', '/comMorpheus/caps', '/comMorpheus/action', '/comMorpheus/job']
+		routes*.method == ['probe', 'caps', 'action', 'jobStatus']
 		routes[0].permissions*.code == ['com-morpheus-view']
-		routes[1].permissions == []
+		routes[1].permissions*.code == ['com-morpheus-actions']
 		routes[2].permissions*.code == ['com-morpheus-actions']
 		routes[3].permissions*.code == ['com-morpheus-actions']
-		routes[4].permissions*.code == ['com-morpheus-actions']
 	}
 
 	def "route methods exist with the signature VME's dispatcher calls"() {
@@ -28,7 +27,7 @@ class ComControllerSpec extends Specification {
 		controller.routes.every { r -> controller.class.getMethod(r.method, ViewModel) != null }
 	}
 
-	def "probe answers with who called it and changes nothing"() {
+	def "probe answers ok and the method, and echoes nothing about the caller (0.4.3)"() {
 		given:
 		ViewModel<Map> vm = new ViewModel<>()
 		vm.user = new User(username: 'alice')
@@ -39,8 +38,8 @@ class ComControllerSpec extends Specification {
 		then:
 		r.data.ok == true
 		r.data.route == 'probe'
-		r.data.user == 'alice'
-		r.data.plugin == 'com-morpheus-plugin'
+		r.data.keySet() == ['ok', 'route', 'method'] as Set
+		!r.data.toString().contains('alice')
 	}
 
 	def "diagnostics panel renders every probe URL and no inline script"() {

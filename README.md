@@ -153,6 +153,8 @@ Then follow **[docs/INSTALL.md](docs/INSTALL.md)**: create the COM API client, u
 
 ## Security
 
+To report a vulnerability, see [SECURITY.md](SECURITY.md).
+
 ### Who acts in COM: one shared identity
 
 The plugin uses **one GreenLake API client for the whole Morpheus appliance**: every tenant, host and user. It's set once in the plugin settings. A GreenLake *personal* API client **inherits the roles of the GreenLake user who created it**. So:
@@ -170,15 +172,15 @@ The plugin uses **one GreenLake API client for the whole Morpheus appliance**: e
 
 ### Safeguards in the plugin
 
-- **Credentials stay on the appliance.** Only the Morpheus appliance talks to GreenLake. The API client secret is stored with the plugin settings and is never sent to browsers.
+- **Credentials stay on the appliance and go only to HPE.** Only the Morpheus appliance talks to GreenLake. The API client secret is stored with the plugin settings and is never sent to browsers. It's sent only to HPE GreenLake sign-in addresses: the URL settings must be under `greenlake.hpe.com` or `cloud.hpe.com`, so someone who can edit the plugin settings can't point them anywhere else.
 - **Read-only by default.** The action buttons are off until an administrator turns on **Enable actions**. Even then, they appear only for roles granted **com-morpheus: Run HPE COM actions** at full access.
 - **Every action request is re-checked on the appliance** (hardened in 0.3.1 after an [independent security review](#independent-security-review)):
   - **Request:**
     - it must be a **POST** (anything else, including an unknown method, is refused);
     - it must carry the `X-Requested-With` header, which a cross-site form or image can't send;
     - when the browser names its origin, that origin must be this appliance;
-    - Morpheus's own CSRF protection applies on top.
-  - **The tab's action token:** the request must carry the signed token the server put into that host's tab. Markup injected elsewhere in the UI can't forge a working button.
+    - Morpheus's own CSRF protection may apply as well; the plugin doesn't rely on it.
+  - **The tab's action token:** the request must carry the signed token the server put into that host's tab. Markup injected elsewhere in the UI can't forge a working button. Tokens expire after a day.
   - **Permission and setting:** actions must be turned on, and the user must have **Run HPE COM actions** at full access.
   - **Ownership:** the user's tenant must own the host (or the user is in the master tenant), and the host must be a hypervisor host.
   - **Which server:** the host's COM server is found again from Morpheus data, never from the browser.
@@ -186,7 +188,7 @@ The plugin uses **one GreenLake API client for the whole Morpheus appliance**: e
     - A `com-serial` / `com-id` **tag** only changes which server is *shown*. For actions, a tag must agree with the host's own hardware: at least one of its MAC addresses must be in that server's inventory, and none in another server's. So a user who can edit tags can't aim a job at someone else's server. A tag still decides which server's data the tab *displays*. Because everything is read through the one shared GreenLake client, a user who can edit a host's tags can view (not act on) any server in the COM workspace, on the host tab and in the cluster summary. Limit the client's COM scope if that matters to you.
   - **Cluster summary:** it lists only hosts owned by the cluster's tenant, and only users of that tenant (or the master tenant) can open it.
   - **Results:** job progress is shown only for that server's own jobs. Unknown, foreign and malformed jobs all get the same answer.
-  - **Rate:** one action per server every 30 seconds.
+  - **Rate:** one action per server every 30 seconds, and one iLO reset per server every 10 minutes. Each Morpheus user can make 60 requests a minute to the action routes and start 20 actions an hour, so one user can't use up the shared client's COM rate limit.
   - **Errors:** unexpected errors return a reference number; the details stay in the Morpheus log.
 - **No commands on hosts.** The plugin never runs anything on hypervisor hosts. Actions are COM jobs only, and each one is logged with the Morpheus user who started it.
 - **No power actions.** Power on, off and restart aren't in this version.
@@ -201,6 +203,13 @@ Before 0.3.1, the action routes, permission model and browser script were review
 All of them are fixed in 0.3.1, each with tests, and the fixes were re-reviewed. Versions 0.2.0 and 0.3.0 are affected when **Enable actions** is on: upgrade to 0.3.1. Exploiting any of them required a signed-in Morpheus user with the actions permission; none was reachable anonymously.
 
 Before 0.4.0, the same reviewer checked the new cluster summary and COM maintenance actions. It found two Medium issues (the cluster tab didn't check tenants, and it read the workspace's whole alert history on each refresh) and two Low ones (COM maintenance needed more safeguards, and the tab appeared on clusters without HPE hosts). All were fixed before release, with tests, and no released version was affected.
+
+On October 31, 2026, the same reviewer did a full review of the code, scripts, build, docs and public history. It found no Critical issue, and no way for a user without the right Morpheus permission to run an action or read another tenant's host data. It found:
+- **one High:** `tools/create-com-user.py` (new in 0.4.2) gave its role Read on far more of Morpheus than the tabs need, including logs, tasks and templates;
+- **three Medium:** the URL settings weren't limited to HPE, so someone who can edit the plugin settings could send the client secret elsewhere; the response cache grew with the size of the COM workspace; and there was no per-user limit on the action routes;
+- **several Low/Informational findings:** iLO link checks, error detail, token lifetime, an unused route, group lookups during page loads, and build hygiene.
+
+The High, the Mediums and most of the Lows are fixed in the next release, with tests. CI with signed build provenance is planned separately. If you made a role with the 0.4.2 script, delete it and run the new script.
 
 ## How it works
 

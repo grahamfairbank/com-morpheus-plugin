@@ -38,7 +38,8 @@ class ComIndex {
 			servers[id] = [id: id, name: s.name, serial: hw.serialNumber, model: hw.model, productId: hw.productId,
 				hostname: ((Map) (s.host ?: [:])).hostname]
 			try {
-				Map inv = client.inventory(id, INVENTORY_TTL_MS)
+				// Not cached (0.4.3): only the MACs are kept, so the index doesn't hold every server's ~100 KB inventory.
+				Map inv = client.inventory(id, 0L)
 				macs[id] = MacMatcher.inventoryMacs(inv?.networkAdapter)
 			} catch (ComException e) {
 				if (e.rateLimited) throw e
