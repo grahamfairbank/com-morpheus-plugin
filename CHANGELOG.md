@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 (2026-10-31)
+
+Tested on Morpheus 9.0.1 with the live COM API. This release has two parts: security hardening and faster tabs.
 
 Security hardening from an independent review on October 31, 2026 (no Critical findings; see [Independent security review](README.md#independent-security-review)).
 
@@ -16,6 +18,16 @@ Security hardening from an independent review on October 31, 2026 (no Critical f
 - **Build:** `tools/check-plugin-core.sh` works in `build/compat` instead of a shared `/tmp` folder. Test data uses example values for NIC serial numbers and storage identifiers.
 - New [`SECURITY.md`](SECURITY.md): how to report a vulnerability, and which versions get fixes.
 - **Docs:** the screenshots use example values (`host-a`, `cluster-a`, `XYZ0000001`, `192.0.2.21`, workspace `my-workspace`) instead of blocked-out text, and the same value means the same thing in every image and section. The README shows the plugin in the Morpheus UI: annotated host and cluster pages from a real 9.0.1 appliance. The install guide lists the example values up front.
+
+Faster tabs, smaller COM reads and a quicker index refresh, from measurements on a Morpheus 9.0 appliance (October 31, 2026). Nothing changes in what the tabs show or in the checks on the action routes.
+
+- **Faster tabs.** Morpheus asks a tab whether to show itself and then renders it, one right after the other. The host tab now reads the host from Morpheus once per page instead of two or three times (each read took 0.7 to 1.1 s), and the cluster tab lists the cluster's servers once instead of twice (2 to 2.8 s each). What was read is reused for at most 15 seconds. Each tab still checks the viewer's permission and tenant on every page, and the action buttons always read the host fresh.
+- **Smaller COM reads.** The plugin asks COM for compressed (gzip) answers: a server's inventory drops from about 136 KB to 14 KB. The 16 MB limit applies to the uncompressed size.
+- **The cluster summary reads only its own servers** from COM, 50 at a time, instead of paging through every server in the workspace. If COM refuses that query, it reads the whole list as before. If a COM list is ever longer than the plugin reads (50 pages), the Morpheus log says so once.
+- **Quicker index refresh.** Rebuilding the host-to-COM match between the regular 6-hour refreshes reads a server's inventory only when COM has collected a new one since the last build, or after a successful **Collect inventory** action; the 6-hour refresh still reads every inventory. A host with no match triggers a rebuild at most once an hour, and never when Morpheus has no MAC addresses for it, so a server newly added to COM can take up to an hour to match on a host page that already showed "No COM match". After a failed build the plugin waits longer each time (up to 15 minutes), or as long as COM asks after a rate limit. A build stops if COM can't be reached, and the last good index stays in use.
+- **Outages:** when sign-in fails or COM can't be reached, tabs show the error at once for the next 45 seconds instead of each waiting for timeouts. Action buttons fail the same way during those 45 seconds. Matching keeps retrying in the background. A broken or cut-off answer fails only that request.
+- **Changing the connection settings** stops a build that's still using the old ones, and the new connection starts clean (its error state, alert fallback and rebuild limits).
+- **Reliability:** cached COM answers are plain maps and lists, safe to share between page loads.
 
 ## 0.4.2 (2026-10-29)
 

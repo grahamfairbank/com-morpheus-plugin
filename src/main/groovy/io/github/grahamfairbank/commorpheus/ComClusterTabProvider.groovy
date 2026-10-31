@@ -22,9 +22,18 @@ class ComClusterTabProvider extends AbstractClusterTabProvider {
 	ComMorpheusPlugin plugin
 	MorpheusContext morpheus
 
-	ComClusterTabProvider(ComMorpheusPlugin plugin, MorpheusContext morpheus) {
+	/** How long show() and the render that follows share one list of the cluster's servers. */
+	static final long HOSTS_REUSE_MS = 15_000L
+	/**
+	 * The cluster's owned hosts (already filtered by owned()), keyed by cluster id and owner id. Data only:
+	 * every show() still checks canView and mayView before using it, and render adds or drops no check.
+	 */
+	final ShortMemo<String, List<HostFacts>> recent
+
+	ComClusterTabProvider(ComMorpheusPlugin plugin, MorpheusContext morpheus, Closure<Long> clock = { System.currentTimeMillis() }) {
 		this.plugin = plugin
 		this.morpheus = morpheus
+		this.recent = new ShortMemo<String, List<HostFacts>>(HOSTS_REUSE_MS, 100, clock)
 	}
 
 	@Override Plugin getPlugin() { plugin }
@@ -39,7 +48,7 @@ class ComClusterTabProvider extends AbstractClusterTabProvider {
 		if (!(s.configured && ComMorpheusPlugin.canView(s, user) && mayView(cluster, account))) return false
 		if (s.showOnAnyHost) return true
 		try {
-			return worthShowing(hosts(cluster).collect { HostFactsReader.facts(it, morpheus, false) })
+			return worthShowing(hostFacts(cluster))
 		} catch (Throwable e) {
 			log.debug("com-morpheus: cluster tab check for ${cluster.id} failed", e)
 			return false
@@ -51,14 +60,27 @@ class ComClusterTabProvider extends AbstractClusterTabProvider {
 		ComSettings s = plugin.loadSettings()
 		Map model
 		try {
-			List<HostFacts> facts = hosts(cluster).collect { HostFactsReader.facts(it, morpheus, true) }
-			model = plugin.service.cluster(cluster.name, facts, s)
+			model = plugin.service.cluster(cluster.name, hostFacts(cluster), s)
 		} catch (Throwable e) {
 			model = [state: 'error', error: ComService.unexpected("cluster tab for ${cluster?.id}", e)]
 		}
 		ViewModel<Map> vm = new ViewModel<>()
 		vm.object = ComView.withFlags(model)
 		return getRenderer().renderTemplate('hbs/com-cluster', vm)
+	}
+
+	/**
+	 * Facts (with interfaces) for the cluster's owned hosts, reused for a few seconds so show() and the render
+	 * right after it list the cluster once. list() records carry their interfaces, so there's no read per host.
+	 */
+	List<HostFacts> hostFacts(ComputeServerGroup cluster) {
+		Long owner = safe { cluster?.owner?.id } as Long
+		String key = "${cluster.id}:${owner}".toString()
+		List<HostFacts> hit = recent.get(key)
+		if (hit != null) return hit
+		List<HostFacts> facts = Collections.unmodifiableList(hosts(cluster).collect { HostFactsReader.facts(it, morpheus, true, true) })
+		recent.put(key, facts)
+		return facts
 	}
 
 	/** The cluster's servers that belong to the cluster's own tenant (render has no user, so the owner decides). */

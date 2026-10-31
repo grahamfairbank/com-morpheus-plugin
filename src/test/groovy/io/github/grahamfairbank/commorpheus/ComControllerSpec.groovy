@@ -9,7 +9,7 @@ class ComControllerSpec extends Specification {
 
 	ComController controller = new ComController(null, null)
 
-	def "every route needs a permission; no open probe (0.4.3)"() {
+	def "every route needs a permission; no open probe (0.5.0)"() {
 		when:
 		def routes = controller.routes
 
@@ -27,7 +27,7 @@ class ComControllerSpec extends Specification {
 		controller.routes.every { r -> controller.class.getMethod(r.method, ViewModel) != null }
 	}
 
-	def "probe answers ok and the method, and echoes nothing about the caller (0.4.3)"() {
+	def "probe answers ok and the method, and echoes nothing about the caller (0.5.0)"() {
 		given:
 		ViewModel<Map> vm = new ViewModel<>()
 		vm.user = new User(username: 'alice')

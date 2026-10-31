@@ -36,7 +36,7 @@ class ComSettingsSpec extends Specification {
 
 	static final String WS = '4f2a9c7e1b8d4e6fa3c5d7e9b1f20a64'
 
-	def "URL settings must be HPE GreenLake hosts, so the secret and token can't be sent elsewhere (0.4.3)"() {
+	def "URL settings must be HPE GreenLake hosts, so the secret and token can't be sent elsewhere (0.5.0)"() {
 		when:
 		ComSettings s = ComSettings.fromMap([comClientId: 'i', comClientSecret: 's', (key): value])
 
@@ -66,7 +66,7 @@ class ComSettingsSpec extends Specification {
 		'proxyUrl'    | 'http://proxy.example.com:3128'                        | false
 	}
 
-	def "the connection key doesn't contain the secret (0.4.3)"() {
+	def "the connection key doesn't contain the secret (0.5.0)"() {
 		given:
 		ComSettings a = ComSettings.fromMap([comClientId: 'i', comClientSecret: 'top-secret'])
 

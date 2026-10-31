@@ -57,6 +57,9 @@ class FakeCom implements ComTransport {
 	boolean rejectAlertSelect = true
 	Map<String, Integer> serverReadStatus = [:]   // 'v1' / 'v1beta2' / 'raw' -> status for single-server reads
 	String refusedTokenUrl = null            // a token from this URL is issued, then refused on reads (401)
+	Map<String, String> inventoryAt = [:]    // server id -> lastFullInventoryCollectionAt in the server list
+	Set<String> hiddenServers = [] as Set    // ids left out of the server list (removed from COM)
+	int serverFilterStatus = 200             // status for /v1/servers?filter=... (400 = COM refuses the filter)
 
 	HttpResult send(String method, String url, Map<String, String> headers, String body) {
 		calls << "${method} ${url}".toString()
@@ -96,7 +99,9 @@ class FakeCom implements ComTransport {
 		String variant = p.startsWith('/v1beta2/') ? 'v1beta2' : (rawId.contains('+') ? 'raw' : 'v1')
 		if (p ==~ '/v1(beta2)?/servers/[^/]+' && serverReadStatus[variant]) return new HttpResult(serverReadStatus[variant], '{"message":"Internal Server Error"}')
 		switch (p) {
-			case '/v1/servers': return page('com-servers.json', q)
+			case '/v1/servers':
+				if (q.filter && serverFilterStatus != 200) return new HttpResult(serverFilterStatus, '{"message":"bad filter"}')
+				return serverPage(q)
 			case ~'/v1(beta2)?/servers/[^/]+':
 				if (id != Fixtures.MATCHED_ID) return new HttpResult(404, '{}')
 				Map sv = (Map) Fixtures.json('com-server.json')
@@ -121,6 +126,24 @@ class FakeCom implements ComTransport {
 	}
 
 	private static HttpResult ok(String body) { new HttpResult(200, body) }
+
+	/** The server list, with inventoryAt/hiddenServers applied and COM's `id in ('a','b')` filter honored. */
+	private HttpResult serverPage(Map q) {
+		Map all = (Map) Fixtures.json('com-servers.json')
+		List<Map> items = ((List<Map>) all.items).findAll { !hiddenServers.contains(it.id) }
+		items.each { Map it -> if (inventoryAt.containsKey(it.id)) it.lastFullInventoryCollectionAt = inventoryAt[it.id] }
+		String filter = q.filter ? URLDecoder.decode(q.filter as String, 'UTF-8') : null
+		if (filter) {
+			def m = filter =~ /^id in \((.*)\)$/
+			if (!m.matches()) return new HttpResult(400, '{"message":"unsupported filter in fake"}')
+			Set<String> ids = (m.group(1) =~ /'((?:[^']|'')*)'/).collect { it[1].replace("''", "'") } as Set
+			items = items.findAll { ids.contains(it.id) }
+		}
+		int offset = (q.offset ?: '0') as int
+		int limit = (q.limit ?: '100') as int
+		List slice = offset < items.size() ? items.subList(offset, Math.min(items.size(), offset + limit)) : []
+		ok(JsonOutput.toJson([offset: offset, count: slice.size(), total: items.size(), items: slice]))
+	}
 
 	/** Serves a collection fixture honoring offset/limit, like COM. */
 	private static HttpResult page(String fixture, Map q) {

@@ -89,7 +89,7 @@ class ComView {
 	}
 
 	/**
-	 * https link to an iLO, only for a plain IPv4/IPv6 address or DNS host name as reported to COM (0.4.3).
+	 * https link to an iLO, only for a plain IPv4/IPv6 address or DNS host name as reported to COM (0.5.0).
 	 * Anything else (paths, user info, ports, odd characters) is shown as text without a link.
 	 */
 	static String iloLink(Object value) {
@@ -102,7 +102,7 @@ class ComView {
 	}
 
 	/**
-	 * Device id -> group name for every COM group (0.4.3: built once in the background, not per page view).
+	 * Device id -> group name for every COM group (0.5.0: built once in the background, not per page view).
 	 * Ids are the string values of "id"/"...Id" keys in each group's device list. A group whose devices can't be read is skipped.
 	 */
 	static Map<String, String> groupMap(List<Map> groups, Closure<Object> devicesOf) {

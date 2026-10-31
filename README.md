@@ -20,7 +20,7 @@
 - **Nothing to install on your hosts.** The plugin matches each Morpheus host to its COM server using the network-adapter MAC addresses both systems already know. No agents, no SSH, no IPMI, no iLO credentials in Morpheus.
 - **Safe, one-click fixes.** Light the UID LED to find the box, refresh COM's inventory, reset a stuck iLO, or put a server into COM maintenance before hardware work. Every button restores, observes or refreshes; none reconfigures. [Why these actions?](#why-these-actions)
 - **Secure by design.** The API secret never leaves the Morpheus appliance. Buttons are off by default and gated by a Morpheus role permission. Every action request passes a chain of server-side checks. Two independent security reviews have been done, and every finding is fixed. [Security details](#security)
-- **Drop-in.** One jar for Morpheus 9.0 and 9.1, with a settings form, two role permissions, and a test suite that runs against both plugin APIs. 0.4.2 is tested on a real Morpheus 9.0.1 appliance against the live COM API.
+- **Drop-in.** One jar for Morpheus 9.0 and 9.1, with a settings form, two role permissions, and a test suite that runs against both plugin APIs. 0.5.0 is tested on a real Morpheus 9.0.1 appliance against the live COM API.
 - **Keeps working when COM changes.** When the live COM API drifted from its published reference in October 2026, 0.4.2 adapted the same day: smaller pages, fallback reads and the newer GreenLake sign-in. See [Known issues](#known-issues).
 
 ## Get started
@@ -79,7 +79,7 @@ Morpheus puts extra tabs under the **▼** at the right end of the tab row. The 
 |---|---|---|
 | ![Firmware](docs/images/tab-firmware.png) | ![Support](docs/images/tab-support.png) | ![Alerts](docs/images/tab-alerts.png) |
 
-## What it does (0.4.2)
+## What it does (0.5.0)
 
 - **Appears only where it makes sense:** on hypervisor hosts whose hardware vendor is HPE and that aren't virtual machines.
 - **Finds the matching COM server automatically.** Morpheus already stores each host's factory network-adapter MAC addresses, and COM's inventory lists the same adapters. The plugin matches them, so it never needs access to the host itself. For special cases, a `com-serial=<serial>` or `com-id=<COM id>` tag on the host overrides the match.
@@ -94,7 +94,7 @@ Morpheus puts extra tabs under the **▼** at the right end of the tab row. The 
 - **Links:**
   - **Open in COM** goes to the server's page in COM.
   - **Open iLO** goes to the iLO's address, as COM's own Remote console link does.
-- **Cluster summary (new in 0.4.0):** an **HPE COM** tab on each cluster's page lists every host with its COM match, model, serial, health, power, active alerts, support state and COM maintenance mode, with totals and links to each host and its COM page. It's read-only. It reads the server list and warranties once for the whole cluster, and active alerts in one workspace-wide query where COM allows it, otherwise per host.
+- **Cluster summary (new in 0.4.0):** an **HPE COM** tab on each cluster's page lists every host with its COM match, model, serial, health, power, active alerts, support state and COM maintenance mode, with totals and links to each host and its COM page. It's read-only. It reads the cluster's own COM servers (by id) and the warranties once for the whole cluster, and active alerts in one workspace-wide query where COM allows it, otherwise per host.
 - **Optional action buttons:** UID light on/off, Collect inventory, iLO reset, and Enter/Exit COM maintenance (new in 0.4.0), run as COM jobs with live progress. See [Why these actions](#why-these-actions) and [Security](#security).
 
 ## Why these actions
@@ -209,7 +209,7 @@ On October 31, 2026, the same reviewer did a full review of the code, scripts, b
 - **three Medium:** the URL settings weren't limited to HPE, so someone who can edit the plugin settings could send the client secret elsewhere; the response cache grew with the size of the COM workspace; and there was no per-user limit on the action routes;
 - **several Low/Informational findings:** iLO link checks, error detail, token lifetime, an unused route, group lookups during page loads, and build hygiene.
 
-The High, the Mediums and most of the Lows are fixed in the next release, with tests. CI with signed build provenance is planned separately. If you made a role with the 0.4.2 script, delete it and run the new script.
+The High, the Mediums and most of the Lows are fixed in 0.5.0, with tests. CI with signed build provenance is planned separately. If you made a role with the 0.4.2 script, delete it and run the new script.
 
 ## How it works
 

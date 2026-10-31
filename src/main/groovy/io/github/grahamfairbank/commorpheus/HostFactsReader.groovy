@@ -11,18 +11,27 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class HostFactsReader {
 
-	static HostFacts facts(ComputeServer server, MorpheusContext morpheus, boolean withInterfaces) {
+	/**
+	 * @param loaded true when the record came from computeServer.get() or list(), which carry the interfaces
+	 *        (measured on 9.0.1), so they are never read again. False for a possibly shallow record.
+	 */
+	static HostFacts facts(ComputeServer server, MorpheusContext morpheus, boolean withInterfaces, boolean loaded = false) {
 		ComputeServerType t = server.computeServerType
 		HostFacts h = new HostFacts(id: server.id, name: server.name, hostname: server.hostname,
 			vendor: server.hardwareProductVendor, product: server.hardwareProductName,
 			typeCode: t?.code, vmHypervisor: t?.vmHypervisor, tags: tags(server))
-		if (withInterfaces) h.interfaces = interfaces(server, morpheus)
+		if (withInterfaces) h.interfaces = interfaces(server, morpheus, loaded)
 		return h
 	}
 
-	static List<Map> interfaces(ComputeServer server, MorpheusContext morpheus) {
+	/**
+	 * The server's interfaces. A record from get() or list() already has them (an empty list means none), so
+	 * only a shallow record (or one with no interface list at all) is re-read by id (C11: that repeat cost a second computeServer.get, 0.7 to 1.1 s).
+	 */
+	static List<Map> interfaces(ComputeServer server, MorpheusContext morpheus, boolean loaded = false) {
 		List<ComputeServerInterface> list = server.interfaces
-		if (!list) {
+		// null means not loaded (whatever the caller thinks); only an empty list on a loaded record means "none".
+		if (list == null || (list.isEmpty() && !loaded)) {
 			try {
 				list = morpheus.services.computeServer.get(server.id)?.interfaces
 			} catch (Throwable e) {

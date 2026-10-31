@@ -33,6 +33,11 @@ class ComService {
 	static final long INDEX_TTL_MS = 6L * 3600_000L
 	static final long INDEX_MIN_REFRESH_MS = 10L * 60_000L
 	static final long INDEX_RETRY_AFTER_ERROR_MS = 60_000L
+	/** Longest wait after failed index builds (the wait doubles from INDEX_RETRY_AFTER_ERROR_MS, or follows COM's 429 hint). */
+	static final long INDEX_RETRY_MAX_MS = 15L * 60_000L
+	/** A host with no MAC match forces a rebuild at most this often (C1). */
+	static final long FORCE_PER_HOST_MS = 3600_000L
+	static final int FORCE_MAP_MAX = 2000
 	static final long SERVER_TTL_MS = 60_000L
 	static final long ALERTS_TTL_MS = 60_000L
 	static final long SECURITY_TTL_MS = 5L * 60_000L
@@ -48,7 +53,7 @@ class ComService {
 	 */
 	private final byte[] tokenKey = { byte[] k = new byte[32]; new java.security.SecureRandom().nextBytes(k); k }()
 
-	/** Tokens are for one day (0.4.3): a token works on the day it was issued and the day after, then never again. */
+	/** Tokens are for one day (0.5.0): a token works on the day it was issued and the day after, then never again. */
 	static final long TOKEN_DAY_MS = 24L * 3600_000L
 
 	String actionToken(Long hostId) { tokenFor(hostId, Math.floorDiv(clock.call(), TOKEN_DAY_MS)) }
@@ -68,7 +73,7 @@ class ComService {
 		}
 	}
 
-	// ---- per-user limits on the action routes (0.4.3) --------------------------------------------
+	// ---- per-user limits on the action routes (0.5.0) --------------------------------------------
 
 	/** Route calls (caps, action, job) per user per minute. A job poll is one call every 4 s, so this allows several at once. */
 	static final int ROUTE_CALLS_PER_MINUTE = 60
@@ -100,11 +105,19 @@ class ComService {
 	private final ExecutorService executor
 	private final AtomicBoolean building = new AtomicBoolean(false)
 
-	private ComClient client
+	private volatile ComClient client
 	private String connectionKey
 	private volatile ComIndex index
 	private volatile String indexError
 	private volatile long indexRequestedAt
+	/** No index build starts before this time (backoff after failed builds). */
+	private volatile long indexRetryNotBefore
+	private volatile int indexFailures
+	/** host -> when its no-match last forced a rebuild (C1); bounded. */
+	private final Map<String, Long> forcedAt = new java.util.concurrent.ConcurrentHashMap<>()
+	/** COM ids whose collect-inventory job succeeded: the next build reads their inventory again. Bounded. */
+	private final Set<String> inventoryChanged = java.util.concurrent.ConcurrentHashMap.newKeySet()
+	static final int INVENTORY_CHANGED_MAX = 1000
 
 	ComService(Closure<ComTransport> transportFactory = { ComSettings s -> new JdkComTransport(s.proxyUrl) },
 	           Closure<Long> clock = { System.currentTimeMillis() }, ExecutorService executor = null) {
@@ -140,33 +153,91 @@ class ComService {
 			index = null
 			indexError = null
 			indexRequestedAt = 0L
+			indexRetryNotBefore = 0L
+			indexFailures = 0
+			forcedAt.clear()
+			inventoryChanged.clear()
 			groupIndex = null
 			groupIndexAt = 0L
+			bulkAlertsRefusedAt = -1L   // a new workspace gets the workspace alerts query again (C5)
+			idFilterRefusedAt = -1L
 		}
 		return client
 	}
 
 	ComIndex currentIndex() { index }
 
-	/** Starts an index build in the background unless one is running (or ran very recently, unless forced). */
-	void requestIndex(ComSettings s, boolean force = false) {
+	/**
+	 * Starts an index build in the background unless one is running (or ran very recently, unless forced, or
+	 * failed recently). Returns true when a build was started. The build reuses the current index's MACs for
+	 * servers whose inventory hasn't changed (C2), and the new index replaces the old one whole.
+	 */
+	boolean requestIndex(ComSettings s, boolean force = false) {
 		ComClient c = clientFor(s)
 		long now = clock.call()
-		if (!force && index != null && now - index.builtAt < INDEX_TTL_MS) return
-		if (index != null && now - indexRequestedAt < INDEX_MIN_REFRESH_MS) return
-		if (index == null && indexError && now - indexRequestedAt < INDEX_RETRY_AFTER_ERROR_MS) return
-		if (!building.compareAndSet(false, true)) return
+		ComIndex previous = index
+		if (!force && previous != null && now - previous.builtAt < INDEX_TTL_MS) return false
+		if (previous != null && now - indexRequestedAt < INDEX_MIN_REFRESH_MS) return false
+		if (previous == null && indexError && now - indexRequestedAt < INDEX_RETRY_AFTER_ERROR_MS) return false
+		if (now < indexRetryNotBefore) return false
+		if (!building.compareAndSet(false, true)) return false
 		indexRequestedAt = now
-		executor.submit {
-			try {
-				ComIndex built = ComIndex.build(c, clock.call())
-				if (c.is(client)) { index = built; indexError = null }
-			} catch (Throwable e) {
-				indexError = e instanceof ComException ? e.message : unexpected('index build', e)
-				if (e instanceof ComException) log.warn("com-morpheus: index build failed: ${indexError}")
-			} finally {
-				building.set(false)
+		try {
+			executor.submit {
+				try {
+					Set<String> mustRead = new HashSet<String>(inventoryChanged)
+					ComIndex built = ComClient.inBackground { ComIndex.build(c, clock.call(), previous, { c.is(client) }, mustRead) }
+					if (c.is(client)) { index = built; indexError = null; indexFailures = 0; indexRetryNotBefore = 0L; inventoryChanged.removeAll(mustRead) }
+				} catch (ComIndex.Superseded ignored) {
+					log.info('com-morpheus: index build stopped: the connection settings changed')
+				} catch (Throwable e) {
+					if (!c.is(client)) return   // a stale build never writes over the new connection's state (C5)
+					indexError = e instanceof ComException ? e.message : unexpected('index build', e)
+					indexFailures++
+					long wait = retryDelay(e, indexFailures)
+					indexRetryNotBefore = clock.call() + wait
+					if (e instanceof ComException) log.warn("com-morpheus: index build failed: ${indexError}; next try in ${(int) (wait / 1000)} s or later")
+				} finally {
+					building.set(false)
+				}
 			}
+		} catch (Throwable e) {
+			building.set(false)   // executor shut down
+			return false
+		}
+		return true
+	}
+
+	/** Wait before the next build after a failure: COM's 429 hint (at least a minute), else doubling from a minute; capped. */
+	static long retryDelay(Throwable e, int failures) {
+		long wait
+		if (e instanceof ComException && ((ComException) e).rateLimited) {
+			Integer after = ((ComException) e).retryAfterSeconds
+			wait = Math.max(INDEX_RETRY_AFTER_ERROR_MS, after != null ? after * 1000L : 0L)
+		} else {
+			wait = INDEX_RETRY_AFTER_ERROR_MS << Math.min(Math.max(failures - 1, 0), 10)
+		}
+		return Math.min(wait, INDEX_RETRY_MAX_MS)
+	}
+
+	/**
+	 * Whether a host with no MAC match may force a rebuild now (C1): never for NO_MACS (a rebuild can't change
+	 * it), and at most once per host per FORCE_PER_HOST_MS. The map is bounded; when full, nothing more is forced.
+	 */
+	private boolean forceFor(HostFacts host, Set<String> macs, MacMatcher.Status status, ComSettings s) {
+		if (status == MacMatcher.Status.NO_MACS) return false
+		String key = host?.id != null ? "id:${host.id}".toString() : "macs:${macs.sort().join(',')}".toString()
+		long now = clock.call()
+		synchronized (forcedAt) {
+			Long last = forcedAt[key]
+			if (last != null && now - last < FORCE_PER_HOST_MS) return false
+			if (forcedAt.size() >= FORCE_MAP_MAX) {
+				forcedAt.entrySet().removeIf { Map.Entry<String, Long> e -> now - e.value >= FORCE_PER_HOST_MS }
+				if (forcedAt.size() >= FORCE_MAP_MAX) return false
+			}
+			if (!requestIndex(s, true)) return false
+			forcedAt[key] = now
+			return true
 		}
 	}
 
@@ -223,7 +294,7 @@ class ComService {
 					[id: id, serial: sv.serial ?: '--', name: sv.name ?: '--', model: sv.model ?: '--', shared: n, url: s.serverPageUrl(id)]
 				}]
 			default:
-				if (clock.call() - idx.builtAt > INDEX_MIN_REFRESH_MS) requestIndex(s, true)
+				if (clock.call() - idx.builtAt > INDEX_MIN_REFRESH_MS) forceFor(host, macs, r.status, s)
 				return [state: 'nomatch', hostMacs: macs.join(', ') ?: 'none',
 					reason: r.status == MacMatcher.Status.NO_MACS ?
 						'Morpheus has no globally unique network adapter MAC addresses for this host.' :
@@ -272,7 +343,12 @@ class ComService {
 			if (rows.every { it.status == 'building' }) return base + [state: 'building']
 			ComClient c = clientFor(s)
 			List<String> notes = []
-			Map<String, Map> servers = ((List<Map>) (optional(notes, 'server list') { c.serverSummaries(SUMMARY_TTL_MS) } ?: []))
+			// Only ids the index knows go into the COM filter: a com-id tag value is user-editable, and an unknown
+			// id would show "Not in COM" anyway.
+			ComIndex known = index
+			List<String> wanted = rows.findAll { it.comId }.collect { it.comId as String }.unique()
+				.findAll { String id -> known?.servers?.containsKey(id) }
+			Map<String, Map> servers = ((List<Map>) (optional(notes, 'server list') { summaryServers(c, wanted) } ?: []))
 				.collectEntries { [(it.id as String): it] }
 			List<String> comIds = rows.findAll { it.comId && servers[it.comId as String] }.collect { it.comId as String }.unique()
 			Map<String, Integer> alertCounts = activeAlertCounts(c, comIds, notes)   // null = unknown
@@ -310,6 +386,30 @@ class ComService {
 		} catch (Throwable e) {
 			return base + [state: 'error', error: unexpected("cluster summary for ${clusterName}", e)]
 		}
+	}
+
+	/** When COM last refused the server id filter (HTTP 400); -1 = never. The whole list is read for a while after. */
+	private volatile long idFilterRefusedAt = -1L
+	static final long ID_FILTER_RETRY_MS = 6L * 3600_000L
+
+	/**
+	 * The cluster rows' COM servers (C4): read by id (50 per call) instead of paging the whole workspace. If COM
+	 * refuses the id filter (400), reads the whole server list as before, and keeps doing so for six hours.
+	 */
+	private List<Map> summaryServers(ComClient c, List<String> comIds) {
+		if (!comIds) return []
+		long now = clock.call()
+		if (idFilterRefusedAt < 0 || now - idFilterRefusedAt >= ID_FILTER_RETRY_MS) {
+			try {
+				return c.serversById(comIds, SUMMARY_TTL_MS)
+			} catch (ComException e) {
+				if (e.status != 400) throw e
+				// Every id here is in the index (see cluster()), so a refusal is about the filter, not a bad tag value.
+				if (c.is(client)) idFilterRefusedAt = now
+				log.info("com-morpheus: COM refused the server id filter (${e.message}); reading the whole server list for the next 6 hours")
+			}
+		}
+		return c.serverSummaries(SUMMARY_TTL_MS)
 	}
 
 	/** The Morpheus side of a cluster row: which COM server, or why none. */
@@ -352,7 +452,7 @@ class ComService {
 
 	/** Minimum time between two actions on the same COM server (0.3.1: no tight loops of iLO resets). */
 	static final long ACTION_COOLDOWN_MS = 30_000L
-	/** Minimum time between two iLO resets of the same server (0.4.3). */
+	/** Minimum time between two iLO resets of the same server (0.5.0). */
 	static final long ILO_RESET_COOLDOWN_MS = 10L * 60_000L
 	private final Map<String, Long> lastIloResetAt = new java.util.concurrent.ConcurrentHashMap<>()
 	private final Map<String, Long> lastActionAt = new java.util.concurrent.ConcurrentHashMap<>()
@@ -449,7 +549,7 @@ class ComService {
 				return counts
 			} catch (ComException e) {
 				if (e.status != 400) { notes << "Couldn't load alerts: ${e.message}".toString(); return null }
-				bulkAlertsRefusedAt = now
+				if (c.is(client)) bulkAlertsRefusedAt = now
 				log.info("com-morpheus: COM refused the workspace alerts query (${e.message}); reading alerts per server for the next 6 hours")
 			}
 		}
@@ -473,7 +573,7 @@ class ComService {
 	}
 
 	static final String NO_SUCH_JOB = 'No such job for this host.'
-	/** Job status is reused for a few seconds (0.4.3), so a tight poll loop costs COM one call per interval. */
+	/** Job status is reused for a few seconds (0.5.0), so a tight poll loop costs COM one call per interval. */
 	static final long JOB_TTL_MS = 3_000L
 
 	/** A job's progress, only if it belongs to this host's COM server. Never throws. */
@@ -495,7 +595,14 @@ class ComService {
 			if (resourceId != m.comId) return [ok: false, error: NO_SUCH_JOB]
 			String state = job?.state as String
 			boolean done = state in ['COMPLETE', 'ERROR', 'STALLED']
-			if (done && job?.resultCode == 'SUCCESS') c.invalidate(m.comId as String) // fresh data on the next tab render
+			if (done && job?.resultCode == 'SUCCESS') {
+				c.invalidate(m.comId as String) // fresh data on the next tab render
+				// A new inventory may have new NICs: the next index build reads it instead of reusing its MACs.
+				String template = (job?.jobTemplate ?: job?.jobTemplateUri ?: '') as String
+				if (template.contains(ComClient.JOB_TEMPLATES.collectInventory) && c.is(client) && inventoryChanged.size() < INVENTORY_CHANGED_MAX) {
+					inventoryChanged.add(m.comId as String)
+				}
+			}
 			return [ok: true, jobId: jobId, state: state, resultCode: job?.resultCode, status: job?.status, done: done]
 		} catch (ComException e) {
 			return [ok: false, error: e.message]
@@ -534,7 +641,7 @@ class ComService {
 	private final AtomicBoolean groupsBuilding = new AtomicBoolean(false)
 
 	/**
-	 * The server's COM group name from a device -> group map rebuilt hourly in the background (0.4.3). Reading
+	 * The server's COM group name from a device -> group map rebuilt hourly in the background (0.5.0). Reading
 	 * every group's members during a page render cost one COM call per group. Null until the first build is done.
 	 */
 	String groupOf(ComClient c, String comId) {
@@ -543,7 +650,7 @@ class ComService {
 			try {
 				executor.submit {
 					try {
-						Map<String, String> built = ComView.groupMap(c.groups(GROUPS_TTL_MS)) { String gid -> c.groupDevices(gid, 0L) }
+						Map<String, String> built = ComClient.inBackground { ComView.groupMap(c.groups(GROUPS_TTL_MS)) { String gid -> c.groupDevices(gid, 0L) } }
 						if (c.is(client)) { groupIndex = built; groupIndexAt = clock.call() }
 					} catch (Throwable e) {
 						log.warn("com-morpheus: couldn't read COM groups: ${e instanceof ComException ? e.message : e.class.simpleName}")

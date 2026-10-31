@@ -49,11 +49,11 @@ class ComSettings {
 	final boolean showOnAnyHost
 	final boolean routeDiagnostics
 	final boolean enableActions
-	/** Settings refused because they could send the client secret or token outside HPE (0.4.3); see problem(). */
+	/** Settings refused because they could send the client secret or token outside HPE (0.5.0); see problem(). */
 	final List<String> rejected
 
 	/**
-	 * Hosts the URL settings may name (0.4.3). The client secret is POSTed to the token URL and the bearer token
+	 * Hosts the URL settings may name (0.5.0). The client secret is POSTed to the token URL and the bearer token
 	 * sent to the API URL, so neither may point anywhere but HPE GreenLake.
 	 */
 	static final List<String> HPE_DOMAINS = ['greenlake.hpe.com', 'cloud.hpe.com']
@@ -126,7 +126,7 @@ class ComSettings {
 
 	/**
 	 * Same identity whenever the values that affect API calls are the same; used to reset caches. Hashed, so the
-	 * secret isn't kept in a second plain string (0.4.3).
+	 * secret isn't kept in a second plain string (0.5.0).
 	 */
 	String connectionKey() {
 		String joined = [apiUrl, clientId, clientSecret, workspaceId, tokenUrl, tenantAcid, proxyUrl].join('\u0000')

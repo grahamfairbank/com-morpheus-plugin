@@ -144,7 +144,7 @@ class ComController implements PluginController {
 		return null
 	}
 
-	/** Per-user route limit reached (0.4.3). */
+	/** Per-user route limit reached (0.5.0). */
 	static final Map TOO_MANY = Collections.unmodifiableMap([ok: false, error: 'Too many requests. Wait a minute, then try again.'])
 
 	/** The host named by serverId, if it exists and the user's tenant owns it (or the user is in the master tenant). */
@@ -158,7 +158,8 @@ class ComController implements PluginController {
 		Long mine = safe { account?.id } as Long
 		Long owner = safe { server.account?.id } as Long
 		if (!master && (mine == null || mine != owner)) return [status: 404, error: 'No such host.']
-		HostFacts facts = HostFactsReader.facts(server, morpheus, true)
+		// Loaded by id just now (never from the tabs' short memo), so its interfaces are current: no second get (C11).
+		HostFacts facts = HostFactsReader.facts(server, morpheus, true, true)
 		if (!ComService.isHost(facts)) return [status: 404, error: 'No such host.']
 		return [facts: facts]
 	}

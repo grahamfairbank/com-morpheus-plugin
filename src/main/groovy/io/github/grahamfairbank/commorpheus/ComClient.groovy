@@ -1,6 +1,6 @@
 package io.github.grahamfairbank.commorpheus
 
-import groovy.json.JsonSlurper
+import groovy.json.JsonSlurperClassic
 import groovy.util.logging.Slf4j
 
 import java.util.concurrent.ConcurrentHashMap
@@ -9,11 +9,14 @@ import java.util.concurrent.ConcurrentHashMap
 class ComException extends RuntimeException {
 	final int status
 	final Integer retryAfterSeconds
+	/** COM couldn't be reached or sign-in failed: not about one server's data. */
+	final boolean outage
 
-	ComException(String message, int status = 0, Integer retryAfterSeconds = null) {
+	ComException(String message, int status = 0, Integer retryAfterSeconds = null, boolean outage = false) {
 		super(message)
 		this.status = status
 		this.retryAfterSeconds = retryAfterSeconds
+		this.outage = outage
 	}
 
 	boolean isRateLimited() { status == 429 }
@@ -27,6 +30,11 @@ class ComException extends RuntimeException {
  *   and the one that worked is tried first next time. Tokens are reused until a minute before expiry.
  * - GET responses are cached per path for the TTL the caller gives.
  * - 401 drops the token and retries once; 429 raises ComException with the server's retry hint.
+ * - Parsed with JsonSlurperClassic (plain HashMap/ArrayList), because parsed answers are cached and shared
+ *   between threads, and the default parser's lazy maps aren't safe for that (C6).
+ * - A failed sign-in or an unreachable COM is remembered for FAIL_FAST_MS: page renders then fail at once with
+ *   the same message instead of each waiting out the timeouts (C3). Background work ({@link #inBackground})
+ *   still tries on its own schedule.
  *
  * Endpoints and field quirks were confirmed against a live COM workspace on 2026-10-22.
  */
@@ -50,8 +58,37 @@ class ComClient {
 	private final Set<String> refusedTokenUrls = new LinkedHashSet<>()
 	private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>()
 
+	/** How long a sign-in or connection failure is remembered for page renders (C3). */
+	static final long FAIL_FAST_MS = 45_000L
+
+	private static class Failure {
+		final long at
+		final String message
+		final int status
+		Failure(long at, String message, int status) { this.at = at; this.message = message; this.status = status }
+	}
+	private volatile Failure signInFailure
+	private volatile Failure connectFailure
+
+	/** Set while the background index or group build runs: it isn't failed fast, so it can find COM back. */
+	private static final ThreadLocal<Boolean> BACKGROUND = ThreadLocal.withInitial { false }
+
+	/** Runs work as background work: remembered failures don't stop its calls (they're still recorded). */
+	static <T> T inBackground(Closure<T> work) {
+		boolean was = BACKGROUND.get()
+		BACKGROUND.set(true)
+		try { return work.call() } finally { BACKGROUND.set(was) }
+	}
+
+	private static boolean failFast() { !BACKGROUND.get() }
+
+	/** Rethrows a remembered failure, if it's recent and this is a page-render call. */
+	private void recentFailure(Failure f) {
+		if (f != null && failFast() && clock.call() - f.at < FAIL_FAST_MS) throw new ComException(f.message, f.status, null, true)
+	}
+
 	/**
-	 * Most responses kept at once (0.4.3). Expired ones are dropped first, then the oldest, so memory follows what
+	 * Most responses kept at once (0.5.0). Expired ones are dropped first, then the oldest, so memory follows what
 	 * people look at rather than the size of the COM workspace.
 	 */
 	static final int MAX_CACHE_ENTRIES = 1000
@@ -76,7 +113,7 @@ class ComClient {
 	 * One query for both, so a cluster summary can reuse a fresh index read and vice versa.
 	 */
 	List<Map> servers(long ttlMs) {
-		return listAll("${BASE}/v1/servers?select=${enc('id,name,hardware,host,state,maintenanceMode,connectionType,lastFullInventoryCollectionAt')}", ttlMs)
+		return listAll("${BASE}/v1/servers?select=${enc(SERVER_SELECT)}".toString(), ttlMs)
 	}
 
 	/**
@@ -103,6 +140,25 @@ class ComClient {
 
 	/** The cluster summary's server list (0.4.0): the same query as {@link #servers}. */
 	List<Map> serverSummaries(long ttlMs) { servers(ttlMs) }
+
+	/** Ids per filtered server read: 50 measured to work (2026-10-31), and it keeps the URL short. */
+	static final int ID_CHUNK = 50
+	static final String SERVER_SELECT = 'id,name,hardware,host,state,maintenanceMode,connectionType,lastFullInventoryCollectionAt'
+
+	/**
+	 * Only these servers, with the same fields as {@link #servers} (C4): `filter=id in ('a','b')`, 50 ids per read,
+	 * each read cached for ttlMs under its own id set. Throws ComException (status 400 when COM refuses the filter;
+	 * callers then fall back to the whole list).
+	 */
+	List<Map> serversById(Collection<String> ids, long ttlMs) {
+		List<String> sorted = ((ids ?: []).findAll { it } as List<String>).unique().sort()
+		List<Map> out = []
+		sorted.collate(ID_CHUNK).each { List<String> chunk ->
+			String filter = "id in (${chunk.collect { "'${it.replace("'", "''")}'" }.join(',')})"
+			out.addAll(listAll("${BASE}/v1/servers?filter=${enc(filter)}&select=${enc(SERVER_SELECT)}".toString(), ttlMs))
+		}
+		return out
+	}
 
 	/**
 	 * Active (uncleared) alerts across the workspace, with only the fields needed to count them per server
@@ -168,7 +224,7 @@ class ComClient {
 			if (r.status == 403) throw new ComException('COM refused to start the job: the API client needs a COM role that can run server jobs (HTTP 403)', 403)
 			throw failure(r, 'COM job')
 		}
-		return (Map) new JsonSlurper().parseText(r.body)
+		return (Map) new JsonSlurperClassic().parseText(r.body)
 	}
 
 	/** Current state of a job, reused for at most ttlMs (0 = always fresh). */
@@ -195,17 +251,28 @@ class ComClient {
 		synchronized (lock) { return listPages(path, ttlMs, pageSize) }   // a waiter then finds the pages cached
 	}
 
+	/** Collections already reported as cut short at MAX_PAGES (warned once each). */
+	private final Set<String> truncatedWarned = ConcurrentHashMap.newKeySet()
+
 	private List<Map> listPages(String path, long ttlMs, int pageSize) {
 		List<Map> all = []
 		int offset = 0
+		boolean complete = false
+		Integer total = null
 		for (int page = 0; page < MAX_PAGES; page++) {
 			String sep = path.contains('?') ? '&' : '?'
 			Map body = (Map) getJson("${path}${sep}offset=${offset}&limit=${pageSize}", ttlMs)
 			List items = (List) (body?.items ?: [])
 			all.addAll(items as List<Map>)
-			Integer total = body?.total as Integer
+			total = body?.total as Integer
 			offset += items.size()
-			if (items.isEmpty() || (total != null && offset >= total)) break
+			if (items.isEmpty() || (total != null && offset >= total)) { complete = true; break }
+		}
+		if (!complete) {
+			String what = shortPath(path)
+			if (truncatedWarned.size() < 100 && truncatedWarned.add(what)) {
+				log.warn("com-morpheus: COM ${what} has more than ${MAX_PAGES} pages${total != null ? " (${total} items)" : ''}; only the first ${all.size()} are used")
+			}
 		}
 		return all
 	}
@@ -223,7 +290,7 @@ class ComClient {
 		if (r.status != 200) throw failure(r, "COM ${shortPath(pathAndQuery)}")
 		Object data
 		try {
-			data = new JsonSlurper().parseText(r.body)
+			data = new JsonSlurperClassic().parseText(r.body)
 		} catch (Exception e) {
 			throw new ComException("COM ${shortPath(pathAndQuery)} returned something that isn't JSON", r.status)
 		}
@@ -250,19 +317,46 @@ class ComClient {
 	private HttpResult get(String pathAndQuery) { send('GET', pathAndQuery, null) }
 
 	private HttpResult send(String method, String pathAndQuery, String jsonBody) {
+		recentFailure(connectFailure)
 		Map<String, String> h = ['Authorization': "Bearer ${accessToken()}".toString(), 'Accept': 'application/json']
 		if (jsonBody != null) h['Content-Type'] = 'application/json'
 		if (settings.tenantAcid) h['Tenant-Acid'] = settings.tenantAcid
+		HttpResult r
 		try {
-			return transport.send(method, settings.apiUrl + pathAndQuery, h, jsonBody)
+			r = transport.send(method, settings.apiUrl + pathAndQuery, h, jsonBody)
 		} catch (ResponseTooLargeException e) {
 			log.warn("com-morpheus: ${shortPath(pathAndQuery)}: ${e.message}")
 			throw new ComException("COM ${shortPath(pathAndQuery)} returned more data than the plugin accepts (${e.message}).")
 		} catch (Exception e) {
+			if (!connectPhase(e)) {
+				// A broken or truncated answer (EOF, bad gzip, reset mid-body): this call failed, COM isn't known to be down.
+				log.warn("com-morpheus: ${shortPath(pathAndQuery)}: incomplete answer from COM: ${e}")
+				throw new ComException("COM ${shortPath(pathAndQuery)} sent an incomplete answer (${e.class.simpleName}). Details are in the Morpheus log.")
+			}
 			// Full detail (proxy, DNS, TLS) goes to the log only.
-			log.warn("com-morpheus: request to ${settings.apiUrl} failed: ${e}")
-			throw new ComException("Couldn't reach COM at ${settings.apiUrl} (${e.class.simpleName}). Details are in the Morpheus log.")
+			String message = "Couldn't reach COM at ${settings.apiUrl} (${e.class.simpleName}). Details are in the Morpheus log.".toString()
+			Failure before = connectFailure
+			if (before == null || clock.call() - before.at >= FAIL_FAST_MS) {
+				log.warn("com-morpheus: request to ${settings.apiUrl} failed: ${e}; page renders fail fast for ${(int) (FAIL_FAST_MS / 1000)} s")
+			} else {
+				log.debug("com-morpheus: request to ${settings.apiUrl} failed again: ${e}")
+			}
+			connectFailure = new Failure(clock.call(), message, 0)
+			throw new ComException(message, 0, null, true)
 		}
+		connectFailure = null   // COM answered (whatever the status), so it's reachable
+		return r
+	}
+
+	/**
+	 * Failures that mean COM (or the proxy) can't be reached at all, so they're remembered for FAIL_FAST_MS:
+	 * connect, DNS, TLS and timeouts. Anything else (EOF, a truncated gzip) is one call's problem.
+	 */
+	static boolean connectPhase(Throwable e) {
+		return e instanceof ConnectException || e instanceof UnknownHostException || e instanceof NoRouteToHostException ||
+			e instanceof java.net.http.HttpTimeoutException || e instanceof SocketTimeoutException ||
+			e instanceof javax.net.ssl.SSLException || e instanceof java.nio.channels.UnresolvedAddressException ||
+			(e.cause != null && !e.cause.is(e) && connectPhase(e.cause))   // the JDK client sometimes wraps the cause
 	}
 
 	/** A valid access token, signing in if needed. */
@@ -283,7 +377,9 @@ class ComClient {
 		if (token && now < tokenExpiresAt - 60_000L) return token
 		if (!settings.configured) throw new ComException('The plugin has no COM client ID and secret yet')
 		String problem = settings.problem()
-		if (problem) throw new ComException(problem)   // never send the secret outside HPE (0.4.3)
+		if (problem) throw new ComException(problem)   // never send the secret outside HPE (0.5.0)
+		// Checked under the lock, so a thread that waited here behind a failed sign-in doesn't POST again (C3).
+		recentFailure(signInFailure)
 
 		List<String> urls = settings.tokenUrls()
 		if (workingTokenUrl && urls.contains(workingTokenUrl)) urls = [workingTokenUrl] + (urls - workingTokenUrl)
@@ -301,20 +397,23 @@ class ComClient {
 			}
 			if (r.status == 200) {
 				Map body = null
-				try { body = (Map) new JsonSlurper().parseText(r.body) } catch (Exception ignored) { }
+				try { body = (Map) new JsonSlurperClassic().parseText(r.body) } catch (Exception ignored) { }
 				if (body?.access_token) {
 					token = body.access_token as String
 					long life = ((body.expires_in ?: 900) as long) * 1000L
 					tokenExpiresAt = now + life
 					if (workingTokenUrl != url) log.info("com-morpheus: signed in to GreenLake via ${hostOf(url)}")
 					workingTokenUrl = url
+					signInFailure = null
 					return token
 				}
 			}
 			tried << "${hostOf(url)}: HTTP ${r.status}".toString()
 		}
-		throw new ComException("Couldn't sign in to GreenLake with the configured client (${tried.join('; ')}). " +
-			'Check the client ID and secret, or set the workspace ID for new-style workspaces.')
+		ComException failed = new ComException("Couldn't sign in to GreenLake with the configured client (${tried.join('; ')}). " +
+			'Check the client ID and secret, or set the workspace ID for new-style workspaces.', 0, null, true)
+		signInFailure = new Failure(clock.call(), failed.message, 0)
+		throw failed
 	}
 
 	private static ComException failure(HttpResult r, String what) {
@@ -332,8 +431,12 @@ class ComClient {
 	private static Integer retryAfter(HttpResult r) {
 		def m = (r.body =~ /"retryAfterSeconds"\s*:\s*(\d+)/)
 		if (m.find()) return m.group(1) as Integer
-		String h = r.header('Retry-After')
-		return h?.isInteger() ? h as Integer : null
+		// GreenLake documents ratelimit-reset (seconds until the window resets) rather than Retry-After.
+		for (String name : ['Retry-After', 'ratelimit-reset']) {
+			String h = r.header(name)?.trim()
+			if (h?.isInteger()) return h as Integer
+		}
+		return null
 	}
 
 	private static String shortPath(String p) { p.replaceFirst('^/compute-ops-mgmt', '').replaceFirst('\\?.*$', '') }

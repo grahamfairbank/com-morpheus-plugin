@@ -16,7 +16,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 BASE=compat/plugin-core-baseline.properties
 prop() { grep -E "^$1=" "$BASE" | cut -d= -f2-; }
-# Inside the repo (build/ is git-ignored), not a shared /tmp path another local user could plant (0.4.3).
+# Inside the repo (build/ is git-ignored), not a shared /tmp path another local user could plant (0.5.0).
 WORK="build/compat"; mkdir -p "$WORK"
 CORE="$WORK/plugin-core"; DOCS="$WORK/morpheus-docs"
 changed=0

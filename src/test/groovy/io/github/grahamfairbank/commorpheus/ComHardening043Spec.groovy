@@ -3,7 +3,7 @@ package io.github.grahamfairbank.commorpheus
 import groovy.json.JsonOutput
 import spock.lang.Specification
 
-/** 0.4.3 hardening from the 2026-10-31 security review: limits, caching, tokens, iLO links, groups. */
+/** 0.5.0 hardening from the 2026-10-31 security review: limits, caching, tokens, iLO links, groups. */
 class ComHardening043Spec extends Specification {
 
 	FakeCom fake = new FakeCom()
@@ -196,8 +196,8 @@ class ComHardening043Spec extends Specification {
 		Map second = svc.tab(Fixtures.host(), ON)
 
 		then:
-		first.summary.find { it.label == 'Group' }.value == 'dHCI-Group1'
-		second.summary.find { it.label == 'Group' }.value == 'dHCI-Group1'
+		first.summary.find { it.label == 'Group' }.value == 'group-a'
+		second.summary.find { it.label == 'Group' }.value == 'group-a'
 		groupsFake.calls.count { it.contains('/devices') } == deviceCalls   // the second render reads no group members
 	}
 

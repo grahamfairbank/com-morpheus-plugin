@@ -11,7 +11,7 @@ body:
     id: plugin
     attributes:
       label: Plugin version and jar
-      placeholder: "0.4.2, com-morpheus-plugin-0.4.2.jar"
+      placeholder: "0.5.0, com-morpheus-plugin-0.5.0.jar"
     validations:
       required: true
   - type: input
