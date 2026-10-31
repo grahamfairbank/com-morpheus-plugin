@@ -1,9 +1,10 @@
 # Screenshot specification
 
-There are two kinds of screenshot in this folder:
+There are three kinds of screenshot in this folder:
 
 - **Rendered:** `tab-*.png` and `cluster-summary.png`. They are rendered from the plugin's test data (`PREVIEW_OUT` in `LiveChecksSpec`). When they're captured, the test data's names, serial numbers and addresses are swapped for the example values below.
-- **Real:** `install-*.png`, `morpheus-host-page.png` and `morpheus-cluster-page.png`. They come from a real Morpheus 9.0.1 appliance and GreenLake workspace, supplied by the maintainer. Every sensitive value is **painted over with an example value** before the image is committed. The browser's address bar and tabs are cropped off.
+- **Terminal:** `install-08-com-user-script.png` is the text of a real run on Morpheus 9.0.1, with the example values swapped in, drawn as a terminal window.
+- **Real:** the other `install-*.png`, `morpheus-host-page.png` and `morpheus-cluster-page.png`. They come from a real Morpheus 9.0.1 appliance and GreenLake workspace, supplied by the maintainer. Every sensitive value is **painted over with an example value** before the image is committed. The browser's address bar and tabs are cropped off.
 
 ## Example values
 
@@ -40,7 +41,7 @@ The workspace, client and email values are shared with [dscc-morpheus-plugin](ht
 
 ## Shots wanted
 
-- `install-08-com-user-script.png`: a run of `tools/create-com-user.py` (0.4.3 or later) on Morpheus 9.0.x with option 2, from the admin login to the closing summary. The old shot showed the earlier script, which granted Read on many more pages, so it was removed.
+None at the moment.
 
 New shots go in `docs/images` as `install-NN-<what>.png` (install guide) or a descriptive name (README).
 

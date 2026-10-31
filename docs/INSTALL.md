@@ -152,12 +152,16 @@ People who look after hardware often need the HPE COM tabs, and maybe the button
 
 At the end it lists what it granted, for example `Read: Operations: Dashboard, Infrastructure: Compute, Infrastructure: Clusters, Infrastructure: Groups, Infrastructure: Clouds`. If your Morpheus version doesn't have one of those permissions, it says so and leaves it out.
 
+Here's a real run on Morpheus 9.0.1, choosing option 2, signed in as `admin`:
+
+![A run of create-com-user.py: role hpe-com-operator with Read on five pages, every other permission checked as None, and user com-operator created](images/install-08-com-user-script.png)
+
 **About the messages:**
 - *could not remove this run's admin token:* the admin login token the script used couldn't be deleted on this version. It expires on its own; nothing else is left behind.
 
-The role it creates, in **Administration → Roles**, searched for `com`: **Compute** is **Read**, **View HPE COM tab** is **Read** and **Run HPE COM actions** is **Full**. Searched for `com`, the role looks the same with every version of the script:
+The role it creates, in **Administration → Roles**, with its description and the plugin's two permissions: **Run HPE COM actions** is **Full** and **View HPE COM tab** is **Read**:
 
-![The hpe-com-operator role: Compute Read, Run HPE COM actions Full, View HPE COM tab Read](images/install-09-com-role.png)
+![The hpe-com-operator role: description "Host and cluster pages plus HPE COM tab and actions", Run HPE COM actions Full, View HPE COM tab Read](images/install-09-com-role.png)
 
 Give the username and password to the person who needs it. They sign in to Morpheus as usual and see the HPE COM tabs (and, with option 2 and **Enable actions** on, the buttons). To give the role to existing users instead: **Administration → Users → (user) → Edit → Roles**.
 
