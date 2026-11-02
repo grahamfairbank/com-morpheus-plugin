@@ -313,7 +313,7 @@ head = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" view
 </defs>
 <rect width="{W}" height="{H}" fill="#ffffff"/>
 <text x="24" y="48" font-size="30" font-weight="bold" fill="{INK}">How com-morpheus-plugin works</text>
-<text x="24" y="76" font-size="15" fill="{MUTED}">Shows HPE Compute Ops Management (COM) data for physical HPE servers inside Morpheus, and runs a few safe COM jobs.</text>
+<text x="24" y="76" font-size="15" fill="{MUTED}">Shows HPE Compute Ops Management (COM) data for physical HPE servers inside HPE Morpheus, and runs a few safe COM jobs.</text>
 '''
 out_path = Path(__file__).resolve().parent.parent / "docs/images/how-it-works.svg"
 out_path.write_text(head + "\n".join(out) + "\n</svg>\n")

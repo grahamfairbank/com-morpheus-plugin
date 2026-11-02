@@ -8,7 +8,7 @@
 </defs>
 <rect width="1400" height="1339" fill="#ffffff"/>
 <text x="24" y="48" font-size="30" font-weight="bold" fill="#1b1f24">How com-morpheus-plugin works</text>
-<text x="24" y="76" font-size="15" fill="#57606a">Shows HPE Compute Ops Management (COM) data for physical HPE servers inside Morpheus, and runs a few safe COM jobs.</text>
+<text x="24" y="76" font-size="15" fill="#57606a">Shows HPE Compute Ops Management (COM) data for physical HPE servers inside HPE Morpheus, and runs a few safe COM jobs.</text>
 <rect x="24" y="108" width="306" height="660" rx="14" fill="#eaf2fc" stroke="#2a6bb8" stroke-width="2"/>
 <text x="42" y="138" font-size="19" font-weight="bold" fill="#2a6bb8" text-anchor="start">① Your browser</text>
 <text x="42" y="158" font-size="13" font-weight="normal" fill="#57606a" text-anchor="start">Morpheus web UI: nothing to install</text>
