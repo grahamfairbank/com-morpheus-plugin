@@ -14,7 +14,7 @@ class ComServiceSpec extends Specification {
 		service.tab(Fixtures.host(), ComSettings.fromMap([:])).state == 'unconfigured'
 	}
 
-	def "physical HPE detection trims VME's trailing newlines and rejects virtual hardware"() {
+	def "physical HPE detection trims Morpheus's trailing newlines and rejects virtual hardware"() {
 		expect:
 		ComService.isPhysicalHpe(new HostFacts(vendor: vendor, product: product)) == physical
 

@@ -8,7 +8,7 @@ import com.morpheusdata.views.HandlebarsRenderer
 import groovy.util.logging.Slf4j
 
 /**
- * com-morpheus: HPE Compute Ops Management (COM) data on physical HPE host pages in HPE VM Essentials 9.1+.
+ * com-morpheus: HPE Compute Ops Management (COM) data on physical HPE host pages in HPE Morpheus 9.0+.
  *
  * Phase 1 (read-only): an "HPE COM" tab with the COM summary, health, firmware, support and alerts,
  * matched to the COM server by NIC MAC addresses, with links to the server's COM page and its iLO.
@@ -100,7 +100,7 @@ class ComMorpheusPlugin extends Plugin {
 			new OptionType(name: 'Proxy URL', code: 'com-morpheus-proxy-url', fieldName: ComSettings.PROXY_URL,
 				fieldLabel: 'HTTP proxy for GreenLake', inputType: OptionType.InputType.TEXT, required: false, displayOrder: order++,
 				placeHolderText: 'http://proxy.example.com:3128',
-				helpText: 'Optional. Proxy the VME manager uses to reach *.greenlake.hpe.com and sso.common.cloud.hpe.com (no authentication).'),
+				helpText: 'Optional. Proxy the Morpheus appliance uses to reach *.greenlake.hpe.com and sso.common.cloud.hpe.com (no authentication).'),
 			new OptionType(name: 'Require permission', code: 'com-morpheus-require-permission', fieldName: ComSettings.REQUIRE_PERMISSION,
 				fieldLabel: 'Only show to roles with the com-morpheus permission', inputType: OptionType.InputType.CHECKBOX,
 				required: false, displayOrder: order++, defaultValue: 'off',

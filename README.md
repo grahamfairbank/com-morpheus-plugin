@@ -1,13 +1,13 @@
 # com-morpheus-plugin
 
-**See every HPE server the way HPE Compute Ops Management sees it, right inside Morpheus.** Health, firmware, hardware, warranty and alerts for each physical host, a status rollup for each cluster, and a few safe one-click fixes. No console switching, no agents, no iLO passwords.
+**See every HPE server the way HPE Compute Ops Management sees it, right inside HPE Morpheus.** Health, firmware, hardware, warranty and alerts for each physical host, a status rollup for each cluster, and a few safe one-click fixes. No console switching, no agents, no iLO passwords.
 
 [![Latest release](https://img.shields.io/github/v/release/grahamfairbank/com-morpheus-plugin?label=release)](../../releases/latest)
 [![Morpheus 9.0 | 9.1](https://img.shields.io/badge/Morpheus-9.0%20%7C%209.1-0d7b6a)](#requirements)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
-> **Unofficial community project.** Not an HPE or Morpheus Data product. Not developed, endorsed or supported by Hewlett Packard Enterprise. Provided as is, without warranty. HPE, HPE GreenLake, Compute Ops Management, Morpheus, VM Essentials, ProLiant and iLO are trademarks of Hewlett Packard Enterprise; see [NOTICE.md](NOTICE.md) for trademarks and for every source this project was built from.
+> **Unofficial community project.** Not an HPE or Morpheus Data product. Not developed, endorsed or supported by Hewlett Packard Enterprise. Provided as is, without warranty. HPE, HPE GreenLake, Compute Ops Management, HPE Morpheus, HPE Morpheus VM Essentials, ProLiant and iLO are trademarks of Hewlett Packard Enterprise; see [NOTICE.md](NOTICE.md) for trademarks and for every source this project was built from.
 
 ![cluster-a in Morpheus 9.0.1 with the plugin's HPE COM tab: totals at the top, then every host with its COM match, model, serial, health, power, active alerts, support and maintenance state](docs/images/morpheus-cluster-page.png)
 
@@ -134,7 +134,8 @@ Power on, power off, restart, firmware updates and configuration changes are **n
 
 ## Requirements
 
-- HPE Morpheus or HPE VM Essentials **9.0.x or 9.1.x**.
+- HPE Morpheus **9.0.x or 9.1.x**, including HPE Morpheus VM Essentials.
+- Physical HPE servers that Morpheus manages as hypervisor hosts, such as HVM (HPE Virtual Machine) hosts.
 - HPE servers onboarded in an **HPE GreenLake** workspace with **Compute Ops Management**.
 - A GreenLake **API client** for Compute Ops Management. Ideally it belongs to a dedicated GreenLake account, because the plugin acts as that account (see [Security](#security)).
   - A view-only COM role is enough for the tab.
@@ -145,7 +146,7 @@ Power on, power off, restart, firmware updates and configuration changes are **n
 
 Use the prebuilt jar from the [Releases](../../releases) page. There's no need to build anything.
 
-**One jar, `com-morpheus-plugin-<version>.jar`, works on Morpheus / VM Essentials 9.0.x and 9.1.x.** It's compiled against the oldest supported Plugin API (1.4.1, Morpheus 9.0), and its whole test suite also runs against Plugin API 1.5.0 (Morpheus 9.1). Before each release, `tools/check-plugin-core.sh` checks HPE's published plugin sources and docs for any compatibility change.
+**One jar, `com-morpheus-plugin-<version>.jar`, works on Morpheus 9.0.x and 9.1.x.** It's compiled against the oldest supported Plugin API (1.4.1, Morpheus 9.0), and its whole test suite also runs against Plugin API 1.5.0 (Morpheus 9.1). Before each release, `tools/check-plugin-core.sh` checks HPE's published plugin sources and docs for any compatibility change.
 
 Each release includes `SHA256SUMS`. Check the download with `sha256sum -c SHA256SUMS`.
 
@@ -255,7 +256,7 @@ The live COM API has drifted from its published reference since October 2026. Ea
 
 - One COM workspace and region per Morpheus appliance.
 - The COM web UI address is confirmed for US West (`us-west2.compute.cloud.hpe.com`). EU Central and AP Northeast follow the same pattern but are unverified; the **COM web UI URL** setting overrides it.
-- Supported: Morpheus / VM Essentials 9.0.x and 9.1.x. A new Morpheus release with a new Plugin API is checked with `tools/check-plugin-core.sh` and the compatibility test run before it's listed as supported.
+- Supported: Morpheus 9.0.x and 9.1.x. A new Morpheus release with a new Plugin API is checked with `tools/check-plugin-core.sh` and the compatibility test run before it's listed as supported.
 
 ## Contributing
 

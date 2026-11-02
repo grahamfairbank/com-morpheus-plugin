@@ -2,7 +2,7 @@
 
 > Unofficial community plugin, not an HPE product and not supported by HPE. See [NOTICE.md](../NOTICE.md).
 
-This guide assumes you've never installed a Morpheus plugin or created a GreenLake API client before. Every step says where to click and what you should see. Allow about 20 minutes.
+This guide assumes you've never installed an HPE Morpheus plugin or created a GreenLake API client before. Every step says where to click and what you should see. Allow about 20 minutes.
 
 *The screenshots are from a real Morpheus 9.0.1 appliance and GreenLake workspace. Names, addresses and ids are replaced with example values, and each example value means the same thing everywhere in this guide and the README:*
 
@@ -20,7 +20,7 @@ This guide assumes you've never installed a Morpheus plugin or created a GreenLa
 
 You need:
 
-- **Morpheus admin access.** HPE Morpheus or HPE VM Essentials **9.0.x or 9.1.x**, and a login that can open **Administration → Integrations → Plugins**.
+- **Morpheus admin access.** HPE Morpheus **9.0.x or 9.1.x** (including HPE Morpheus VM Essentials), and a login that can open **Administration → Integrations → Plugins**.
 - **Access to your HPE GreenLake workspace**, the one where your HPE servers are onboarded in **Compute Ops Management** (COM), with permission to create API clients.
 - **Network access from the Morpheus appliance** (the manager, not your laptop) to these addresses on port 443:
   - `<region>.api.greenlake.hpe.com` (for example `us-west.api.greenlake.hpe.com`)

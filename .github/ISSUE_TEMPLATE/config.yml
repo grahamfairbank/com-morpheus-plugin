@@ -5,4 +5,4 @@ contact_links:
     about: Please report security problems privately, not as a public issue.
   - name: HPE products and support
     url: https://support.hpe.com/
-    about: This is an unofficial community plugin. For HPE Morpheus, VM Essentials or Compute Ops Management product support, contact HPE.
+    about: This is an unofficial community plugin. For HPE Morpheus (any edition) or Compute Ops Management product support, contact HPE.

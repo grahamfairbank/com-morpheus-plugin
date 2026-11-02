@@ -20,13 +20,13 @@ class MacMatcherSpec extends Specification {
 		'not a mac'         | null                | false
 	}
 
-	def "host MACs from VME skip bonds, bridges, OVS and virtual interfaces"() {
+	def "host MACs from Morpheus skip bonds, bridges, OVS and virtual interfaces"() {
 		when:
 		Set<String> macs = MacMatcher.hostMacs(Fixtures.host().interfaces)
 
 		then: 'the 8 factory NIC MACs of the physical host, including both bonded ports'
 		macs.size() == 8
-		macs.contains('00:00:5F:26:BC:30')   // ens1f0np0, bonded: VME keeps its factory MAC
+		macs.contains('00:00:5F:26:BC:30')   // ens1f0np0, bonded: Morpheus keeps its factory MAC
 		!macs.any { it.startsWith('AA:00:00') } // bond0
 		!macs.contains('F6:00:00:F8:31:4E')     // mgmt bridge
 	}

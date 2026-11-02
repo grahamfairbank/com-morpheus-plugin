@@ -17,8 +17,8 @@ body:
   - type: input
     id: morpheus
     attributes:
-      label: Morpheus / VM Essentials version
-      placeholder: "9.0.1"
+      label: HPE Morpheus version and edition
+      placeholder: "9.0.1, Morpheus VM Essentials"
     validations:
       required: true
   - type: input

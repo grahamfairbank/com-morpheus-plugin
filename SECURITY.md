@@ -6,7 +6,7 @@ Please **don't open a public issue** for a security problem. Use GitHub's privat
 
 Helpful things to include:
 
-- the plugin version and Morpheus version;
+- the plugin version and your HPE Morpheus version and edition;
 - what a user (or someone without an account) can do that they shouldn't, and which Morpheus permissions they need;
 - the steps to show it.
 

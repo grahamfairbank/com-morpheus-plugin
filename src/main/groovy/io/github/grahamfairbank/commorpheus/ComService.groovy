@@ -7,7 +7,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicBoolean
 
-/** What the tab needs to know about a VME host, copied out of VME's ComputeServer. */
+/** What the tab needs to know about a Morpheus host, copied out of Morpheus's ComputeServer. */
 class HostFacts {
 	Long id
 	String name
@@ -18,14 +18,14 @@ class HostFacts {
 	Boolean vmHypervisor
 	/** [name:, macAddress:] per interface */
 	List<Map> interfaces = []
-	/** VME tags, name -> value */
+	/** Morpheus tags, name -> value */
 	Map<String, String> tags = [:]
 }
 
 /**
  * Builds the HPE COM tab for one host: match it to a COM server, then fetch and shape that server's data.
  * Holds the COM client and the MAC index; both are rebuilt when the connection settings change.
- * Free of VME classes (the tab provider converts ComputeServer to HostFacts).
+ * Free of Morpheus classes (the tab provider converts ComputeServer to HostFacts).
  */
 @Slf4j
 class ComService {

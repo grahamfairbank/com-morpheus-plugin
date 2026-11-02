@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 /**
  * Opt-in: LOAD_JARS=/path/a.jar,/path/b.jar loads each built plugin jar through morpheus-plugin-api's own
- * PluginManager.registerPlugin(path), the same entry point VME uses, and reports whether it loads and,
+ * PluginManager.registerPlugin(path), the same entry point Morpheus uses, and reports whether it loads and,
  * if not, why. registerPlugin swallows the exception and prints it, so stdout and stderr are captured too.
  * Only jars whose classes are NOT on the test classpath give a valid result (registerPlugin's class loader is
  * parent-first): test with renamed builds, not com-morpheus ones.

@@ -81,7 +81,7 @@ class ComSettingsSpec extends Specification {
 		ComSettings.fromMap([:]).serverPageUrl('869121-B21+MXQ0000000') == 'https://us-west2.compute.cloud.hpe.com/serverDetail/869121-B21+MXQ0000000'
 	}
 
-	def "checkboxes accept VME's on/off"() {
+	def "checkboxes accept Morpheus's on/off"() {
 		expect:
 		ComSettings.fromMap([requirePermission: 'on', showOnAnyHost: 'off']).requirePermission
 		!ComSettings.fromMap([requirePermission: 'on', showOnAnyHost: 'off']).showOnAnyHost

@@ -22,7 +22,7 @@ class ComControllerSpec extends Specification {
 		routes[3].permissions*.code == ['com-morpheus-actions']
 	}
 
-	def "route methods exist with the signature VME's dispatcher calls"() {
+	def "route methods exist with the signature Morpheus's dispatcher calls"() {
 		expect: 'Dispatcher uses getClass().getMethod(name, ViewModel)'
 		controller.routes.every { r -> controller.class.getMethod(r.method, ViewModel) != null }
 	}

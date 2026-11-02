@@ -4,7 +4,7 @@ import com.morpheusdata.views.HandlebarsRenderer
 import com.morpheusdata.views.ViewModel
 import spock.lang.Specification
 
-/** Renders the tab template the way VME does, for every state the service can return. */
+/** Renders the tab template the way Morpheus does, for every state the service can return. */
 class TemplateSpec extends Specification {
 
 	HandlebarsRenderer renderer = new HandlebarsRenderer('renderer', getClass().classLoader)

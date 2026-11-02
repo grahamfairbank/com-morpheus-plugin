@@ -34,7 +34,7 @@ This project refers to the following names only to describe what it works with (
 - **HPE** and **Hewlett Packard Enterprise**, and the HPE logo
 - **HPE GreenLake** and **GreenLake**
 - **HPE Compute Ops Management** (abbreviated "COM" in this project)
-- **HPE Morpheus**, **Morpheus**, **HPE Morpheus VM Essentials** and **HPE VM Essentials** (abbreviated "VME" in this project)
+- **HPE Morpheus**, **Morpheus**, **HPE Morpheus VM Essentials** and the other HPE Morpheus editions
 - **HPE ProLiant** and **ProLiant**
 - **HPE iLO**, **iLO** and **Integrated Lights-Out**
 - **HPE Smart Array**

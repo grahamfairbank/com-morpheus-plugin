@@ -1,4 +1,4 @@
-// com-morpheus-plugin: shows HPE Compute Ops Management (COM) data on physical host pages in HPE VM Essentials.
+// com-morpheus-plugin: shows HPE Compute Ops Management (COM) data on physical host pages in HPE Morpheus.
 // Layout follows the Morpheus plugin generator: Gradle + shadow "fat jar" + asset pipeline +
 // morpheus-plugin-gradle. Build with ./gradlew shadowJar (or tools/build.sh, which needs only Docker).
 

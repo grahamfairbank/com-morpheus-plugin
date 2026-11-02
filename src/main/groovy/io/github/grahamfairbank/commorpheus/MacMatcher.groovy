@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 /**
  * Matches a Morpheus host to a COM server by NIC MAC addresses.
  *
- * VME stores each host's interfaces with their factory MACs, including bonded ports; COM's inventory
+ * Morpheus stores each host's interfaces with their factory MACs, including bonded ports; COM's inventory
  * lists the same adapters. Only globally unique MACs count: locally administered ones (bonds, bridges,
  * OVS, VM tap devices) are random or shared and would cause false matches.
  */
@@ -42,7 +42,7 @@ class MacMatcher {
 		return (first & 0x01) == 0 && (first & 0x02) == 0
 	}
 
-	/** Usable MACs from VME interfaces ([name:, macAddress:] maps), skipping virtual interfaces. */
+	/** Usable MACs from Morpheus interfaces ([name:, macAddress:] maps), skipping virtual interfaces. */
 	static Set<String> hostMacs(List<Map> interfaces) {
 		Set<String> out = new TreeSet<>()
 		interfaces?.each { Map i ->

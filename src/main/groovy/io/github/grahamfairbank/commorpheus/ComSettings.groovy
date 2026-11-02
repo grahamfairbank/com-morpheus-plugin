@@ -5,12 +5,12 @@ import groovy.transform.CompileStatic
 
 /**
  * The plugin's settings (Administration > Integrations > Plugins > com-morpheus), parsed on each use,
- * plus the URLs derived from them. Free of VME classes so it can be unit tested on its own.
+ * plus the URLs derived from them. Free of Morpheus classes so it can be unit tested on its own.
  */
 @CompileStatic
 class ComSettings {
 
-	// Field names used in ComMorpheusPlugin's option types. VME stores settings as JSON keyed by these.
+	// Field names used in ComMorpheusPlugin's option types. Morpheus stores settings as JSON keyed by these.
 	static final String API_URL = 'comApiUrl'
 	static final String CLIENT_ID = 'comClientId'
 	static final String CLIENT_SECRET = 'comClientSecret'
@@ -78,7 +78,7 @@ class ComSettings {
 		enableActions = bool(m[ENABLE_ACTIONS])
 	}
 
-	/** Parses VME's settings JSON. Bad or missing JSON gives an unconfigured instance, never an exception. */
+	/** Parses Morpheus's settings JSON. Bad or missing JSON gives an unconfigured instance, never an exception. */
 	static ComSettings fromJson(String json) {
 		Map m = [:]
 		if (json?.trim()) {

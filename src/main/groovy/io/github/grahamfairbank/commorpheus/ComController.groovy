@@ -11,9 +11,9 @@ import groovy.util.logging.Slf4j
 
 /**
  * Plugin web routes. The probe routes are harmless diagnostics: they prove that the browser can reach a
- * plugin route on the target VME before phase 2's buttons depend on it. It reads and changes nothing.
+ * plugin route on the target Morpheus appliance before phase 2's buttons depend on it. It reads and changes nothing.
  *
- * Note: VME's Dispatcher looks routes up in Plugin.getControllers(), which registerProvider() doesn't
+ * Note: Morpheus's Dispatcher looks routes up in Plugin.getControllers(), which registerProvider() doesn't
  * fill, so the plugin also passes this controller to setControllers().
  */
 @Slf4j

@@ -2,7 +2,7 @@
 
 ## 0.5.0 (2026-10-31)
 
-Tested on Morpheus 9.0.1 with the live COM API. This release has two parts: security hardening and faster tabs.
+Tested on HPE Morpheus 9.0.1 with the live COM API. This release has two parts: security hardening and faster tabs.
 
 Security hardening from an independent review on October 31, 2026 (no Critical findings; see [Independent security review](README.md#independent-security-review)).
 
@@ -89,7 +89,7 @@ These fixes come from an **independent security review**. A separate AI reviewer
 
 ## 0.3.0 (2026-10-25)
 
-- **One jar for Morpheus / VM Essentials 9.0 and 9.1:** `com-morpheus-plugin-<version>.jar`, with a minimum appliance version of 9.0.0. This replaces 0.2.0's `-vme9.0` / `-vme9.1` pair. It came from a post-0.2.0 finding: the 9.1 build runs unchanged on a 9.0 appliance.
+- **One jar for Morpheus 9.0 and 9.1:** `com-morpheus-plugin-<version>.jar`, with a minimum appliance version of 9.0.0. This replaces 0.2.0's `-vme9.0` / `-vme9.1` pair. It came from a post-0.2.0 finding: the 9.1 build runs unchanged on a 9.0 appliance.
   - The jar is compiled against the oldest supported Plugin API (1.4.1), so it can't use anything newer.
   - `tools/build.sh` repeats the whole test suite against Plugin API 1.5.0.
   - The same jar loads with its route controller through the plugin manager of both API versions.
@@ -146,17 +146,17 @@ Phase 2 starts by proving that the browser can reach a plugin web route on the t
   - `/comMorpheus/probeOpen` needs none.
 
   The panel shows the HTTP status of each call and a summary to copy. The probes read and change nothing.
-- **The controller is registered with `setControllers`.** VME's dispatcher looks routes up there, and `registerProvider` alone doesn't add them.
+- **The controller is registered with `setControllers`.** Morpheus's dispatcher looks routes up there, and `registerProvider` alone doesn't add them.
 - **Clearer help text for the client secret setting:** it comes from the same Personal API client as the client ID.
-- **The panel's script uses VME's CSP nonce** (`morpheus.getWebRequest().getNonceToken()`).
+- **The panel's script uses Morpheus's CSP nonce** (`morpheus.getWebRequest().getNonceToken()`).
 
 ### 0.1.0
 
-The first build, read-only. Verified on 2026-10-23 on a VME 9.0.2 manager with a physical ProLiant DL360 Gen10 host (vme9.0 jar).
+The first build, read-only. Verified on 2026-10-23 on an HPE Morpheus VM Essentials 9.0.2 appliance with a physical ProLiant DL360 Gen10 host (vme9.0 jar).
 
 - **HPE COM tab** on physical HPE hypervisor hosts, with Summary, Health (including iLO security), Firmware, Support and Alerts.
-- **Automatic matching** of VME hosts to COM servers by network adapter MAC addresses, with no host access. `com-serial` / `com-id` tags override the match.
+- **Automatic matching** of Morpheus hypervisor hosts to COM servers by network adapter MAC addresses, with no host access. `com-serial` / `com-id` tags override the match.
 - **Links:** Open in COM (`/serverDetail/<id>`) and Open iLO.
 - **COM client:** signs in with OAuth2 client credentials and auto-detects the token URL; caches responses; retries once on 401; reports 429 rate limits; supports an optional proxy and MSP `Tenant-Acid`.
-- **Two jars from one source:** `-vme9.0` (Plugin API 1.4.1, VME 9.0.x) and `-vme9.1` (Plugin API 1.5.0, VME 9.1.x). Both are tested.
+- **Two jars from one source:** `-vme9.0` (Plugin API 1.4.1, Morpheus 9.0.x) and `-vme9.1` (Plugin API 1.5.0, Morpheus 9.1.x). Both are tested.
 - **Handles COM API quirks** found in the spike: the warranty `deviceId` filter is ignored, `IloSecurityParams` has a capital I, `firmwareBundleId` is null, and `manufacturingDate` is undocumented.

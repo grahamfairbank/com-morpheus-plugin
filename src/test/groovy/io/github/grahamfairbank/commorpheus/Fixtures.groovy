@@ -7,8 +7,8 @@ import java.util.concurrent.AbstractExecutorService
 import java.util.concurrent.TimeUnit
 
 /**
- * Test data from a live COM workspace and VME host (2026-10-22/23), anonymized: serials TST0000AB?,
- * IPs from documentation ranges, MAC vendor prefixes replaced consistently in both COM and VME data.
+ * Test data from a live COM workspace and Morpheus host (2026-10-22/23), anonymized: serials TST0000AB?,
+ * IPs from documentation ranges, MAC vendor prefixes replaced consistently in both COM and Morpheus data.
  * The matched server is 869121-B21+TST0000ABM.
  */
 class Fixtures {
